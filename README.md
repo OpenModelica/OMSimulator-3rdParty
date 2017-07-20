@@ -13,3 +13,7 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 ## PugiXML
 
 - http://pugixml.org/ [https://github.com/zeux/pugixml]
+
+## CVODE
+
+- https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
