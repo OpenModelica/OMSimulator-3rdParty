@@ -8,7 +8,7 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 
 ## Lua
 
-- https://www.lua.org/download.html [revision 9639]
+- https://www.lua.org/download.html [version 5.3.4]
 
 ## PugiXML
 
