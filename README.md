@@ -17,3 +17,7 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 ## CVODE
 
 - https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
+
+## KINSOL
+
+- https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
