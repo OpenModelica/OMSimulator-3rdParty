@@ -1,27 +1,37 @@
 RM=rm -rf
 MKDIR=mkdir -p
 
+# ugly fix for macosx 
+detected_OS := $(shell uname -s)
+ifeq ($(detected_OS),Darwin)
+    LUA_TARGET := macosx
+    INSTALL_DIR := install/mac
+else
+    LUA_TARGET := linux
+    INSTALL_DIR := install/linux
+endif
+
 .PHONY: Lua distclean
 
 Lua:
 	@echo
 	@echo "# make Lua"
 	@echo
-	$(MAKE) -C lua-5.3.4 linux
+	$(MAKE) -C lua-5.3.4 $(LUA_TARGET)
 	$(RM) lua-5.3.4/src/*.o
-	$(MKDIR) install/linux
-	mv lua-5.3.4/src/liblua.a install/linux
-	mv lua-5.3.4/src/lua install/linux
-	mv lua-5.3.4/src/luac install/linux
-	$(MKDIR) install/linux/include
-	cp lua-5.3.4/src/lauxlib.h install/linux/include
-	cp lua-5.3.4/src/lua.h install/linux/include
-	cp lua-5.3.4/src/lua.hpp install/linux/include
-	cp lua-5.3.4/src/luaconf.h install/linux/include
-	cp lua-5.3.4/src/lualib.h install/linux/include
+	$(MKDIR) $(INSTALL_DIR)
+	mv lua-5.3.4/src/liblua.a $(INSTALL_DIR)
+	mv lua-5.3.4/src/lua $(INSTALL_DIR)
+	mv lua-5.3.4/src/luac $(INSTALL_DIR)
+	$(MKDIR) $(INSTALL_DIR)/include
+	cp lua-5.3.4/src/lauxlib.h $(INSTALL_DIR)/include
+	cp lua-5.3.4/src/lua.h $(INSTALL_DIR)/include
+	cp lua-5.3.4/src/lua.hpp $(INSTALL_DIR)/include
+	cp lua-5.3.4/src/luaconf.h $(INSTALL_DIR)/include
+	cp lua-5.3.4/src/lualib.h $(INSTALL_DIR)/include
 
 distclean:
 	@echo
 	@echo "# make distclean"
 	@echo
-	$(RM) install/linux
+	$(RM) $(INSTALL_DIR)
