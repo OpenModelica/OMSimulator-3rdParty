@@ -6,6 +6,9 @@ detected_OS := $(shell uname -s)
 ifeq ($(detected_OS),Darwin)
     LUA_TARGET := macosx
     INSTALL_DIR := install/mac
+else ifeq (MINGW,$(findstring MINGW,$(detected_OS)))
+    LUA_TARGET := mingw
+    INSTALL_DIR := install/win
 else
     LUA_TARGET := linux
     INSTALL_DIR := install/linux
