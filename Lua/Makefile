@@ -1,17 +1,17 @@
 RM=rm -rf
 MKDIR=mkdir -p
 
-# ugly fix for macosx 
+# ugly fix for macosx
 detected_OS := $(shell uname -s)
 ifeq ($(detected_OS),Darwin)
-    LUA_TARGET := macosx
-    INSTALL_DIR := install/mac
+	LUA_TARGET := macosx
+	INSTALL_DIR := install/mac
 else ifeq (MINGW,$(findstring MINGW,$(detected_OS)))
-    LUA_TARGET := mingw
-    INSTALL_DIR := install/win
+	LUA_TARGET := mingw
+	INSTALL_DIR := install/mingw
 else
-    LUA_TARGET := linux
-    INSTALL_DIR := install/linux
+	LUA_TARGET := linux
+	INSTALL_DIR := install/linux
 endif
 
 .PHONY: Lua distclean
