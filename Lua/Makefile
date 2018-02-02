@@ -6,12 +6,15 @@ detected_OS := $(shell uname -s)
 ifeq ($(detected_OS),Darwin)
 	LUA_TARGET := macosx
 	INSTALL_DIR := install/mac
+	SHREXT := .dylib
 else ifeq (MINGW,$(findstring MINGW,$(detected_OS)))
 	LUA_TARGET := mingw
 	INSTALL_DIR := install/mingw
+	SHREXT := .dll
 else
 	LUA_TARGET := linux
 	INSTALL_DIR := install/linux
+	SHREXT := .so
 endif
 
 .PHONY: Lua distclean
@@ -23,6 +26,7 @@ Lua:
 	$(MAKE) -C lua-5.3.4 $(LUA_TARGET)
 	$(RM) lua-5.3.4/src/*.o
 	$(MKDIR) $(INSTALL_DIR)
+	mv lua-5.3.4/src/lua53$(SHREXT) $(INSTALL_DIR)
 	mv lua-5.3.4/src/liblua.a $(INSTALL_DIR)
 	mv lua-5.3.4/src/lua $(INSTALL_DIR)
 	mv lua-5.3.4/src/luac $(INSTALL_DIR)
