@@ -1,6 +1,6 @@
 @echo off
 
-@call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+@call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64 8.1
 
 cd lua-5.3.4\src
 cl /MD /O2 /c /DLUA_BUILD_AS_DLL *.c
