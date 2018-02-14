@@ -27,3 +27,9 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 - https://github.com/ceres-solver/ceres-solver [version 1.13.0]
 
   Inserted as git submodule.
+
+## Eigen
+
+- https://github.com/eigenteam/eigen-git-mirror [version 3.3.4]
+
+  Inserted as git submodule. Dependency to Ceres Solver.
