@@ -39,3 +39,9 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 - https://github.com/gflags/gflags [version 2.2.1]
 
   Inserted as git submodule. Dependency to Ceres Solver.
+
+## glog
+
+- https://github.com/google/glog [version 0.3.5]
+
+  Inserted as git submodule. Dependency to Ceres Solver.
