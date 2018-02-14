@@ -1,0 +1,6 @@
+[submodule "tags"]
+	path = tags
+	url = https://github.com/ceres-solver/ceres-solver
+[submodule "ceres-solver"]
+	path = ceres-solver
+	url = https://github.com/ceres-solver/ceres-solver

@@ -21,3 +21,9 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 ## KINSOL
 
 - https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
+
+## Ceres Solver
+
+- https://github.com/ceres-solver/ceres-solver [version 1.13.0]
+
+  Inserted as git submodule.
