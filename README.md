@@ -33,3 +33,9 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 - https://github.com/eigenteam/eigen-git-mirror [version 3.3.4]
 
   Inserted as git submodule. Dependency to Ceres Solver.
+
+## gflags
+
+- https://github.com/gflags/gflags [version 2.2.1]
+
+  Inserted as git submodule. Dependency to Ceres Solver.
