@@ -1,0 +1,1 @@
+nmake clean VC install /A
