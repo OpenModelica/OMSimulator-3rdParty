@@ -55,6 +55,7 @@ include/Makefile.in
 include/libxml/Makefile
 include/libxml/Makefile.in
 include/libxml/xmlversion.h
+install/
 install-sh
 libtool
 libxml-2.0-uninstalled.pc
