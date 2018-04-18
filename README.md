@@ -22,6 +22,10 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 
 - https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
 
+## CTPL
+
+- https://github.com/vit-vit/CTPL [SHA1 ID: 437e135dbd94eb65b45533d9ce8ee28b5bd37b6d]
+
 ## Ceres Solver
 
 - https://github.com/ceres-solver/ceres-solver [version 1.13.0, 19333b0f55c8462381038e70d42af43b52941128]
