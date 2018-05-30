@@ -2,24 +2,32 @@
 REM run this on wsl using:
 REM cmd.exe /C buildWinVS.bat VS15-Win64
 
-if ["%~1"]==["VS14-Win64"] SET OMS_VS_VERSION="Visual Studio 14 2015 Win64"
-if ["%~1"]==["VS14-Win32"] SET OMS_VS_VERSION="Visual Studio 14 2015"
-if ["%~1"]==["VS15-Win64"] SET OMS_VS_VERSION="Visual Studio 15 2017 Win64"
+SET OMS_VS_TARGET=%~1
+IF ["%OMS_VS_TARGET%"]==["VS14-Win32"] SET OMS_VS_PLATFORM=32 && SET OMS_VS_VERSION="Visual Studio 14 2015"
+IF ["%OMS_VS_TARGET%"]==["VS14-Win64"] SET OMS_VS_PLATFORM=64 && SET OMS_VS_VERSION="Visual Studio 14 2015 Win64"
+IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] SET OMS_VS_PLATFORM=32 && SET OMS_VS_VERSION="Visual Studio 15 2017"
+IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] SET OMS_VS_PLATFORM=64 && SET OMS_VS_VERSION="Visual Studio 15 2017 Win64"
 
-REM exit if no VS version could be recognized
 IF NOT DEFINED OMS_VS_VERSION (
-	echo No argument or unsupported argument given. Supported: VS14-Win64, VS14-Win32, VS15-WIN64
-	echo Default to "Visual Studio 14 2015 Win64".
-	pause
-	SET OMS_VS_VERSION="Visual Studio 14 2015 Win64"
+  ECHO No argument or unsupported argument given. Use one of the following VS version strings:
+  ECHO   "VS14-Win32" for Visual Studio 14 2015
+  ECHO   "VS14-Win64" for Visual Studio 14 2015 Win64
+  ECHO   "VS15-Win32" for Visual Studio 15 2017
+  ECHO   "VS15-Win64" for Visual Studio 15 2017 Win64
+  GOTO fail
 )
 
-echo Using %OMS_VS_VERSION%
+SET OMS_VS_TARGET
+SET OMS_VS_VERSION
+SET OMS_VS_PLATFORM
+ECHO.
 
-SET "VSCMD_START_DIR=%CD%"
-if ["%~1"]==["VS14-Win64"] @call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64 8.1
-if ["%~1"]==["VS14-Win32"] @call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x86
-if ["%~1"]==["VS15-Win64"] @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+SET VSCMD_START_DIR="%CD%"
+
+IF ["%OMS_VS_TARGET%"]==["VS14-Win32"] @CALL "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x86
+IF ["%OMS_VS_TARGET%"]==["VS14-Win64"] @CALL "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64
+IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 
 cd lua-5.3.4\src
 cl /MD /O2 /c /DLUA_BUILD_AS_DLL *.c
@@ -45,3 +53,9 @@ COPY lua-5.3.4\src\lua.h install\win\include
 COPY lua-5.3.4\src\lua.hpp install\win\include
 COPY lua-5.3.4\src\luaconf.h install\win\include
 COPY lua-5.3.4\src\lualib.h install\win\include
+
+EXIT /b 0
+
+:fail
+ECHO 3rdParty/Lua failed!
+EXIT /b 1
