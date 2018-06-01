@@ -26,6 +26,7 @@ IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] @CALL "C:\Program Files (x86)\Microsoft V
 IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 
 nmake clean VC install /A
+IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
 
 EXIT /b 0
 
