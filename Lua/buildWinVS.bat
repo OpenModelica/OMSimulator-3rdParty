@@ -31,6 +31,7 @@ IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft V
 
 cd lua-5.3.4\src
 cl /MD /O2 /c /DLUA_BUILD_AS_DLL *.c
+IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
 ren lua.obj lua.o
 ren luac.obj luac.o
 link /DLL /IMPLIB:lua.lib /OUT:lua.dll *.obj

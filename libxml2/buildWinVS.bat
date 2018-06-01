@@ -30,6 +30,7 @@ rd /s/q install
 rd /s/q win32/bin.msvc
 cscript configure.js compiler=msvc prefix=$(MAKEDIR)\..\install\win debug=yes iconv=no
 nmake /f Makefile.msvc install
+IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
 cd..
 
 EXIT /b 0
