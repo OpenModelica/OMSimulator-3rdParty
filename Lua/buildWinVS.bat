@@ -29,18 +29,20 @@ IF ["%OMS_VS_TARGET%"]==["VS14-Win64"] @CALL "%VS140COMNTOOLS%\..\..\VC\vcvarsal
 IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 
-cd lua-5.3.4\src
+IF EXIST "install\win\" RMDIR /S /Q install\win
+
+CD lua-5.3.4\src
 cl /MD /O2 /c /DLUA_BUILD_AS_DLL *.c
 IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
-ren lua.obj lua.o
-ren luac.obj luac.o
+REN lua.obj lua.o
+REN luac.obj luac.o
 link /DLL /IMPLIB:lua.lib /OUT:lua.dll *.obj
 link /OUT:lua.exe lua.o lua.lib
 lib /OUT:lua.lib *.obj /NODEFAULTLIB:MSVCRT
 link /OUT:luac.exe luac.o lua.lib
 DEL *.o
 DEL *.obj
-cd ..\..
+CD ..\..
 
 if not exist "install\win" MKDIR install\win
 MOVE lua-5.3.4\src\*.exe install\win
@@ -55,8 +57,8 @@ COPY lua-5.3.4\src\lua.hpp install\win\include
 COPY lua-5.3.4\src\luaconf.h install\win\include
 COPY lua-5.3.4\src\lualib.h install\win\include
 
-EXIT /b 0
+EXIT /B 0
 
 :fail
 ECHO 3rdParty/Lua failed!
-EXIT /b 1
+EXIT /B 1

@@ -25,16 +25,28 @@ IF ["%OMS_VS_TARGET%"]==["VS14-Win64"] @CALL "%VS140COMNTOOLS%\..\..\VC\vcvarsal
 IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 
-cd win32
-rd /s/q install
-rd /s/q win32/bin.msvc
+IF EXIST "install\win\" RMDIR /S /Q install\win && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+IF EXIST "win32\bin.msvc\" RMDIR /S /Q win32\bin.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+
+CD win32
 cscript configure.js compiler=msvc prefix=$(MAKEDIR)\..\install\win debug=yes iconv=no
+IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
 nmake /f Makefile.msvc install
 IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
-cd..
+CD..
 
-EXIT /b 0
+IF EXIST "config.h" DEL config.h
+IF EXIST "include\libxml\xmlversion.h" DEL include\libxml\xmlversion.h
+IF EXIST "win32\Makefile" DEL win32\Makefile
+IF EXIST "win32\config.msvc" DEL win32\config.msvc
+IF EXIST "win32\bin.msvc\" RMDIR /S /Q win32\bin.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+IF EXIST "win32\int.a.dll.msvc\" RMDIR /S /Q win32\int.a.dll.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+IF EXIST "win32\int.a.msvc\" RMDIR /S /Q win32\int.a.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+IF EXIST "win32\int.msvc\" RMDIR /S /Q win32\int.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+IF EXIST "win32\int.utils.msvc\" RMDIR /S /Q win32\int.utils.msvc && IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
+
+EXIT /B 0
 
 :fail
 ECHO 3rdParty/libxml2 failed!
-EXIT /b 1
+EXIT /B 1
