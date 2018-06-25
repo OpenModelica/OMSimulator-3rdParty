@@ -25,6 +25,10 @@ IF ["%OMS_VS_TARGET%"]==["VS14-Win64"] @CALL "%VS140COMNTOOLS%\..\..\VC\vcvarsal
 IF ["%OMS_VS_TARGET%"]==["VS15-Win32"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 IF ["%OMS_VS_TARGET%"]==["VS15-Win64"] @CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 
+IF NOT EXIST install\\ MKDIR install
+IF NOT EXIST install\\win MKDIR install\\win
+IF NOT EXIST install\\win\\lib MKDIR install\\win\\lib
+
 nmake clean VC install /A
 IF NOT ["%ERRORLEVEL%"]==["0"] GOTO fail
 
