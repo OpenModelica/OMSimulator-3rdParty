@@ -9,6 +9,7 @@ ifeq ($(detected_OS),Darwin)
 else ifeq (MINGW,$(findstring MINGW,$(detected_OS)))
 	LUA_TARGET := mingw
 	INSTALL_DIR := install/mingw
+	EXE := .exe
 else
 	LUA_TARGET := linux
 	INSTALL_DIR := install/linux
@@ -24,8 +25,8 @@ Lua:
 	$(RM) lua-5.3.4/src/*.o
 	$(MKDIR) $(INSTALL_DIR)
 	mv lua-5.3.4/src/liblua.a $(INSTALL_DIR)
-	mv lua-5.3.4/src/lua $(INSTALL_DIR)
-	mv lua-5.3.4/src/luac $(INSTALL_DIR)
+	mv lua-5.3.4/src/lua$(EXE) $(INSTALL_DIR)
+	mv lua-5.3.4/src/luac$(EXE) $(INSTALL_DIR)
 	$(MKDIR) $(INSTALL_DIR)/include
 	cp lua-5.3.4/src/lauxlib.h $(INSTALL_DIR)/include
 	cp lua-5.3.4/src/lua.h $(INSTALL_DIR)/include
