@@ -25,6 +25,7 @@ libxml2/compile
 libxml2/config.guess
 libxml2/config.h
 libxml2/config.h.in
+libxml2/config.h.in~
 libxml2/config.log
 libxml2/config.status
 libxml2/config.sub
