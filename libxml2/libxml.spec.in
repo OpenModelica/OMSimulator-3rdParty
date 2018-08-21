@@ -97,15 +97,9 @@ at parse time or later once the document has been modified.
 %prep
 %setup -q
 
-mkdir py3doc
-cp doc/*.py py3doc
-sed -i 's|#!/usr/bin/python |#!%{__python3} |' py3doc/*.py
-
 %build
 %configure
 make %{_smp_mflags}
-
-find doc -type f -exec chmod 0644 \{\} \;
 
 %install
 rm -fr %{buildroot}
@@ -124,8 +118,6 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/*.a
 rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/*.la
 rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/libxml2-%{version}/*
 rm -rf $RPM_BUILD_ROOT%{_datadir}/doc/libxml2-python-%{version}/*
-(cd doc/examples ; make clean ; rm -rf .deps Makefile)
-gzip -9 -c doc/libxml2-api.xml > doc/libxml2-api.xml.gz
 
 %check
 make runtests
@@ -154,9 +146,6 @@ rm -fr %{buildroot}
 
 %doc %{_mandir}/man1/xml2-config.1*
 %doc AUTHORS NEWS README Copyright
-%doc doc/*.html doc/html doc/*.gif doc/*.png
-%doc doc/tutorial doc/libxml2-api.xml.gz
-%doc doc/examples
 %doc %dir %{_datadir}/gtk-doc/html/libxml2
 %doc %{_datadir}/gtk-doc/html/libxml2/*.devhelp
 %doc %{_datadir}/gtk-doc/html/libxml2/*.html
@@ -185,8 +174,6 @@ rm -fr %{buildroot}
 %doc python/TODO
 %doc python/libxml2class.txt
 %doc python/tests/*.py
-%doc doc/*.py
-%doc doc/python.html
 
 %if 0%{?with_python3}
 %files -n python3-%{name}
@@ -198,8 +185,6 @@ rm -fr %{buildroot}
 %{_libdir}/python3*/site-packages/libxml2mod*
 %doc python/TODO
 %doc python/libxml2class.txt
-%doc py3doc/*.py
-%doc doc/python.html
 %endif # with_python3
 
 %changelog
