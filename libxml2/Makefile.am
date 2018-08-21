@@ -2,9 +2,9 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = include . doc example xstc $(PYTHON_SUBDIR)
+SUBDIRS = include . example xstc $(PYTHON_SUBDIR)
 
-DIST_SUBDIRS = include . doc example python xstc
+DIST_SUBDIRS = include . example xstc
 
 AM_CPPFLAGS = -I$(top_builddir)/include -I$(srcdir)/include
 
