@@ -71,6 +71,8 @@ AC_PATH_PROG(XMLLINT, xmllint, /usr/bin/xmllint)
 AC_PATH_PROG(XSLTPROC, xsltproc, /usr/bin/xsltproc)
 PKG_PROG_PKG_CONFIG
 
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
 LT_INIT
 
 dnl
