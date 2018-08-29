@@ -147,3 +147,5 @@ libxml2/xstc/Makefile
 libxml2/xstc/Makefile.in
 libxml2/xzlib.lo
 libxml2/xzlib.o
+RegEx/OMSRegEx
+RegEx/OMSRegEx.exe
