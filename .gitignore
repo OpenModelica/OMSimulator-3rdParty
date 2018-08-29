@@ -12,6 +12,7 @@ libxml2/SAX.o
 libxml2/SAX2.lo
 libxml2/SAX2.o
 libxml2/aclocal.m4
+libxml2/ar-lib
 libxml2/autom4te.cache/
 libxml2/buf.lo
 libxml2/buf.o
