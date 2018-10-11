@@ -45,6 +45,7 @@
 #include <time.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 # include <direct.h>
@@ -52,7 +53,6 @@
 #else
 # include <unistd.h>
 # include <utime.h>
-# include <sys/stat.h>
 #endif
 
 
@@ -72,7 +72,7 @@
 static int minizip_printf( const char * format, ... )
 {
 	return 1;
-}
+} 
 
 
 /*
@@ -107,7 +107,7 @@ void change_file_date(filename,dosdate,tmu_date)
   SetFileTime(hFile,&ftm,&ftLastAcc,&ftm);
   CloseHandle(hFile);
 #else
-#if defined(unix) || defined(__APPLE__)
+#ifdef unix || __APPLE__
   struct utimbuf ut;
   struct tm newdate;
   newdate.tm_sec = tmu_date.tm_sec;
@@ -197,13 +197,15 @@ int makedir (newdir)
   return 1;
 }
 
-static void miniunz_do_banner()
+static void do_banner()
 {
+	/*
     minizip_printf("MiniUnz 1.01b, demo of zLib + Unz package written by Gilles Vollant\n");
     minizip_printf("more info at http://www.winimage.com/zLibDll/unzip.html\n\n");
+	*/
 }
 
-static void miniunz_do_help()
+static void do_help()
 {
     minizip_printf("Usage : miniunz [-e] [-x] [-v] [-l] [-o] [-p password] file.zip [file_to_extr.] [-d extractdir]\n\n" \
            "  -e  Extract without pathname (junk paths)\n" \
@@ -543,7 +545,6 @@ int do_extract_onefile(uf,filename,opt_extract_without_path,opt_overwrite,passwo
 }
 
 
-
 int miniunz(argc,argv)
     int argc;
     char *argv[];
@@ -562,10 +563,10 @@ int miniunz(argc,argv)
     const char *dirname=NULL;
     unzFile uf=NULL;
 
-    miniunz_do_banner();
+    do_banner();
     if (argc==1)
     {
-        miniunz_do_help();
+        do_help();
         return 0;
     }
     else

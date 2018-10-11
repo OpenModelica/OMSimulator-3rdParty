@@ -47,6 +47,7 @@
 #include <time.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 # include <direct.h>
@@ -74,7 +75,7 @@
 static int minizip_printf( const char * format, ... )
 {
 	return 1;
-}
+} 
 
 #ifdef _WIN32
 uLong filetime(f, tmzip, dt)
@@ -100,7 +101,7 @@ uLong filetime(f, tmzip, dt)
   return ret;
 }
 #else
-#if defined(unix) || defined(__APPLE__)
+#ifdef unix || __APPLE__
 uLong filetime(f, tmzip, dt)
     char *f;               /* name of file to get info on */
     tm_zip *tmzip;         /* return value: access, modific. and creation times */
@@ -169,13 +170,16 @@ int check_exist_file(filename)
     return ret;
 }
 
-static void minizip_do_banner()
+static void do_banner()
 {
+	/*
     minizip_printf("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
     minizip_printf("more info on MiniZip at http://www.winimage.com/zLibDll/minizip.html\n\n");
+	*/
+
 }
 
-static void minizip_do_help()
+static void do_help()
 {
     minizip_printf("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
            "  -o  Overwrite existing file.zip\n" \
@@ -249,7 +253,6 @@ int isLargeFile(const char* filename)
  return largeFile;
 }
 
-
 int minizip(argc,argv)
     int argc;
     char *argv[];
@@ -267,10 +270,10 @@ int minizip(argc,argv)
     const char* password=NULL;
 
 
-    minizip_do_banner();
+    do_banner();
     if (argc==1)
     {
-        minizip_do_help();
+        do_help();
         return 0;
     }
     else
@@ -519,7 +522,7 @@ int minizip(argc,argv)
     }
     else
     {
-       minizip_do_help();
+       do_help();
     }
 
     free(buf);
