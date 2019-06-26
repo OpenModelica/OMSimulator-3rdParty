@@ -32,7 +32,7 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 
 ## Ceres Solver
 
-- https://github.com/ceres-solver/ceres-solver [version 1.13.0, 19333b0f55c8462381038e70d42af43b52941128]
+- https://github.com/ceres-solver/ceres-solver [version 1.14.0, facb199f3eda902360f9e1d5271372b7e54febe1]
 
 ## Eigen
 

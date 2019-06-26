@@ -140,7 +140,6 @@ TEST(InnerProductComputer, NormalOperation) {
   }
 }
 
-
 TEST(InnerProductComputer, SubMatrix) {
   // "Randomly generated seed."
   SetRandomState(29823);
@@ -223,6 +222,5 @@ TEST(InnerProductComputer, SubMatrix) {
 }
 
 #undef COMPUTE_AND_COMPARE
-
 }  // namespace internal
 }  // namespace ceres

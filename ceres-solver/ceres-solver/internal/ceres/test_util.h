@@ -28,16 +28,15 @@
 //
 // Author: keir@google.com (Keir Mierle)
 
+#ifndef CERES_INTERNAL_TEST_UTIL_H_
+#define CERES_INTERNAL_TEST_UTIL_H_
+
 #include <string>
 #include "ceres/internal/port.h"
 #include "ceres/problem.h"
 #include "ceres/solver.h"
 #include "ceres/stringprintf.h"
 #include "gtest/gtest.h"
-
-
-#ifndef CERES_INTERNAL_TEST_UTIL_H_
-#define CERES_INTERNAL_TEST_UTIL_H_
 
 namespace ceres {
 namespace internal {
@@ -103,8 +102,6 @@ struct SolverConfig {
         sparse_linear_algebra_library_type;
     options->preconditioner_type = preconditioner_type;
     options->num_threads = num_threads;
-    options->num_linear_solver_threads = num_threads;
-
     if (use_automatic_ordering) {
       options->linear_solver_ordering.reset();
     }

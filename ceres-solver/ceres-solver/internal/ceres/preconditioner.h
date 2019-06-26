@@ -34,6 +34,7 @@
 #include <vector>
 #include "ceres/casts.h"
 #include "ceres/compressed_row_sparse_matrix.h"
+#include "ceres/context_impl.h"
 #include "ceres/linear_operator.h"
 #include "ceres/sparse_matrix.h"
 #include "ceres/types.h"
@@ -51,15 +52,33 @@ class Preconditioner : public LinearOperator {
         : type(JACOBI),
           visibility_clustering_type(CANONICAL_VIEWS),
           sparse_linear_algebra_library_type(SUITE_SPARSE),
+          subset_preconditioner_start_row_block(-1),
+          use_postordering(false),
           num_threads(1),
           row_block_size(Eigen::Dynamic),
           e_block_size(Eigen::Dynamic),
-          f_block_size(Eigen::Dynamic) {
+          f_block_size(Eigen::Dynamic),
+          context(NULL) {
     }
 
     PreconditionerType type;
     VisibilityClusteringType visibility_clustering_type;
     SparseLinearAlgebraLibraryType sparse_linear_algebra_library_type;
+
+    // When using the subset preconditioner, all row blocks starting
+    // from this row block are used to construct the preconditioner.
+    //
+    // i.e., the Jacobian matrix A is horizonatally partitioned as
+    //
+    // A = [P]
+    //     [Q]
+    //
+    // where P has subset_preconditioner_start_row_block row blocks,
+    // and the preconditioner is the inverse of the matrix Q'Q.
+    int subset_preconditioner_start_row_block;
+
+    // See solver.h for information about these flags.
+    bool use_postordering;
 
     // If possible, how many threads the preconditioner can use.
     int num_threads;
@@ -94,6 +113,8 @@ class Preconditioner : public LinearOperator {
     int row_block_size;
     int e_block_size;
     int f_block_size;
+
+    ContextImpl* context;
   };
 
   // If the optimization problem is such that there are no remaining

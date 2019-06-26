@@ -30,8 +30,8 @@
 
 #include "ceres/coordinate_descent_minimizer.h"
 
-#ifdef CERES_USE_OPENMP
-#include <omp.h>
+#if defined(CERES_USE_TBB) || defined(CERES_USE_CXX11_THREADS)
+#include "ceres/parallel_for.h"
 #endif
 
 #include <iterator>
@@ -45,7 +45,9 @@
 #include "ceres/problem_impl.h"
 #include "ceres/program.h"
 #include "ceres/residual_block.h"
+#include "ceres/scoped_thread_token.h"
 #include "ceres/solver.h"
+#include "ceres/thread_token_provider.h"
 #include "ceres/trust_region_minimizer.h"
 #include "ceres/trust_region_strategy.h"
 
@@ -58,6 +60,9 @@ using std::min;
 using std::set;
 using std::string;
 using std::vector;
+
+CoordinateDescentMinimizer::CoordinateDescentMinimizer(ContextImpl* context)
+    : context_(CHECK_NOTNULL(context)) {}
 
 CoordinateDescentMinimizer::~CoordinateDescentMinimizer() {
 }
@@ -120,6 +125,7 @@ bool CoordinateDescentMinimizer::Init(
   evaluator_options_.linear_solver_type = DENSE_QR;
   evaluator_options_.num_eliminate_blocks = 0;
   evaluator_options_.num_threads = 1;
+  evaluator_options_.context = context_;
 
   return true;
 }
@@ -140,6 +146,7 @@ void CoordinateDescentMinimizer::Minimize(
 
   LinearSolver::Options linear_solver_options;
   linear_solver_options.type = DENSE_QR;
+  linear_solver_options.context = context_;
 
   for (int i = 0; i < options.num_threads; ++i) {
     linear_solvers[i] = LinearSolver::Create(linear_solver_options);
@@ -148,30 +155,38 @@ void CoordinateDescentMinimizer::Minimize(
   for (int i = 0; i < independent_set_offsets_.size() - 1; ++i) {
     const int num_problems =
         independent_set_offsets_[i + 1] - independent_set_offsets_[i];
-    // No point paying the price for an OpemMP call if the set is of
-    // size zero.
+    // Avoid parallelization overhead call if the set is empty.
     if (num_problems == 0) {
       continue;
     }
 
-#ifdef CERES_USE_OPENMP
     const int num_inner_iteration_threads =
         min(options.num_threads, num_problems);
     evaluator_options_.num_threads =
         max(1, options.num_threads / num_inner_iteration_threads);
 
+    ThreadTokenProvider thread_token_provider(num_inner_iteration_threads);
+
+#ifdef CERES_USE_OPENMP
     // The parameter blocks in each independent set can be optimized
     // in parallel, since they do not co-occur in any residual block.
 #pragma omp parallel for num_threads(num_inner_iteration_threads)
 #endif
+
+#if !(defined(CERES_USE_TBB) || defined(CERES_USE_CXX11_THREADS))
     for (int j = independent_set_offsets_[i];
          j < independent_set_offsets_[i + 1];
          ++j) {
-#ifdef CERES_USE_OPENMP
-      int thread_id = omp_get_thread_num();
 #else
-      int thread_id = 0;
-#endif
+    ParallelFor(context_,
+                independent_set_offsets_[i],
+                independent_set_offsets_[i + 1],
+                num_inner_iteration_threads,
+                [&](int j) {
+#endif // !(defined(CERES_USE_TBB) || defined(CERES_USE_CXX11_THREADS))
+
+      const ScopedThreadToken scoped_thread_token(&thread_token_provider);
+      const int thread_id = scoped_thread_token.token();
 
       ParameterBlock* parameter_block = parameter_blocks_[j];
       const int old_index = parameter_block->index();
@@ -203,6 +218,9 @@ void CoordinateDescentMinimizer::Minimize(
       parameter_block->SetState(parameters + parameter_block->state_offset());
       parameter_block->SetConstant();
     }
+#if defined(CERES_USE_TBB) || defined(CERES_USE_CXX11_THREADS)
+  );
+#endif
   }
 
   for (int i =  0; i < parameter_blocks_.size(); ++i) {
@@ -227,7 +245,7 @@ void CoordinateDescentMinimizer::Solve(Program* program,
 
   Minimizer::Options minimizer_options;
   minimizer_options.evaluator.reset(
-      CHECK_NOTNULL(Evaluator::Create(evaluator_options_, program,  &error)));
+      CHECK_NOTNULL(Evaluator::Create(evaluator_options_, program, &error)));
   minimizer_options.jacobian.reset(
       CHECK_NOTNULL(minimizer_options.evaluator->CreateJacobian()));
 

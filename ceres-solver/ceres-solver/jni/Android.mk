@@ -79,6 +79,11 @@ ifneq ($(shell $(LOCAL_PATH)/assert_ndk_version.sh "r9d" $(NDK_ROOT)), true)
   $(error Ceres requires NDK version r9d or greater)
 endif
 
+# Ceres requires Eigen to build.
+ifndef EIGEN_PATH
+  $(error Ceres requires Eigen; please invoke via EIGEN_PATH=... ndk-build)
+endif
+
 EIGEN_PATH := $(EIGEN_PATH)
 CERES_INCLUDE_PATHS := $(CERES_EXTRA_INCLUDES)
 CERES_INCLUDE_PATHS += $(LOCAL_PATH)/../internal
@@ -133,6 +138,8 @@ LOCAL_SRC_FILES := $(CERES_SRC_PATH)/array_utils.cc \
                    $(CERES_SRC_PATH)/compressed_row_sparse_matrix.cc \
                    $(CERES_SRC_PATH)/conditioned_cost_function.cc \
                    $(CERES_SRC_PATH)/conjugate_gradients_solver.cc \
+                   $(CERES_SRC_PATH)/context.cc \
+                   $(CERES_SRC_PATH)/context_impl.cc \
                    $(CERES_SRC_PATH)/coordinate_descent_minimizer.cc \
                    $(CERES_SRC_PATH)/corrector.cc \
                    $(CERES_SRC_PATH)/covariance.cc \
@@ -195,6 +202,7 @@ LOCAL_SRC_FILES := $(CERES_SRC_PATH)/array_utils.cc \
                    $(CERES_SRC_PATH)/sparse_normal_cholesky_solver.cc \
                    $(CERES_SRC_PATH)/split.cc \
                    $(CERES_SRC_PATH)/stringprintf.cc \
+                   $(CERES_SRC_PATH)/subset_preconditioner.cc \
                    $(CERES_SRC_PATH)/suitesparse.cc \
                    $(CERES_SRC_PATH)/triplet_sparse_matrix.cc \
                    $(CERES_SRC_PATH)/trust_region_minimizer.cc \
@@ -217,6 +225,7 @@ LOCAL_SRC_FILES := $(CERES_SRC_PATH)/array_utils.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_3_d.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_3.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_4.cc \
+                   $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_6.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_8.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_9.cc \
                    $(CERES_SRC_PATH)/generated/schur_eliminator_2_4_d.cc \
@@ -237,6 +246,7 @@ LOCAL_SRC_FILES := $(CERES_SRC_PATH)/array_utils.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_3_d.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_3.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_4.cc \
+                   $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_6.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_8.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_9.cc \
                    $(CERES_SRC_PATH)/generated/partitioned_matrix_view_2_4_d.cc \

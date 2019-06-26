@@ -67,8 +67,6 @@ class GradientProblemEvaluator : public Evaluator {
     ScopedExecutionTimer call_type_timer(
         gradient == NULL ? "Evaluator::Residual" : "Evaluator::Jacobian",
         &execution_summary_);
-    execution_summary_.IncrementCall(gradient == NULL ? "Evaluator::Residual"
-                                                      : "Evaluator::Jacobian");
     return problem_.Evaluate(state, cost, gradient);
   }
 
@@ -88,12 +86,8 @@ class GradientProblemEvaluator : public Evaluator {
 
   virtual int NumResiduals() const { return 1; }
 
-  virtual std::map<std::string, int> CallStatistics() const {
-    return execution_summary_.calls();
-  }
-
-  virtual std::map<std::string, double> TimeStatistics() const {
-    return execution_summary_.times();
+  virtual std::map<std::string, internal::CallStatistics> Statistics() const {
+    return execution_summary_.statistics();
   }
 
  private:
