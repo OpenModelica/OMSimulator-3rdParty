@@ -163,7 +163,7 @@ The matrix :math:`D(x)` is a non-negative diagonal matrix, typically
 the square root of the diagonal of the matrix :math:`J(x)^\top J(x)`.
 
 Before going further, let us make some notational simplifications. We
-will assume that the matrix :math:`\sqrt{\mu} D` has been concatenated
+will assume that the matrix :math:`\frac{1}{\sqrt{\mu}} D` has been concatenated
 at the bottom of the matrix :math:`J` and similarly a vector of zeros
 has been added to the bottom of the vector :math:`f` and the rest of
 our discussion will be in terms of :math:`J` and :math:`f`, i.e, the
@@ -1282,7 +1282,12 @@ elimination group [LiSaad]_.
 
 .. member:: int Solver::Options::num_linear_solver_threads
 
-   Default: ``1``
+   Default: ``-1``
+
+   **This field is deprecated, and is ignored by
+   Ceres. Solver::Options::num_threads controls threading for all
+   of Ceres Solver. This setting is scheduled to be removed in
+   1.15.0.**
 
    Number of threads used by the linear solver.
 
@@ -1610,8 +1615,8 @@ elimination group [LiSaad]_.
    specified in this vector. By default, parameter blocks are updated
    only at the end of the optimization, i.e., when the
    :class:`Minimizer` terminates. This behavior is controlled by
-   :member:`Solver::Options::update_state_every_variable`. If the user
-   wishes to have access to the update parameter blocks when his/her
+   :member:`Solver::Options::update_state_every_iteration`. If the user
+   wishes to have access to the updated parameter blocks when his/her
    callbacks are executed, then set
    :member:`Solver::Options::update_state_every_iteration` to true.
 
@@ -1621,10 +1626,45 @@ elimination group [LiSaad]_.
 
    Default: ``false``
 
-   Normally the parameter blocks are only updated when the solver
-   terminates. Setting this to true update them in every
-   iteration. This setting is useful when building an interactive
-   application using Ceres and using an :class:`IterationCallback`.
+   If true, the user's parameter blocks are updated at the end of
+   every Minimizer iteration, otherwise they are updated when the
+   Minimizer terminates. This is useful if, for example, the user
+   wishes to visualize the state of the optimization every iteration
+   (in combination with an IterationCallback).
+
+   **Note**: If :member:`Solver::Options::evaluation_callback` is set,
+   then the behaviour of this flag is slightly different in each case:
+
+   1. If :member:`Solver::Options::update_state_every_iteration` is
+      false, then the user's state is changed at every residual and/or
+      jacobian evaluation. Any user provided IterationCallbacks should
+      **not** inspect and depend on the user visible state while the
+      solver is running, since they it have undefined contents.
+
+   2. If :member:`Solver::Options::update_state_every_iteration` is
+      false, then the user's state is changed at every residual and/or
+      jacobian evaluation, BUT the solver will ensure that before the
+      user provided `IterationCallbacks` are called, the user visible
+      state will be updated to the current best point found by the
+      solver.
+
+.. member:: bool Solver::Options::evaluation_callback
+
+   Default: ``NULL``
+
+   If non-``NULL``, gets notified when Ceres is about to evaluate the
+   residuals and/or Jacobians. This enables sharing computation between
+   residuals, which in some cases is important for efficient cost
+   evaluation. See :class:`EvaluationCallback` for details.
+
+   **Note**: Evaluation callbacks are incompatible with inner
+   iterations.
+
+   **Warning**: This interacts with
+   :member:`Solver::Options::update_state_every_iteration`. See the
+   documentation for that option for more details.
+
+   The solver does `not`  take ownership of the pointer.
 
 :class:`ParameterBlockOrdering`
 ===============================
@@ -1685,6 +1725,61 @@ elimination group [LiSaad]_.
 
    Number of groups with one or more elements.
 
+:class:`EvaluationCallback`
+===========================
+
+.. class:: EvaluationCallback
+
+   Interface for receiving callbacks before Ceres evaluates residuals or
+   Jacobians:
+
+   .. code-block:: c++
+
+      class EvaluationCallback {
+       public:
+        virtual ~EvaluationCallback() {}
+        virtual void PrepareForEvaluation()(bool evaluate_jacobians
+                                            bool new_evaluation_point) = 0;
+      };
+
+   ``PrepareForEvaluation()`` is called before Ceres requests residuals
+   or jacobians for a given setting of the parameters. User parameters
+   (the double* values provided to the cost functions) are fixed until
+   the next call to ``PrepareForEvaluation()``. If
+   ``new_evaluation_point == true``, then this is a new point that is
+   different from the last evaluated point. Otherwise, it is the same
+   point that was evaluated previously (either jacobian or residual) and
+   the user can use cached results from previous evaluations. If
+   ``evaluate_jacobians`` is true, then Ceres will request jacobians in
+   the upcoming cost evaluation.
+
+   Using this callback interface, Ceres can notify you when it is about
+   to evaluate the residuals or jacobians. With the callback, you can
+   share computation between residual blocks by doing the shared
+   computation in PrepareForEvaluation() before Ceres calls
+   CostFunction::Evaluate() on all the residuals. It also enables
+   caching results between a pure residual evaluation and a residual &
+   jacobian evaluation, via the new_evaluation_point argument.
+
+   One use case for this callback is if the cost function compute is
+   moved to the GPU. In that case, the prepare call does the actual cost
+   function evaluation, and subsequent calls from Ceres to the actual
+   cost functions merely copy the results from the GPU onto the
+   corresponding blocks for Ceres to plug into the solver.
+
+   **Note**: Ceres provides no mechanism to share data other than the
+   notification from the callback. Users must provide access to
+   pre-computed shared data to their cost functions behind the scenes;
+   this all happens without Ceres knowing. One approach is to put a
+   pointer to the shared data in each cost function (recommended) or to
+   use a global shared variable (discouraged; bug-prone).  As far as
+   Ceres is concerned, it is evaluating cost functions like any other;
+   it just so happens that behind the scenes the cost functions reuse
+   pre-computed data to execute faster.
+
+   See ``evaluation_callback_test.cc`` for code that explicitly verifies
+   the preconditions between ``PrepareForEvaluation()`` and
+   ``CostFunction::Evaluate()``.
 
 :class:`IterationCallback`
 ==========================
@@ -2041,13 +2136,27 @@ The three arrays will be:
    Time (in seconds) spent in the linear solver computing the trust
    region step.
 
+.. member:: int Solver::Summary::num_linear_solves
+
+   Number of times the Newton step was computed by solving a linear
+   system. This does not include linear solves used by inner
+   iterations.
+
 .. member:: double Solver::Summary::residual_evaluation_time_in_seconds
 
    Time (in seconds) spent evaluating the residual vector.
 
+.. member:: int Solver::Summary::num_residual_evaluations
+
+   Number of times only the residuals were evaluated.
+
 .. member:: double Solver::Summary::jacobian_evaluation_time_in_seconds
 
    Time (in seconds) spent evaluating the Jacobian matrix.
+
+.. member:: int Solver::Summary::num_jacobian_evaluations
+
+   Number of times only the Jacobian and the residuals were evaluated.
 
 .. member:: double Solver::Summary::inner_iteration_time_in_seconds
 
@@ -2111,20 +2220,30 @@ The three arrays will be:
 
    Number of threads actually used by the solver for Jacobian and
    residual evaluation. This number is not equal to
-   :member:`Solver::Summary::num_threads_given` if `OpenMP` is not
-   available.
+   :member:`Solver::Summary::num_threads_given` if none of `OpenMP`,
+   `TBB` or `CXX11_THREADS` is available.
 
 .. member:: int Solver::Summary::num_linear_solver_threads_given
 
-   Number of threads specified by the user for solving the trust
+   **This field is deprecated and is scheduled to be removed in
+   1.15.0.** :member:`Solver::Summary::num_threads_given` should be used
+   instead.  In the interim the value of this field will be the same as
+   :member:`Solver::Summary::num_threads_given`.
+
+   Number of threads requested by the user for solving the trust
    region problem.
 
 .. member:: int Solver::Summary::num_linear_solver_threads_used
 
+   **This field is deprecated and is scheduled to be removed in
+   1.15.0.** :member:`Solver::Summary::num_threads_used` should be used
+   instead.  In the interim the value of this field will be the same as
+   :member:`Solver::Summary::num_threads_used`.
+
    Number of threads actually used by the solver for solving the trust
    region problem. This number is not equal to
-   :member:`Solver::Summary::num_linear_solver_threads_given` if
-   `OpenMP` is not available.
+   :member:`Solver::Summary::num_linear_solver_threads_given` if none
+   of `OpenMP`, `TBB` or `CXX11_THREADS` is available.
 
 .. member:: LinearSolverType Solver::Summary::linear_solver_type_given
 

@@ -227,6 +227,8 @@ macro(suitesparse_find_component COMPONENT)
       else()
         message(STATUS "Did not find ${COMPONENT} header (optional "
           "SuiteSparse component).")
+        # Hide optional vars from CMake GUI even if not found.
+        mark_as_advanced(${COMPONENT}_INCLUDE_DIR)
       endif()
     endif()
   endif()
@@ -249,6 +251,8 @@ macro(suitesparse_find_component COMPONENT)
       else()
         message(STATUS "Did not find ${COMPONENT} library (optional SuiteSparse "
           "dependency)")
+        # Hide optional vars from CMake GUI even if not found.
+        mark_as_advanced(${COMPONENT}_LIBRARY)
       endif()
     endif()
   endif()
@@ -287,21 +291,14 @@ if (SUITESPARSEQR_FOUND)
   # SuiteSparseQR may be compiled with Intel Threading Building Blocks,
   # we assume that if TBB is installed, SuiteSparseQR was compiled with
   # support for it, this will do no harm if it wasn't.
-  suitesparse_find_component(TBB LIBRARIES tbb)
+  find_package(TBB QUIET)
   if (TBB_FOUND)
-    message(STATUS "Found Intel Thread Building Blocks (TBB) library: "
-      "${TBB_LIBRARY}, assuming SuiteSparseQR was compiled with TBB.")
-    suitesparse_find_component(TBB_MALLOC LIBRARIES tbbmalloc)
-    if (TBB_MALLOC_FOUND)
-      message(STATUS "Found Intel Thread Building Blocks (TBB) Malloc library: "
-        "${TBB_MALLOC_LIBRARY}")
-      # Add the TBB libraries to the SuiteSparseQR libraries (the only
-      # libraries to optionally depend on TBB).
-      list(APPEND SUITESPARSEQR_LIBRARY ${TBB_LIBRARY} ${TBB_MALLOC_LIBRARY})
-    else()
-      message(STATUS "Did not find Intel Thread Building Blocks (TBB) Malloc "
-        "Library, discarding TBB as a dependency.")
-    endif()
+    message(STATUS "Found Intel Thread Building Blocks (TBB) library "
+      "(${TBB_VERSION}) assuming SuiteSparseQR was compiled "
+      "with TBB.")
+    # Add the TBB libraries to the SuiteSparseQR libraries (the only
+    # libraries to optionally depend on TBB).
+    list(APPEND SUITESPARSEQR_LIBRARY ${TBB_LIBRARIES})
   else()
     message(STATUS "Did not find Intel TBB library, assuming SuiteSparseQR was "
       "not compiled with TBB.")

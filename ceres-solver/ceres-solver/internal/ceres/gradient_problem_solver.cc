@@ -98,12 +98,14 @@ void GradientProblemSolver::Solve(const GradientProblemSolver::Options& options,
                                   const GradientProblem& problem,
                                   double* parameters_ptr,
                                   GradientProblemSolver::Summary* summary) {
-  using internal::scoped_ptr;
-  using internal::WallTimeInSeconds;
-  using internal::Minimizer;
+  using internal::CallStatistics;
   using internal::GradientProblemEvaluator;
+  using internal::GradientProblemSolverStateUpdatingCallback;
   using internal::LoggingCallback;
+  using internal::Minimizer;
+  using internal::scoped_ptr;
   using internal::SetSummaryFinalCost;
+  using internal::WallTimeInSeconds;
 
   double start_time = WallTimeInSeconds();
 
@@ -122,6 +124,10 @@ void GradientProblemSolver::Solve(const GradientProblemSolver::Options& options,
     return;
   }
 
+  VectorRef parameters(parameters_ptr, problem.NumParameters());
+  Vector solution(problem.NumParameters());
+  solution = parameters;
+
   // TODO(sameeragarwal): This is a bit convoluted, we should be able
   // to convert to minimizer options directly, but this will do for
   // now.
@@ -137,10 +143,16 @@ void GradientProblemSolver::Solve(const GradientProblemSolver::Options& options,
                                        logging_callback.get());
   }
 
+  scoped_ptr<IterationCallback> state_updating_callback;
+  if (options.update_state_every_iteration) {
+    state_updating_callback.reset(
+        new GradientProblemSolverStateUpdatingCallback(
+            problem.NumParameters(), solution.data(), parameters_ptr));
+    minimizer_options.callbacks.insert(minimizer_options.callbacks.begin(),
+                                       state_updating_callback.get());
+  }
+
   scoped_ptr<Minimizer> minimizer(Minimizer::Create(LINE_SEARCH));
-  Vector solution(problem.NumParameters());
-  VectorRef parameters(parameters_ptr, problem.NumParameters());
-  solution = parameters;
 
   Solver::Summary solver_summary;
   solver_summary.fixed_cost = 0.0;
@@ -163,18 +175,22 @@ void GradientProblemSolver::Solve(const GradientProblemSolver::Options& options,
     SetSummaryFinalCost(summary);
   }
 
-  const std::map<string, double>& evaluator_time_statistics =
-       minimizer_options.evaluator->TimeStatistics();
-  summary->cost_evaluation_time_in_seconds =
-      FindWithDefault(evaluator_time_statistics, "Evaluator::Residual", 0.0);
-  summary->gradient_evaluation_time_in_seconds =
-      FindWithDefault(evaluator_time_statistics, "Evaluator::Jacobian", 0.0);
-  const std::map<string, int>& evaluator_call_statistics =
-       minimizer_options.evaluator->CallStatistics();
-  summary->num_cost_evaluations =
-      FindWithDefault(evaluator_call_statistics, "Evaluator::Residual", 0);
-  summary->num_gradient_evaluations =
-      FindWithDefault(evaluator_call_statistics, "Evaluator::Jacobian", 0);
+  const std::map<string, CallStatistics>& evaluator_statistics =
+      minimizer_options.evaluator->Statistics();
+  {
+    const CallStatistics& call_stats = FindWithDefault(
+        evaluator_statistics, "Evaluator::Residual", CallStatistics());
+    summary->cost_evaluation_time_in_seconds = call_stats.time;
+    summary->num_cost_evaluations = call_stats.calls;
+  }
+
+  {
+    const CallStatistics& call_stats = FindWithDefault(
+        evaluator_statistics, "Evaluator::Jacobian", CallStatistics());
+    summary->gradient_evaluation_time_in_seconds = call_stats.time;
+    summary->num_gradient_evaluations = call_stats.calls;
+  }
+
   summary->total_time_in_seconds = WallTimeInSeconds() - start_time;
 }
 
@@ -262,15 +278,15 @@ string GradientProblemSolver::Summary::FullReport() const {
                 static_cast<int>(iterations.size()));
 
   StringAppendF(&report, "\nTime (in seconds):\n");
-  StringAppendF(&report, "\n  Cost evaluation     %23.4f (%d)\n",
+  StringAppendF(&report, "\n  Cost evaluation     %23.6f (%d)\n",
                 cost_evaluation_time_in_seconds,
                 num_cost_evaluations);
-  StringAppendF(&report, "  Gradient evaluation %23.4f (%d)\n",
+  StringAppendF(&report, "  Gradient & cost evaluation %16.6f (%d)\n",
                 gradient_evaluation_time_in_seconds,
                 num_gradient_evaluations);
-  StringAppendF(&report, "  Polynomial minimization   %17.4f\n",
+  StringAppendF(&report, "  Polynomial minimization   %17.6f\n",
                 line_search_polynomial_minimization_time_in_seconds);
-  StringAppendF(&report, "Total               %25.4f\n\n",
+  StringAppendF(&report, "Total               %25.6f\n\n",
                 total_time_in_seconds);
 
   StringAppendF(&report, "Termination:        %25s (%s)\n",
