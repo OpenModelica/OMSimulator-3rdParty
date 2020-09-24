@@ -1,8 +1,4 @@
-/*
- * -----------------------------------------------------------------
- * $Revision: 4552 $
- * $Date: 2015-07-29 10:12:20 -0700 (Wed, 29 Jul 2015) $
- * -----------------------------------------------------------------
+/* -----------------------------------------------------------------
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * Example (serial):
@@ -38,7 +34,6 @@
  * and with different initial guesses (leading to one or the other
  * of the known solutions).
  *
- *
  * Constraints are imposed to make all components of the solution
  * positive.
  * -----------------------------------------------------------------
@@ -48,12 +43,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <kinsol/kinsol.h>
-#include <kinsol/kinsol_klu.h>
-#include <kinsol/kinsol_dense.h>
-#include <nvector/nvector_serial.h>
-#include <sundials/sundials_types.h>
-#include <sundials/sundials_math.h>
+#include <kinsol/kinsol.h>              /* access to KINSOL func., consts. */
+#include <nvector/nvector_serial.h>     /* access to serial N_Vector       */
+#include <sunmatrix/sunmatrix_sparse.h> /* access to sparse SUNMatrix      */
+#include <sunlinsol/sunlinsol_klu.h>    /* access to KLU SUNLinearSolver   */
+#include <sundials/sundials_types.h>    /* defs. of realtype, sunindextype */
+#include <sundials/sundials_math.h>     /* access to SUNRexp               */
 
 /* Problem Constants */
 
@@ -81,12 +76,8 @@ typedef struct {
 
 /* Functions Called by the KINSOL Solver */
 static int func(N_Vector u, N_Vector f, void *user_data);
-static int jac(N_Vector y, N_Vector f, SlsMat J, void *user_data,
-               N_Vector tmp1, N_Vector tmp2);
-static int jacDense(long int N,
-                    N_Vector y, N_Vector f,
-                    DlsMat J, void *user_data,
-                    N_Vector tmp1, N_Vector tmp2);
+static int jac(N_Vector y, N_Vector f, SUNMatrix J,
+               void *user_data, N_Vector tmp1, N_Vector tmp2);
 
 /* Private Helper Functions */
 static void SetInitialGuess1(N_Vector u, UserData data);
@@ -110,10 +101,14 @@ int main()
   N_Vector u1, u2, u, s, c;
   int glstr, mset, flag;
   void *kmem;
+  SUNMatrix J;
+  SUNLinearSolver LS;
 
   u1 = u2 = u = NULL;
   s = c = NULL;
   kmem = NULL;
+  J = NULL;
+  LS = NULL;
   data = NULL;
 
   /* User data */
@@ -142,7 +137,7 @@ int main()
   SetInitialGuess1(u1,data);
   SetInitialGuess2(u2,data);
 
-  N_VConst_Serial(ONE,s); /* no scaling */
+  N_VConst(ONE,s); /* no scaling */
 
   NV_Ith_S(c,0) =  ZERO;   /* no constraint on x1 */
   NV_Ith_S(c,1) =  ZERO;   /* no constraint on x2 */
@@ -169,20 +164,21 @@ int main()
   flag = KINInit(kmem, func, u);
   if (check_flag(&flag, "KINInit", 1)) return(1);
 
-  /* Call KINDense to specify the linear solver */
-/*   
- * flag = KINDense(kmem, NEQ); // <-- Replace with KINKLU
- * if (check_flag(&flag, "KINDense", 1)) return(1);
- * flag = KINDlsSetDenseJacFn(kmem, jacDense);
- * if (check_flag(&flag, "KINDlsSetDenseJacFn", 1)) return(1);
- */
+  /* Create sparse SUNMatrix */
+  J = SUNSparseMatrix(NEQ, NEQ, data->nnz, CSR_MAT);
+  if(check_flag((void *)J, "SUNSparseMatrix", 0)) return(1);
 
-  /* Attach KLU linear solver, which uses CSR matrix */
-  flag = KINKLU(kmem, NEQ, data->nnz, CSR_MAT);
-  if (check_flag(&flag, "KINKLU", 1)) return(1);
+  /* Create KLU solver object */
+  LS = SUNLinSol_KLU(u, J);
+  if(check_flag((void *)LS, "SUNLinSol_KLU", 0)) return(1);
 
-  flag = KINSlsSetSparseJacFn(kmem, jac);
-  if (check_flag(&flag, "KINSlsSetSparseJacFn", 1)) return(1);
+  /* Attach KLU linear solver */
+  flag = KINSetLinearSolver(kmem, LS, J);
+  if(check_flag(&flag, "KINSetLinearSolver", 1)) return(1);
+
+  /* Set the Jacobian function */
+  flag = KINSetJacFn(kmem, jac);
+  if (check_flag(&flag, "KINSetJacFn", 1)) return(1);
 
   /* Print out the problem size, solution parameters, initial guess. */
   PrintHeader(fnormtol, scsteptol);
@@ -194,28 +190,28 @@ int main()
   printf("  [x1,x2] = ");
   PrintOutput(u1);
 
-  N_VScale_Serial(ONE,u1,u);
+  N_VScale(ONE,u1,u);
   glstr = KIN_NONE;
   mset = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u1,u);
+  N_VScale(ONE,u1,u);
   glstr = KIN_LINESEARCH;
   mset = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u1,u);
+  N_VScale(ONE,u1,u);
   glstr = KIN_NONE;
   mset = 0;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u1,u);
+  N_VScale(ONE,u1,u);
   glstr = KIN_LINESEARCH;
   mset = 0;
   SolveIt(kmem, u, s, glstr, mset);
@@ -229,28 +225,28 @@ int main()
   printf("  [x1,x2] = ");
   PrintOutput(u2);
 
-  N_VScale_Serial(ONE,u2,u);
+  N_VScale(ONE,u2,u);
   glstr = KIN_NONE;
   mset = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u2,u);
+  N_VScale(ONE,u2,u);
   glstr = KIN_LINESEARCH;
   mset = 1;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u2,u);
+  N_VScale(ONE,u2,u);
   glstr = KIN_NONE;
   mset = 0;
   SolveIt(kmem, u, s, glstr, mset);
 
   /* --------------------------- */
 
-  N_VScale_Serial(ONE,u2,u);
+  N_VScale(ONE,u2,u);
   glstr = KIN_LINESEARCH;
   mset = 0;
   SolveIt(kmem, u, s, glstr, mset);
@@ -260,12 +256,14 @@ int main()
 
   /* Free memory */
 
-  N_VDestroy_Serial(u1);
-  N_VDestroy_Serial(u2);
-  N_VDestroy_Serial(u);
-  N_VDestroy_Serial(s);
-  N_VDestroy_Serial(c);
+  N_VDestroy(u1);
+  N_VDestroy(u2);
+  N_VDestroy(u);
+  N_VDestroy(s);
+  N_VDestroy(c);
   KINFree(&kmem);
+  SUNLinSolFree(LS);
+  SUNMatDestroy(J);
   free(data);
 
   return(0);
@@ -325,8 +323,8 @@ static int func(N_Vector u, N_Vector f, void *user_data)
   lb = params->lb;
   ub = params->ub;
 
-  udata = N_VGetArrayPointer_Serial(u);
-  fdata = N_VGetArrayPointer_Serial(f);
+  udata = N_VGetArrayPointer(u);
+  fdata = N_VGetArrayPointer(f);
 
   x1 = udata[0];
   x2 = udata[1];
@@ -350,21 +348,17 @@ static int func(N_Vector u, N_Vector f, void *user_data)
  * System Jacobian
  */
 
-static int jac(N_Vector y, N_Vector f,
-               SlsMat J, void *user_data,
-               N_Vector tmp1, N_Vector tmp2)
+static int jac(N_Vector y, N_Vector f, SUNMatrix J,
+               void *user_data, N_Vector tmp1, N_Vector tmp2)
 {
   realtype *yd;
-  int *rowptrs;
-  int *colvals;
-  realtype *data;
+  sunindextype *rowptrs = SUNSparseMatrix_IndexPointers(J);
+  sunindextype *colvals = SUNSparseMatrix_IndexValues(J);
+  realtype *data = SUNSparseMatrix_Data(J);
   
-  yd = N_VGetArrayPointer_Serial(y);
-  rowptrs = (*J->rowptrs);
-  colvals = (*J->colvals);
-  data    = J->data;
+  yd = N_VGetArrayPointer(y);
   
-  SparseSetMatToZero(J);
+  SUNMatZero(J);
 
   rowptrs[0] =  0;
   rowptrs[1] =  2;
@@ -374,37 +368,37 @@ static int jac(N_Vector y, N_Vector f,
   rowptrs[5] = 10;
   rowptrs[6] = 12;
 
-  /* row 0 */
+  /* row 0: J(0,0) and J(0,1) */
   data[0] = PT5 * cos(yd[0]*yd[1]) * yd[1] - PT5;
   colvals[0] = 0;
   data[1] = PT5 * cos(yd[0]*yd[1]) * yd[0] - PT25/PI;
   colvals[1] = 1;
 
-  /* row 1 */
+  /* row 1: J(1,0) and J(1,1) */
   data[2] = TWO * (ONE - PT25/PI) * (SUNRexp(TWO*yd[0]) - E);
   colvals[2] = 0;
   data[3] = E/PI;
   colvals[3] = 1;
   
-  /* row 2 */
+  /* row 2: J(2,0) and J(2,2) */
   data[4] = -ONE;
   colvals[4] = 0;
   data[5] =  ONE;
   colvals[5] = 2;
   
-  /* row 3 */
+  /* row 3: J(3,0) and J(3,3) */
   data[6] = -ONE;
   colvals[6] = 0;
   data[7] =  ONE;
   colvals[7] = 3;
   
-  /* row 4 */
+  /* row 4: J(4,1) and J(4,4) */
   data[8] = -ONE;
   colvals[8] = 1;
   data[9] =  ONE;
   colvals[9] = 4;
   
-  /* row 5 */
+  /* row 5: J(5,1) and J(5,5) */
   data[10] = -ONE;
   colvals[10] = 1;
   data[11] =  ONE;
@@ -412,48 +406,6 @@ static int jac(N_Vector y, N_Vector f,
   
   return(0);
 
-}
-
-
-/*
- * System dense Jacobian
- */
-
-static int jacDense(long int N,
-                    N_Vector y, N_Vector f,
-                    DlsMat J, void *user_data,
-                    N_Vector tmp1, N_Vector tmp2)
-{
-  realtype *yd;
-
-  yd = N_VGetArrayPointer_Serial(y);
-
-  /* row 0 */
-  DENSE_ELEM(J,0,0) = PT5 * cos(yd[0]*yd[1]) * yd[1] - PT5;
-  DENSE_ELEM(J,0,1) = PT5 * cos(yd[0]*yd[1]) * yd[0] - PT25/PI;
-
-  /* row 1 */
-  DENSE_ELEM(J,1,0) = TWO * (ONE - PT25/PI) * (SUNRexp(TWO*yd[0]) - E);
-  DENSE_ELEM(J,1,1) = E/PI;
-  
-  /* row 2 */
-  DENSE_ELEM(J,2,0) = -ONE;
-  DENSE_ELEM(J,2,2) =  ONE;
-  
-  /* row 3 */
-  DENSE_ELEM(J,3,0) = -ONE;
-  DENSE_ELEM(J,3,3) =  ONE;
-  
-  /* row 4 */
-  DENSE_ELEM(J,4,1) = -ONE;
-  DENSE_ELEM(J,4,4) =  ONE;
-  
-  /* row 5 */
-  DENSE_ELEM(J,5,1) = -ONE;
-  DENSE_ELEM(J,5,5) =  ONE;
-  
-
-  return(0);
 }
 
 
@@ -473,7 +425,7 @@ static void SetInitialGuess1(N_Vector u, UserData data)
   realtype *udata;
   realtype *lb, *ub;
 
-  udata = N_VGetArrayPointer_Serial(u);
+  udata = N_VGetArrayPointer(u);
 
   lb = data->lb;
   ub = data->ub;
@@ -498,7 +450,7 @@ static void SetInitialGuess2(N_Vector u, UserData data)
   realtype *udata;
   realtype *lb, *ub;
 
-  udata = N_VGetArrayPointer_Serial(u);
+  udata = N_VGetArrayPointer(u);
 
   lb = data->lb;
   ub = data->ub;
@@ -558,20 +510,15 @@ static void PrintOutput(N_Vector u)
 
 static void PrintFinalStats(void *kmem)
 {
-  long int nni, nfe, nje, nfeD;
+  long int nni, nfe, nje;
   int flag;
   
   flag = KINGetNumNonlinSolvIters(kmem, &nni);
   check_flag(&flag, "KINGetNumNonlinSolvIters", 1);
   flag = KINGetNumFuncEvals(kmem, &nfe);
   check_flag(&flag, "KINGetNumFuncEvals", 1);
-
-/*   flag = KINDlsGetNumJacEvals(kmem, &nje);
- *   check_flag(&flag, "KINDlsGetNumJacEvals", 1);
- */
-
-  flag = KINSlsGetNumJacEvals(kmem, &nje);
-  check_flag(&flag, "KINSlsGetNumJacEvals", 1);
+  flag = KINGetNumJacEvals(kmem, &nje);
+  check_flag(&flag, "KINGetNumJacEvals", 1);
   
   printf("Final Statistics:\n");
   printf("  nni = %5ld    nfe  = %5ld \n", nni, nfe);

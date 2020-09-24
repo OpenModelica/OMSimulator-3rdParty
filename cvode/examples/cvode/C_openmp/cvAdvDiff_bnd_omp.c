@@ -1,15 +1,21 @@
-/*
- * -----------------------------------------------------------------
- * $Revision:  $
- * $Date:  $
- * -----------------------------------------------------------------
- * Programmer(s): Ting Yan @ SMU
+/* -----------------------------------------------------------------
+ * Programmer(s): Daniel Reynolds and Ting Yan @ SMU
  *     Based on cvAdvDiff_bnd.c and parallelized with OpenMP
+ * -----------------------------------------------------------------
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2020, Lawrence Livermore National Security
+ * and Southern Methodist University.
+ * All rights reserved.
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * Example problem:
  *
  * The following is a simple example problem with a banded Jacobian,
- * with the program for its solution by CVODE.
+ * solved using CVODE.
  * The problem is the semi-discrete form of the advection-diffusion
  * equation in 2-D:
  *   du/dt = d^2 u / dx^2 + .5 du/dx + d^2 u / dy^2
@@ -21,40 +27,38 @@
  * central differencing, and with boundary values eliminated,
  * leaving an ODE system of size NEQ = MX*MY.
  * This program solves the problem with the BDF method, Newton
- * iteration with the CVBAND band linear solver, and a user-supplied
+ * iteration with the SUNBAND linear solver, and a user-supplied
  * Jacobian routine.
  * It uses scalar relative and absolute tolerances.
  * Output is printed at t = .1, .2, ..., 1.
  * Run statistics (optional outputs) are printed at the end.
  *
- * Optionally, we can set the number of threads from environment 
+ * Optionally, we can set the number of threads from environment
  * variable or command line. To check the current value for number
  * of threads from environment:
  *      % echo $OMP_NUM_THREADS
  *
  * Execution:
  *
- * If the user want to use the default value or the number of threads 
- * from environment value:
- *      % ./cvAdvDiff_bnd_omp 
- * If the user want to specify the number of threads to use
- *      % ./cvAdvDiff_bnd_omp num_threads
- * where num_threads is the number of threads the user want to use 
- * -----------------------------------------------------------------
- */
+ * To use the default value or the number of threads from the
+ * environment value, run without arguments:
+ *      % ./cvAdvDiff_bnd_omp
+ * The environment variable can be over-ridden with a command line
+ * argument specifying the number of threads to use, e.g:
+ *      % ./cvAdvDiff_bnd_omp 5
+ * ----------------------------------------------------------------- */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-/* Header files with a description of contents used in cvbanx.c */
+/* Header files with a description of contents */
 
-#include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
-#include <cvode/cvode_band.h>        /* prototype for CVBand */
-#include <nvector/nvector_openmp.h>  /* serial N_Vector types, fcts., macros */
-#include <sundials/sundials_band.h>  /* definitions of type DlsMat and macros */
-#include <sundials/sundials_types.h> /* definition of type realtype */
-#include <sundials/sundials_math.h>  /* definition of ABS and EXP */
+#include <cvode/cvode.h>               /* prototypes for CVODE fcts., consts. */
+#include <nvector/nvector_openmp.h>    /* serial N_Vector types, fcts., macros */
+#include <sunmatrix/sunmatrix_band.h>  /* access to band SUNMatrix */
+#include <sunlinsol/sunlinsol_band.h>  /* access to band SUNLinearSolver */
+#include <sundials/sundials_types.h>   /* definition of type realtype */
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -83,11 +87,11 @@
 
 /* IJth is defined in order to isolate the translation from the
    mathematical 2-dimensional structure of the dependent variable vector
-   to the underlying 1-dimensional storage. 
+   to the underlying 1-dimensional storage.
    IJth(vdata,i,j) references the element in the vdata array for
    u at mesh point (i,j), where 1 <= i <= MX, 1 <= j <= MY.
    The vdata array is obtained via the macro call vdata = NV_DATA_S(v),
-   where v is an N_Vector. 
+   where v is an N_Vector.
    The variables are ordered by the y index j, then by the x index i. */
 
 #define IJth(vdata,i,j) (vdata[(j-1) + (i-1)*MY])
@@ -108,15 +112,13 @@ static void PrintFinalStats(void *cvode_mem);
 
 /* Private function to check function return values */
 
-static int check_flag(void *flagvalue, char *funcname, int opt);
+static int check_retval(void *returnvalue, const char *funcname, int opt);
 
 /* Functions Called by the Solver */
 
 static int f(realtype t, N_Vector u, N_Vector udot, void *user_data);
-static int Jac(long int N, long int mu, long int ml,
-               realtype t, N_Vector u, N_Vector fu, 
-               DlsMat J, void *user_data,
-               N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
+static int Jac(realtype t, N_Vector u, N_Vector fu, SUNMatrix J,
+               void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 /*
  *-------------------------------
@@ -129,13 +131,17 @@ int main(int argc, char *argv[])
   realtype dx, dy, reltol, abstol, t, tout, umax;
   N_Vector u;
   UserData data;
+  SUNMatrix A;
+  SUNLinearSolver LS;
   void *cvode_mem;
-  int iout, flag;
+  int iout, retval;
   long int nst;
   int num_threads;
 
   u = NULL;
   data = NULL;
+  A = NULL;
+  LS = NULL;
   cvode_mem = NULL;
 
   /* Set the number of threads to use */
@@ -143,19 +149,18 @@ int main(int argc, char *argv[])
 #ifdef _OPENMP
   num_threads = omp_get_max_threads();  /* Overwrite with OMP_NUM_THREADS environment variable */
 #endif
-  if (argc > 1)        /* overwrithe with command line value, if supplied */
-    num_threads = strtol(argv[1], NULL, 0);
+  if (argc > 1)        /* overwrite with command line value, if supplied */
+    num_threads = (int) strtol(argv[1], NULL, 0);
 
-  /* Create a serial vector */
-
+  /* Create an OpenMP vector */
   u = N_VNew_OpenMP(NEQ, num_threads);  /* Allocate u vector */
-  if(check_flag((void*)u, "N_VNew_OpenMP", 0)) return(1);
+  if(check_retval((void*)u, "N_VNew_OpenMP", 0)) return(1);
 
   reltol = ZERO;  /* Set the tolerances */
   abstol = ATOL;
 
   data = (UserData) malloc(sizeof *data);  /* Allocate data memory */
-  if(check_flag((void *)data, "malloc", 2)) return(1);
+  if(check_retval((void *)data, "malloc", 2)) return(1);
   dx = data->dx = XMAX/(MX+1);  /* Set grid coefficients in data */
   dy = data->dy = YMAX/(MY+1);
   data->hdcoef = ONE/(dx*dx);
@@ -165,53 +170,64 @@ int main(int argc, char *argv[])
 
   SetIC(u, data);  /* Initialize u vector */
 
-  /* Call CVodeCreate to create the solver memory and specify the 
-   * Backward Differentiation Formula and the use of a Newton iteration */
-  cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
-  if(check_flag((void *)cvode_mem, "CVodeCreate", 0)) return(1);
+  /* Call CVodeCreate to create the solver memory and specify the
+   * Backward Differentiation Formula */
+  cvode_mem = CVodeCreate(CV_BDF);
+  if(check_retval((void *)cvode_mem, "CVodeCreate", 0)) return(1);
 
   /* Call CVodeInit to initialize the integrator memory and specify the
    * user's right hand side function in u'=f(t,u), the inital time T0, and
    * the initial dependent variable vector u. */
-  flag = CVodeInit(cvode_mem, f, T0, u);
-  if(check_flag(&flag, "CVodeInit", 1)) return(1);
+  retval = CVodeInit(cvode_mem, f, T0, u);
+  if(check_retval(&retval, "CVodeInit", 1)) return(1);
 
   /* Call CVodeSStolerances to specify the scalar relative tolerance
    * and scalar absolute tolerance */
-  flag = CVodeSStolerances(cvode_mem, reltol, abstol);
-  if (check_flag(&flag, "CVodeSStolerances", 1)) return(1);
+  retval = CVodeSStolerances(cvode_mem, reltol, abstol);
+  if (check_retval(&retval, "CVodeSStolerances", 1)) return(1);
 
   /* Set the pointer to user-defined data */
-  flag = CVodeSetUserData(cvode_mem, data);
-  if(check_flag(&flag, "CVodeSetUserData", 1)) return(1);
+  retval = CVodeSetUserData(cvode_mem, data);
+  if(check_retval(&retval, "CVodeSetUserData", 1)) return(1);
 
-  /* Call CVBand to specify the CVBAND band linear solver */
-  flag = CVBand(cvode_mem, NEQ, MY, MY);
-  if(check_flag(&flag, "CVBand", 1)) return(1);
+  /* Create banded SUNMatrix for use in linear solves -- since this will be factored,
+     set the storage bandwidth to be the sum of upper and lower bandwidths */
+  A = SUNBandMatrix(NEQ, MY, MY);
+  if(check_retval((void *)A, "SUNBandMatrix", 0)) return(1);
+
+  /* Create banded SUNLinearSolver object for use by CVode */
+  LS = SUNLinSol_Band(u, A);
+  if(check_retval((void *)LS, "SUNLinSol_Band", 0)) return(1);
+
+  /* Call CVodeSetLinearSolver to attach the matrix and linear solver to CVode */
+  retval = CVodeSetLinearSolver(cvode_mem, LS, A);
+  if(check_retval(&retval, "CVodeSetLinearSolver", 1)) return(1);
 
   /* Set the user-supplied Jacobian routine Jac */
-  flag = CVDlsSetBandJacFn(cvode_mem, Jac);
-  if(check_flag(&flag, "CVDlsSetBandJacFn", 1)) return(1);
+  retval = CVodeSetJacFn(cvode_mem, Jac);
+  if(check_retval(&retval, "CVodeSetJacFn", 1)) return(1);
 
   /* In loop over output points: call CVode, print results, test for errors */
 
   umax = N_VMaxNorm(u);
   PrintHeader(reltol, abstol, umax);
   for(iout=1, tout=T1; iout <= NOUT; iout++, tout += DTOUT) {
-    flag = CVode(cvode_mem, tout, u, &t, CV_NORMAL);
-    if(check_flag(&flag, "CVode", 1)) break;
+    retval = CVode(cvode_mem, tout, u, &t, CV_NORMAL);
+    if(check_retval(&retval, "CVode", 1)) break;
     umax = N_VMaxNorm(u);
-    flag = CVodeGetNumSteps(cvode_mem, &nst);
-    check_flag(&flag, "CVodeGetNumSteps", 1);
+    retval = CVodeGetNumSteps(cvode_mem, &nst);
+    check_retval(&retval, "CVodeGetNumSteps", 1);
     PrintOutput(t, umax, nst);
   }
- 
+
   PrintFinalStats(cvode_mem);  /* Print some final statistics   */
   printf("num_threads = %i\n\n", num_threads);
-   
 
-  N_VDestroy_OpenMP(u);   /* Free the u vector */
+
+  N_VDestroy(u);          /* Free the u vector */
   CVodeFree(&cvode_mem);  /* Free the integrator memory */
+  SUNLinSolFree(LS);      /* Free the linear solver memory */
+  SUNMatDestroy(A);       /* Free the matrix memory */
   free(data);             /* Free the user data */
 
   return(0);
@@ -229,10 +245,12 @@ static int f(realtype t, N_Vector u,N_Vector udot, void *user_data)
 {
   realtype uij, udn, uup, ult, urt, hordc, horac, verdc, hdiff, hadv, vdiff;
   realtype *udata, *dudata;
-  int i, j;
+  sunindextype i, j;
   UserData data;
 
-  udata = NV_DATA_OMP(u);
+  i = j = 0;
+
+  udata  = NV_DATA_OMP(u);
   dudata = NV_DATA_OMP(udot);
 
   /* Extract needed constants from data */
@@ -270,15 +288,14 @@ static int f(realtype t, N_Vector u,N_Vector udot, void *user_data)
 
 /* Jacobian routine. Compute J(t,u). */
 
-static int Jac(long int N, long int mu, long int ml,
-               realtype t, N_Vector u, N_Vector fu, 
-               DlsMat J, void *user_data,
+static int Jac(realtype t, N_Vector u, N_Vector fu,
+               SUNMatrix J, void *user_data,
                N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  long int i, j, k;
+  sunindextype i, j, k;
   realtype *kthCol, hordc, horac, verdc;
   UserData data;
-  
+
   /*
     The components of f = udot that depend on u(i,j) are
     f(i,j), f(i-1,j), f(i+1,j), f(i,j-1), f(i,j+1), with
@@ -289,24 +306,26 @@ static int Jac(long int N, long int mu, long int ml,
       df(i,j+1)/du(i,j) = 1/dy^2           (if j < MY)
   */
 
-  data = (UserData) user_data;
+  i = j = 0;
+
+  data  = (UserData) user_data;
   hordc = data->hdcoef;
   horac = data->hacoef;
   verdc = data->vdcoef;
 
-#pragma omp parallel for collapse(2) default(shared) private(j, u, k, kthCol) num_threads(data->nthreads) 
+#pragma omp parallel for collapse(2) default(shared) private(i, j, k, kthCol) num_threads(data->nthreads)
   for (j=1; j <= MY; j++) {
     for (i=1; i <= MX; i++) {
       k = j-1 + (i-1)*MY;
-      kthCol = BAND_COL(J,k);
+      kthCol = SUNBandMatrix_Column(J,k);
 
       /* set the kth column of J */
 
-      BAND_COL_ELEM(kthCol,k,k) = -TWO*(verdc+hordc);
-      if (i != 1)  BAND_COL_ELEM(kthCol,k-MY,k) = hordc + horac;
-      if (i != MX) BAND_COL_ELEM(kthCol,k+MY,k) = hordc - horac;
-      if (j != 1)  BAND_COL_ELEM(kthCol,k-1,k)  = verdc;
-      if (j != MY) BAND_COL_ELEM(kthCol,k+1,k)  = verdc;
+      SM_COLUMN_ELEMENT_B(kthCol,k,k) = -TWO*(verdc+hordc);
+      if (i != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-MY,k) = hordc + horac;
+      if (i != MX) SM_COLUMN_ELEMENT_B(kthCol,k+MY,k) = hordc - horac;
+      if (j != 1)  SM_COLUMN_ELEMENT_B(kthCol,k-1,k)  = verdc;
+      if (j != MY) SM_COLUMN_ELEMENT_B(kthCol,k+1,k)  = verdc;
     }
   }
 
@@ -323,9 +342,11 @@ static int Jac(long int N, long int mu, long int ml,
 
 static void SetIC(N_Vector u, UserData data)
 {
-  int i, j;
+  sunindextype i, j;
   realtype x, y, dx, dy;
   realtype *udata;
+
+  i = j = 0;
 
   /* Extract needed constants from data */
 
@@ -337,14 +358,14 @@ static void SetIC(N_Vector u, UserData data)
   udata = NV_DATA_OMP(u);
 
   /* Load initial profile into u vector */
-#pragma omp parallel for default(shared) private(j, i, y, x)  
+#pragma omp parallel for default(shared) private(j, i, y, x)
   for (j=1; j <= MY; j++) {
     y = j*dy;
     for (i=1; i <= MX; i++) {
       x = i*dx;
-      IJth(udata,i,j) = x*(XMAX - x)*y*(YMAX - y)*SUNRexp(FIVE*x*y);
+      IJth(udata,i,j) = x*(XMAX - x)*y*(YMAX - y)*exp(FIVE*x*y);
     }
-  }  
+  }
 }
 
 /* Print first lines of output (problem description) */
@@ -389,26 +410,26 @@ static void PrintOutput(realtype t, realtype umax, long int nst)
 
 static void PrintFinalStats(void *cvode_mem)
 {
-  int flag;
+  int retval;
   long int nst, nfe, nsetups, netf, nni, ncfn, nje, nfeLS;
 
-  flag = CVodeGetNumSteps(cvode_mem, &nst);
-  check_flag(&flag, "CVodeGetNumSteps", 1);
-  flag = CVodeGetNumRhsEvals(cvode_mem, &nfe);
-  check_flag(&flag, "CVodeGetNumRhsEvals", 1);
-  flag = CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
-  check_flag(&flag, "CVodeGetNumLinSolvSetups", 1);
-  flag = CVodeGetNumErrTestFails(cvode_mem, &netf);
-  check_flag(&flag, "CVodeGetNumErrTestFails", 1);
-  flag = CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
-  check_flag(&flag, "CVodeGetNumNonlinSolvIters", 1);
-  flag = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
-  check_flag(&flag, "CVodeGetNumNonlinSolvConvFails", 1);
+  retval = CVodeGetNumSteps(cvode_mem, &nst);
+  check_retval(&retval, "CVodeGetNumSteps", 1);
+  retval = CVodeGetNumRhsEvals(cvode_mem, &nfe);
+  check_retval(&retval, "CVodeGetNumRhsEvals", 1);
+  retval = CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
+  check_retval(&retval, "CVodeGetNumLinSolvSetups", 1);
+  retval = CVodeGetNumErrTestFails(cvode_mem, &netf);
+  check_retval(&retval, "CVodeGetNumErrTestFails", 1);
+  retval = CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
+  check_retval(&retval, "CVodeGetNumNonlinSolvIters", 1);
+  retval = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
+  check_retval(&retval, "CVodeGetNumNonlinSolvConvFails", 1);
 
-  flag = CVDlsGetNumJacEvals(cvode_mem, &nje);
-  check_flag(&flag, "CVDlsGetNumJacEvals", 1);
-  flag = CVDlsGetNumRhsEvals(cvode_mem, &nfeLS);
-  check_flag(&flag, "CVDlsGetNumRhsEvals", 1);
+  retval = CVodeGetNumJacEvals(cvode_mem, &nje);
+  check_retval(&retval, "CVodeGetNumJacEvals", 1);
+  retval = CVodeGetNumLinRhsEvals(cvode_mem, &nfeLS);
+  check_retval(&retval, "CVodeGetNumLinRhsEvals", 1);
 
   printf("\nFinal Statistics:\n");
   printf("nst = %-6ld nfe  = %-6ld nsetups = %-6ld nfeLS = %-6ld nje = %ld\n",
@@ -422,34 +443,34 @@ static void PrintFinalStats(void *cvode_mem)
 /* Check function return value...
      opt == 0 means SUNDIALS function allocates memory so check if
               returned NULL pointer
-     opt == 1 means SUNDIALS function returns a flag so check if
-              flag >= 0
+     opt == 1 means SUNDIALS function returns an integer value so check if
+              retval < 0
      opt == 2 means function allocates memory so check if returned
               NULL pointer */
 
-static int check_flag(void *flagvalue, char *funcname, int opt)
+static int check_retval(void *returnvalue, const char *funcname, int opt)
 {
-  int *errflag;
+  int *retval;
 
   /* Check if SUNDIALS function returned NULL pointer - no memory allocated */
 
-  if (opt == 0 && flagvalue == NULL) {
+  if (opt == 0 && returnvalue == NULL) {
     fprintf(stderr, "\nSUNDIALS_ERROR: %s() failed - returned NULL pointer\n\n",
             funcname);
     return(1); }
 
-  /* Check if flag < 0 */
+  /* Check if retval < 0 */
 
   else if (opt == 1) {
-    errflag = (int *) flagvalue;
-    if (*errflag < 0) {
-      fprintf(stderr, "\nSUNDIALS_ERROR: %s() failed with flag = %d\n\n",
-              funcname, *errflag);
+    retval = (int *) returnvalue;
+    if (*retval < 0) {
+      fprintf(stderr, "\nSUNDIALS_ERROR: %s() failed with retval = %d\n\n",
+              funcname, *retval);
       return(1); }}
 
   /* Check if function returned NULL pointer - no memory allocated */
 
-  else if (opt == 2 && flagvalue == NULL) {
+  else if (opt == 2 && returnvalue == NULL) {
     fprintf(stderr, "\nMEMORY_ERROR: %s() failed - returned NULL pointer\n\n",
             funcname);
     return(1); }

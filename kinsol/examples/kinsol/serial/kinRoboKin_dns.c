@@ -1,8 +1,4 @@
-/*
- * -----------------------------------------------------------------
- * $Revision: 4834 $
- * $Date: 2016-08-01 16:59:05 -0700 (Mon, 01 Aug 2016) $
- * -----------------------------------------------------------------
+/* -----------------------------------------------------------------
  * Programmer(s): Radu Serban @ LLNL
  * -----------------------------------------------------------------
  * This example solves a nonlinear system from robot kinematics.
@@ -24,11 +20,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <kinsol/kinsol.h>
-#include <kinsol/kinsol_dense.h>
-#include <nvector/nvector_serial.h>
-#include <sundials/sundials_types.h>
-#include <sundials/sundials_math.h>
+#include <kinsol/kinsol.h>             /* access to KINSOL func., consts. */
+#include <nvector/nvector_serial.h>    /* access to serial N_Vector       */
+#include <sunmatrix/sunmatrix_dense.h> /* access to dense SUNMatrix       */
+#include <sunlinsol/sunlinsol_dense.h> /* access to dense SUNLinearSolver */
+#include <sundials/sundials_types.h>   /* defs. of realtype, sunindextype */
+#include <sundials/sundials_math.h>    /* access to SUNRsqrt              */
 
 /* Problem Constants */
 
@@ -43,13 +40,11 @@
 #define TWO   RCONST(2.0)
 
 #define Ith(v,i)    NV_Ith_S(v,i-1)
-#define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
+#define IJth(A,i,j) SM_ELEMENT_D(A,i-1,j-1)
 
 static int func(N_Vector y, N_Vector f, void *user_data);
-static int jac(long int N,
-               N_Vector y, N_Vector f,
-               DlsMat J, void *user_data,
-               N_Vector tmp1, N_Vector tmp2);
+static int jac(N_Vector y, N_Vector f, SUNMatrix J,
+               void *user_data, N_Vector tmp1, N_Vector tmp2);
 static void PrintOutput(N_Vector y);
 static void PrintFinalStats(void *kmem);
 static int check_flag(void *flagvalue, const char *funcname, int opt);
@@ -66,9 +61,13 @@ int main()
   N_Vector y, scale, constraints;
   int mset, flag, i;
   void *kmem;
+  SUNMatrix J;
+  SUNLinearSolver LS;
 
   y = scale = constraints = NULL;
   kmem = NULL;
+  J = NULL;
+  LS = NULL;
 
   printf("\nRobot Kinematics Example\n");
   printf("8 variables; -1 <= x_i <= 1\n");
@@ -95,7 +94,7 @@ int main()
 
   /* Set optional inputs */
 
-  N_VConst_Serial(ZERO,constraints);
+  N_VConst(ZERO,constraints);
   for (i = NVAR+1; i <= NEQ; i++) Ith(constraints, i) = ONE;
   
   flag = KINSetConstraints(kmem, constraints);
@@ -109,13 +108,21 @@ int main()
   flag = KINSetScaledStepTol(kmem, scsteptol);
   if (check_flag(&flag, "KINSetScaledStepTol", 1)) return(1);
 
-  /* Attach dense linear solver */
+  /* Create dense SUNMatrix */
+  J = SUNDenseMatrix(NEQ, NEQ);
+  if(check_flag((void *)J, "SUNDenseMatrix", 0)) return(1);
 
-  flag = KINDense(kmem, NEQ);
-  if (check_flag(&flag, "KINDense", 1)) return(1);
+  /* Create dense SUNLinearSolver object */
+  LS = SUNLinSol_Dense(y, J);
+  if(check_flag((void *)LS, "SUNLinSol_Dense", 0)) return(1);
 
-  flag = KINDlsSetDenseJacFn(kmem, jac);
-  if (check_flag(&flag, "KINDlsSetDenseJacFn", 1)) return(1);
+  /* Attach the matrix and linear solver to KINSOL */
+  flag = KINSetLinearSolver(kmem, LS, J);
+  if(check_flag(&flag, "KINSetLinearSolver", 1)) return(1);
+
+  /* Set the Jacobian function */
+  flag = KINSetJacFn(kmem, jac);
+  if (check_flag(&flag, "KINSetJacFn", 1)) return(1);
 
   /* Indicate exact Newton */
 
@@ -125,7 +132,7 @@ int main()
 
   /* Initial guess */
 
-  N_VConst_Serial(ONE, y);
+  N_VConst(ONE, y);
   for(i = 1; i <= NVAR; i++) Ith(y,i) = SUNRsqrt(TWO)/TWO;
 
   printf("Initial guess:\n");
@@ -133,7 +140,7 @@ int main()
 
   /* Call KINSol to solve problem */
 
-  N_VConst_Serial(ONE,scale);
+  N_VConst(ONE,scale);
   flag = KINSol(kmem,           /* KINSol memory block */
                 y,              /* initial guess on input; solution vector */
                 KIN_LINESEARCH, /* global strategy choice */
@@ -148,10 +155,12 @@ int main()
 
   PrintFinalStats(kmem);
 
-  N_VDestroy_Serial(y);
-  N_VDestroy_Serial(scale);
-  N_VDestroy_Serial(constraints);
+  N_VDestroy(y);
+  N_VDestroy(scale);
+  N_VDestroy(constraints);
   KINFree(&kmem);
+  SUNLinSolFree(LS);
+  SUNMatDestroy(J);
 
   return(0);
 }
@@ -172,8 +181,8 @@ static int func(N_Vector y, N_Vector f, void *user_data)
   realtype lb1, lb2, lb3, lb4, lb5, lb6, lb7, lb8;
   realtype ub1, ub2, ub3, ub4, ub5, ub6, ub7, ub8;
 
-  yd = N_VGetArrayPointer_Serial(y);
-  fd = N_VGetArrayPointer_Serial(f);
+  yd = N_VGetArrayPointer(y);
+  fd = N_VGetArrayPointer(f);
 
   x1 = yd[0]; l1 = yd[ 8]; u1 = yd[16]; 
   x2 = yd[1]; l2 = yd[ 9]; u2 = yd[17]; 
@@ -235,16 +244,14 @@ static int func(N_Vector y, N_Vector f, void *user_data)
  * System Jacobian
  */
 
-static int jac(long int N,
-               N_Vector y, N_Vector f,
-               DlsMat J, void *user_data,
-               N_Vector tmp1, N_Vector tmp2)
+static int jac(N_Vector y, N_Vector f,SUNMatrix J,
+               void *user_data, N_Vector tmp1, N_Vector tmp2)
 {
   int i;
   realtype *yd;
   realtype x1, x2, x3, x4, x5, x6, x7, x8;
 
-  yd = N_VGetArrayPointer_Serial(y);
+  yd = N_VGetArrayPointer(y);
 
   x1 = yd[0];
   x2 = yd[1];
@@ -382,10 +389,10 @@ static void PrintFinalStats(void *kmem)
   flag = KINGetNumFuncEvals(kmem, &nfe);
   check_flag(&flag, "KINGetNumFuncEvals", 1);
 
-  flag = KINDlsGetNumJacEvals(kmem, &nje);
-  check_flag(&flag, "KINDlsGetNumJacEvals", 1);
-  flag = KINDlsGetNumFuncEvals(kmem, &nfeD);
-  check_flag(&flag, "KINDlsGetNumFuncEvals", 1);
+  flag = KINGetNumJacEvals(kmem, &nje);
+  check_flag(&flag, "KINGetNumJacEvals", 1);
+  flag = KINGetNumLinFuncEvals(kmem, &nfeD);
+  check_flag(&flag, "KINGetNumLinFuncEvals", 1);
 
   printf("\nFinal Statistics.. \n");
   printf("nni    = %5ld    nfe   = %5ld \n", nni, nfe);

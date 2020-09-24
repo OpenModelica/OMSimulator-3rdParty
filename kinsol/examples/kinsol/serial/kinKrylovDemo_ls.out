@@ -33,9 +33,9 @@ nps    =   120    npe   =     1     ncfl  =     2
 
 =========================================================
 
- ------- 
-| SPBCG |
- -------
+ -------- 
+| SPBCGS |
+ --------
 
 Predator-prey test problem --  KINSol (serial version)
 
@@ -44,7 +44,7 @@ Number of species = 6
 Total system size = 150
 
 Flag globalstrategy = 0 (0 = None, 1 = Linesearch)
-Linear solver is SPBCG with maxl = 15
+Linear solver is SPBCGS with maxl = 15
 Preconditioning uses interaction-only block-diagonal matrix
 Positivity constraints imposed on all components 
 Tolerance parameters:  fnormtol = 1e-07   scsteptol = 1e-13
@@ -62,9 +62,9 @@ At top right:
  1.2637 1.2637 1.2637 37908.7 37908.7 37908.7
 
 Final Statistics.. 
-nni    =     7    nli   =    80
-nfe    =     8    nfeSG =   167
-nps    =   167    npe   =     1     ncfl  =     4
+nni    =     7    nli   =    79
+nfe    =     8    nfeSG =   165
+nps    =   165    npe   =     1     ncfl  =     4
 
 =========================================================
 

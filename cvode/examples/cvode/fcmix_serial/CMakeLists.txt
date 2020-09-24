@@ -1,194 +1,335 @@
 # ---------------------------------------------------------------
-# $Revision: 4957 $
-# $Date: 2016-09-23 12:21:47 -0700 (Fri, 23 Sep 2016) $
+# Programmer(s): Radu Serban @ LLNL
+#                David J. Gardner @ LLNL
 # ---------------------------------------------------------------
-# Programmer:  Radu Serban @ LLNL
-# ---------------------------------------------------------------
-# LLNS Copyright Start
-# Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department 
-# of Energy by Lawrence Livermore National Laboratory in part under 
-# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
-# Produced at the Lawrence Livermore National Laboratory.
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2020, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # CMakeLists.txt file for the FCVODE serial examples
+# ---------------------------------------------------------------
 
+# Example lists are tuples "name\;type" where the type is
+# 'develop' for examples excluded from 'make test' in releases
 
-# Add variable FCVODE_examples with the names of the serial FCVODE examples
-
-SET(FCVODE_examples
-  fcvAdvDiff_bnd
-  fcvDiurnal_kry_bp
-  fcvDiurnal_kry
-  fcvRoberts_dns
+# Examples using SUNDIALS linear solvers
+set(FCVODE_examples
+  "fcvAdvDiff_bnd\;develop"
+  "fcvDiurnal_kry_bp\;develop"
+  "fcvDiurnal_kry\;develop"
+  "fcvRoberts_dns\;develop"
+  "fcvRoberts_dns_constraints\;develop"
   )
 
-SET(FCVODE_examples_KLU
-  fcvRoberts_klu
+# Examples using LAPACK linear solvers
+set(FCVODE_examples_BL
+  "fcvRoberts_dnsL\;develop"
   )
 
-SET(FCVODE_examples_SUPERLUMT
-  fcvRoberts_sps
-  )
+# Add sparse solvers examples for 64-bit indextype configurations only,
+# not compatible with 32-bit indextype
+if(SUNDIALS_INDEX_SIZE MATCHES "64")
 
-# Add variable fcvode_bl_examples with the names of the serial FCVODE examples
-# that use Lapack
+  # Examples using KLU linear solver
+  set(FCVODE_examples_KLU
+    "fcvRoberts_klu\;develop"
+    )
 
-SET(FCVODE_examples_BL
-  fcvRoberts_dnsL
-  )
+  # Examples using SuperLU_MT linear solver
+  set(FCVODE_examples_SUPERLUMT
+    "fcvRoberts_sps\;develop"
+    )
 
-# Specify libraries to link against (through the target that was used to 
+endif()
+
+# Specify libraries to link against (through the target that was used to
 # generate them) based on the value of the variable LINK_LIBRARY_TYPE
+if(LINK_LIBRARY_TYPE MATCHES "static")
+  set(CVODE_LIB sundials_cvode_static)
+  set(NVECS_LIB sundials_nvecserial_static)
+  set(FNVECS_LIB sundials_fnvecserial_static)
+else()
+  set(CVODE_LIB sundials_cvode_shared)
+  set(NVECS_LIB sundials_nvecserial_shared)
+  set(FNVECS_LIB sundials_fnvecserial_shared)
+endif()
 
-IF(LINK_LIBRARY_TYPE MATCHES "static")
-  SET(CVODE_LIB sundials_cvode_static)
-  SET(NVECS_LIB sundials_nvecserial_static)
-  SET(FNVECS_LIB sundials_fnvecserial_static)
-ELSE(LINK_LIBRARY_TYPE MATCHES "static")
-  SET(CVODE_LIB sundials_cvode_shared)
-  SET(NVECS_LIB sundials_nvecserial_shared)
-  SET(FNVECS_LIB sundials_fnvecserial_shared)
-ENDIF(LINK_LIBRARY_TYPE MATCHES "static")
+if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+  list(APPEND CVODE_LIB
+       sundials_cvode_fused_stubs_${LINK_LIBRARY_TYPE})
+endif()
 
 # Only static FCMIX libraries are available
-
-SET(FCVODE_LIB sundials_fcvode_static)
+set(FCVODE_LIB sundials_fcvode_static)
 
 # Set-up linker flags and link libraries
+set(SUNDIALS_LIBS ${FCVODE_LIB} ${CVODE_LIB} ${FNVECS_LIB} ${NVECS_LIB} ${EXTRA_LINK_LIBS})
 
-SET(SUNDIALS_LIBS ${FCVODE_LIB} ${CVODE_LIB} ${FNVECS_LIB} ${NVECS_LIB} ${EXTRA_LINK_LIBS})
-IF(LAPACK_FOUND)
-  LIST(APPEND SUNDIALS_LIBS ${LAPACK_LIBRARIES})
-ENDIF(LAPACK_FOUND)
 
-IF(KLU_FOUND)
-  LIST(APPEND SUNDIALS_LIBS ${KLU_LIBRARIES})
-ENDIF(KLU_FOUND)
+# Add the build and install targets for each example
+foreach(example_tuple ${FCVODE_examples})
 
-IF(SUPERLUMT_FOUND)
-  LIST(APPEND SUNDIALS_LIBS ${SUPERLUMT_LIBRARIES})
-ENDIF(SUPERLUMT_FOUND)
+  # parse the example tuple
+  list(GET example_tuple 0 example)
+  list(GET example_tuple 1 example_type)
 
-IF(HYPRE_FOUND)
-  LIST(APPEND SUNDIALS_LIBS ${HYPRE_LIBRARIES})
-ENDIF(HYPRE_FOUND)
+  # example source files
+  add_executable(${example} ${example}.f)
 
-# Add the build and install targets for each FCVODE example
+  set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
-FOREACH(example ${FCVODE_examples})
-  ADD_EXECUTABLE(${example} ${example}.f)
-  SET_TARGET_PROPERTIES(${example} PROPERTIES FOLDER "Examples")
-  SUNDIALS_ADD_TEST(${example} ${example})
-  TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
-  IF(EXAMPLES_INSTALL)
-    INSTALL(FILES ${example}.f ${example}.out DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
-  ENDIF(EXAMPLES_INSTALL)
-ENDFOREACH(example ${FCVODE_examples})
+  # add example to regression tests
+  sundials_add_test(${example} ${example}
+    ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+    ANSWER_FILE ${example}.out
+    EXAMPLE_TYPE ${example_type})
 
-# Add the build and install targets for each Lapack FCVODE example (if needed)
+  # libraries to link against
+  target_link_libraries(${example} ${SUNDIALS_LIBS})
 
-IF(LAPACK_FOUND)
-  FOREACH(example ${FCVODE_examples_BL})
-    ADD_EXECUTABLE(${example} ${example}.f)
-    SET_TARGET_PROPERTIES(${example} PROPERTIES FOLDER "Examples")
-    SUNDIALS_ADD_TEST(${example} ${example})
-    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
-    IF(EXAMPLES_INSTALL)
-      INSTALL(FILES ${example}.f ${example}.out DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
-    ENDIF(EXAMPLES_INSTALL)
-  ENDFOREACH(example ${FCVODE_examples_BL})
-ENDIF(LAPACK_FOUND)
+   # install example source and out files
+  if(EXAMPLES_INSTALL)
+    install(FILES ${example}.f ${example}.out
+      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
+  endif()
 
-# If KLU support is enabled, add the build and install targets for
-# the examples using KLU
-IF(KLU_FOUND)
-  FOREACH(example ${FCVODE_examples_KLU})
-    ADD_EXECUTABLE(${example} ${example}.f)
-    SET_TARGET_PROPERTIES(${example} PROPERTIES FOLDER "Examples")
-    SUNDIALS_ADD_TEST(${example} ${example})
-    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
-    IF(EXAMPLES_INSTALL)
-      INSTALL(FILES ${example}.f ${example}.out DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
-    ENDIF(EXAMPLES_INSTALL)
-  ENDFOREACH(example ${FCVODE_examples_KLU})
-ENDIF(KLU_FOUND)
+endforeach(example_tuple ${FCVODE_examples})
 
-# If SUPERLUMT support is enabled, add the build and install targets for
-# the examples using SUPERLUMT
-IF(SUPERLUMT_FOUND)
-  FOREACH(example ${FCVODE_examples_SUPERLUMT})
-    ADD_EXECUTABLE(${example} ${example}.f)
-    SET_TARGET_PROPERTIES(${example} PROPERTIES FOLDER "Examples")
-    SUNDIALS_ADD_TEST(${example} ${example})
-    TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
-    IF(EXAMPLES_INSTALL)
-      INSTALL(FILES ${example}.f ${example}.out DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
-    ENDIF(EXAMPLES_INSTALL)
-  ENDFOREACH(example ${FCVODE_examples_SUPERLUMT})
-ENDIF(SUPERLUMT_FOUND)
 
-IF(EXAMPLES_INSTALL)
+# Add the build and install targets for each LAPACK example (if needed)
+if(LAPACK_FOUND)
+
+  # Sundials LAPACK linear solver modules
+  if(LINK_LIBRARY_TYPE MATCHES "static")
+    set(SUNLINSOLLAPACK_LIBS
+      sundials_sunlinsollapackband_static
+      sundials_sunlinsollapackdense_static
+      sundials_fsunlinsollapackband_static
+      sundials_fsunlinsollapackdense_static)
+  else()
+    set(SUNLINSOLLAPACK_LIBS
+      sundials_sunlinsollapackband_shared
+      sundials_sunlinsollapackdense_shared
+      sundials_fsunlinsollapackband_shared
+      sundials_fsunlinsollapackdense_shared)
+  endif()
+
+  # LAPACK libraries
+  list(APPEND SUNLINSOLLAPACK_LIBS ${LAPACK_LIBRARIES})
+
+  # BLAS libraries
+  if(BLAS_FOUND)
+    list(APPEND SUNLINSOLLAPACK_LIBS ${BLAS_LIBRARIES})
+  endif(BLAS_FOUND)
+
+  foreach(example_tuple ${FCVODE_examples_BL})
+
+    # parse the example tuple
+    list(GET example_tuple 0 example)
+    list(GET example_tuple 1 example_type)
+
+    # example source files
+    add_executable(${example} ${example}.f)
+
+    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+
+    # add example to regression tests
+    sundials_add_test(${example} ${example}
+      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+      ANSWER_FILE ${example}.out
+      EXAMPLE_TYPE ${example_type})
+
+    # libraries to link against
+    target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLLAPACK_LIBS})
+
+     # install example source and out files
+    if(EXAMPLES_INSTALL)
+      install(FILES ${example}.f ${example}.out
+        DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
+    endif()
+
+  endforeach(example_tuple ${FCVODE_examples_BL})
+
+endif(LAPACK_FOUND)
+
+
+# Add the build and install targets for each KLU example (if needed)
+if(KLU_FOUND)
+
+  # Sundials KLU linear solver module
+  if(LINK_LIBRARY_TYPE MATCHES "static")
+    set(SUNLINSOLKLU_LIBS
+      sundials_sunlinsolklu_static
+      sundials_fsunlinsolklu_static)
+  else()
+    set(SUNLINSOLKLU_LIBS
+      sundials_sunlinsolklu_shared
+      sundials_fsunlinsolklu_shared)
+  endif()
+
+  # KLU libraries
+  list(APPEND SUNLINSOLKLU_LIBS ${KLU_LIBRARIES})
+
+  foreach(example_tuple ${FCVODE_examples_KLU})
+
+    # parse the example tuple
+    list(GET example_tuple 0 example)
+    list(GET example_tuple 1 example_type)
+
+    # example source files
+    add_executable(${example} ${example}.f)
+
+    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+
+    # add example to regression tests
+    sundials_add_test(${example} ${example}
+      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+      ANSWER_FILE ${example}.out
+      EXAMPLE_TYPE ${example_type})
+
+    # libraries to link against
+    target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLKLU_LIBS})
+
+     # install example source and out files
+    if(EXAMPLES_INSTALL)
+      install(FILES ${example}.f ${example}.out
+        DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
+    endif()
+
+  endforeach(example_tuple ${FCVODE_examples_KLU})
+
+endif(KLU_FOUND)
+
+
+# Add the build and install targets for each SuperLU_MT example (if needed)
+if(SUPERLUMT_FOUND)
+
+  # Sundials SuperLU_MT linear solver module
+  if(LINK_LIBRARY_TYPE MATCHES "static")
+    set(SUNLINSOLSLUMT_LIBS
+      sundials_sunlinsolsuperlumt_static
+      sundials_fsunlinsolsuperlumt_static)
+  else()
+    set(SUNLINSOLSLUMT_LIBS
+      sundials_sunlinsolsuperlumt_shared
+      sundials_fsunlinsolsuperlumt_shared)
+  endif()
+
+  # SuperLU_MT libraries
+  list(APPEND SUNLINSOLSLUMT_LIBS ${SUPERLUMT_LIBRARIES})
+
+  # BLAS libraries
+  if(BLAS_FOUND)
+    list(APPEND SUNLINSOLSLUMT_LIBS ${BLAS_LIBRARIES})
+  endif(BLAS_FOUND)
+
+  foreach(example_tuple ${FCVODE_examples_SUPERLUMT})
+
+    # parse the example tuple
+    list(GET example_tuple 0 example)
+    list(GET example_tuple 1 example_type)
+
+    # example source files
+    add_executable(${example} ${example}.f)
+
+    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+
+    # add example to regression tests
+    sundials_add_test(${example} ${example}
+      ANSWER_DIR ${CMAKE_CURRENT_SOURCE_DIR}
+      ANSWER_FILE ${example}.out
+      EXAMPLE_TYPE ${example_type})
+
+    # libraries to link against
+    target_link_libraries(${example} ${SUNDIALS_LIBS} ${SUNLINSOLSLUMT_LIBS})
+
+     # install example source and out files
+    if(EXAMPLES_INSTALL)
+      install(FILES ${example}.f ${example}.out
+        DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
+    endif()
+
+  endforeach(example_tuple ${FCVODE_examples_SUPERLUMT})
+
+endif(SUPERLUMT_FOUND)
+
+# create Makfile and CMakeLists.txt for examples
+if(EXAMPLES_INSTALL)
 
   # Install the README file
-  INSTALL(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
+  install(FILES README DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
-  SET(SOLVER "CVODE")
-  SET(SOLVER_LIB "sundials_cvode")
-  SET(SOLVER_FLIB "sundials_fcvode")
-  LIST2STRING(FCVODE_examples EXAMPLES)
-  IF(LAPACK_FOUND)
-    LIST2STRING(FCVODE_examples_BL EXAMPLES_BL)
-  ELSE(LAPACK_FOUND)
-    SET(EXAMPLES_BL "")
-  ENDIF(LAPACK_FOUND)
-  
-  IF(KLU_FOUND)
-    LIST2STRING(FCVODE_examples_KLU EXAMPLES)
-  ENDIF(KLU_FOUND)
-  
-  IF(SUPERLUMT_FOUND)
-    LIST2STRING(FCVODE_examples_SUPERLUMT EXAMPLES)
-  ENDIF(SUPERLUMT_FOUND)
-  
-  # Regardless of the platform we're on, we will generate and install 
-  # CMakeLists.txt file for building the examples. This file  can then 
+  set(SOLVER "CVODE")
+  set(SOLVER_LIB "sundials_cvode")
+  set(SOLVER_FLIB "sundials_fcvode")
+  if(SUNDIALS_BUILD_PACKAGE_FUSED_KERNELS)
+    set(LIBS "-lsundials_cvode_fused_stubs ${LIBS}")
+  endif()
+
+  examples2string(FCVODE_examples EXAMPLES)
+
+  if(LAPACK_FOUND)
+    examples2string(FCVODE_examples_BL EXAMPLES_BL)
+  else()
+    set(EXAMPLES_BL "")
+  endif()
+
+  if(KLU_FOUND)
+    examples2string(FCVODE_examples_KLU EXAMPLES_KLU)
+  else()
+    set(EXAMPLES_KLU "")
+  endif()
+
+  if(SUPERLUMT_FOUND)
+    examples2string(FCVODE_examples_SUPERLUMT EXAMPLES_SLUMT)
+  else()
+    set(EXAMPLES_SLUMT "")
+  endif()
+
+  # Regardless of the platform we're on, we will generate and install
+  # CMakeLists.txt file for building the examples. This file  can then
   # be used as a template for the user's own programs.
 
   # generate CMakelists.txt in the binary directory
-  CONFIGURE_FILE(
-      ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_F77_ex.in
-      ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/CMakeLists.txt
-      @ONLY
-      )
-
-  # install CMakelists.txt
-  INSTALL(
-    FILES ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/CMakeLists.txt
-    DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial 
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_serial_F77_ex.in
+    ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/CMakeLists.txt
+    @ONLY
     )
 
-  # On UNIX-type platforms, we also  generate and install a makefile for 
-  # building the examples. This makefile can then be used as a template 
+  # install CMakelists.txt
+  install(
+    FILES ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/CMakeLists.txt
+    DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial
+    )
+
+  # On UNIX-type platforms, we also  generate and install a makefile for
+  # building the examples. This makefile can then be used as a template
   # for the user's own programs.
 
-  IF(UNIX)
+  if(UNIX)
     # generate Makefile and place it in the binary dir
-    CONFIGURE_FILE(
+    configure_file(
       ${PROJECT_SOURCE_DIR}/examples/templates/makefile_serial_F77_ex.in
       ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/Makefile_ex
       @ONLY
       )
     # install the configured Makefile_ex as Makefile
-    INSTALL(
-      FILES ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/Makefile_ex 
-      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial 
+    install(
+      FILES ${PROJECT_BINARY_DIR}/examples/cvode/fcmix_serial/Makefile_ex
+      DESTINATION ${EXAMPLES_INSTALL_PATH}/cvode/fcmix_serial
       RENAME Makefile
       )
-  ENDIF(UNIX)
+  endif(UNIX)
 
-ENDIF(EXAMPLES_INSTALL)
+  # add test_install target
+  sundials_add_test_install(cvode fcmix_serial)
+
+endif(EXAMPLES_INSTALL)

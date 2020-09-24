@@ -1,120 +1,210 @@
 # ---------------------------------------------------------------
-# $Revision: 4945 $
-# $Date: 2016-09-21 22:15:14 -0700 (Wed, 21 Sep 2016) $
+# Programmer(s): Steven Smith @ LLNL
 # ---------------------------------------------------------------
-# Programmer:  Steven Smith @ LLNL
-# ---------------------------------------------------------------
-# LLNS Copyright Start
-# Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department 
-# of Energy by Lawrence Livermore National Laboratory in part under 
-# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
-# Produced at the Lawrence Livermore National Laboratory.
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2020, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
-# CMakeLists.txt file for nvector examples
+# CMakeLists.txt file for OpenMP nvector examples
+# ---------------------------------------------------------------
 
-# Add variable nvector_openmp_examples with the names of the nvector examples
+# Example lists are tuples "name\;args\;type" where the type is
+# 'develop' for examples excluded from 'make test' in releases
 
-SET(nvector_openmp_examples
-  test_nvector_openmp
-)
+# Examples using SUNDIALS OpenMP nvector
+set(nvector_openmp_examples
+  "test_nvector_openmp\;1000 1 0\;"
+  "test_nvector_openmp\;1000 2 0\;"
+  "test_nvector_openmp\;1000 4 0\;"
+  "test_nvector_openmp\;10000 1 0\;"
+  "test_nvector_openmp\;10000 2 0\;"
+  "test_nvector_openmp\;10000 4 0\;"
+  )
 
-SET(nvector_examples_dependencies
+# Dependencies for nvector examples
+set(nvector_examples_dependencies
   test_nvector
   sundials_nvector
-)
+  )
+
+# If building F2003 tests
+if (F2003_INTERFACE_ENABLE)
+  set(nvector_openmp_fortran_examples
+    "test_fnvector_openmp_mod\;\;")
+endif()
 
 # Add source directory to include directories
-INCLUDE_DIRECTORIES(. ..)
+include_directories(. ..)
 
-# Specify libraries to link against (through the target that was used to 
+# Specify libraries to link against (through the target that was used to
 # generate them) based on the value of the variable LINK_LIBRARY_TYPE
-
-IF(LINK_LIBRARY_TYPE MATCHES "static")
-  SET(NVECS_LIB sundials_nvecopenmp_static)
-ELSE(LINK_LIBRARY_TYPE MATCHES "static")
-  SET(NVECS_LIB sundials_nvecopenmp_shared)
-ENDIF(LINK_LIBRARY_TYPE MATCHES "static")
+if(LINK_LIBRARY_TYPE MATCHES "static")
+  set(NVECS_LIB sundials_nvecopenmp_static)
+  if (F2003_INTERFACE_ENABLE)
+    list(APPEND NVECS_LIB sundials_fnvecopenmp_mod_static)
+  endif()
+else()
+  set(NVECS_LIB sundials_nvecopenmp_shared)
+  if (F2003_INTERFACE_ENABLE)
+    list(APPEND NVECS_LIB sundials_fnvecopenmp_mod_shared)
+  endif()
+endif()
 
 # Set-up linker flags and link libraries
+set(SUNDIALS_LIBS ${NVECS_LIB} ${EXTRA_LINK_LIBS})
 
-SET(SUNDIALS_LIBS ${NVECS_LIB} ${EXTRA_LINK_LIBS})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+# Use C flags for linker as well.
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
 
-IF(OPENMP_FOUND)
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  # Use C flags for linker as well.
-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
-ENDIF(OPENMP_FOUND)
 
-# Add the build and install targets for each nvector example
+# Add the build and install targets for each example
+foreach(example_tuple ${nvector_openmp_examples})
 
-FOREACH(example ${nvector_openmp_examples})
-  ADD_EXECUTABLE(${example} ${example}.c ../test_nvector.c ../../../src/sundials/sundials_nvector.c)
-  SET_TARGET_PROPERTIES(${example} PROPERTIES FOLDER "Examples")
+  # parse the example tuple
+  list(GET example_tuple 0 example)
+  list(GET example_tuple 1 example_args)
+  list(GET example_tuple 2 example_type)
 
-  SUNDIALS_ADD_TEST(${example}_1000_1_0 ${example} TEST_ARGS 1000 1 0)
-  SUNDIALS_ADD_TEST(${example}_1000_2_0 ${example} TEST_ARGS 1000 2 0)
-  SUNDIALS_ADD_TEST(${example}_1000_4_0 ${example} TEST_ARGS 1000 4 0)
+  # check if this example has already been added, only need to add
+  # example source files once for testing with different inputs
+  if(NOT TARGET ${example})
+    # example source files
+    add_executable(${example} ${example}.c
+      ../test_nvector.c ../../../src/sundials/sundials_nvector.c)
 
-  SUNDIALS_ADD_TEST(${example}_10000_1_0 ${example} TEST_ARGS 10000 1 0)
-  SUNDIALS_ADD_TEST(${example}_10000_2_0 ${example} TEST_ARGS 10000 2 0)
-  SUNDIALS_ADD_TEST(${example}_10000_4_0 ${example} TEST_ARGS 10000 4 0)
+    # folder to organize targets in an IDE
+    set_target_properties(${example} PROPERTIES FOLDER "Examples")
 
-  TARGET_LINK_LIBRARIES(${example} ${SUNDIALS_LIBS})
+    # libraries to link against
+    target_link_libraries(${example} ${SUNDIALS_LIBS})
+  endif()
 
-  IF(EXAMPLES_INSTALL)
-    INSTALL(FILES ${example}.c ../test_nvector.c ../test_nvector.h ../../../src/sundials/sundials_nvector.c DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp)
-  ENDIF(EXAMPLES_INSTALL)
-ENDFOREACH(example ${nvector_openmp_examples})
+  # check if example args are provided and set the test name
+  if("${example_args}" STREQUAL "")
+    set(test_name ${example})
+  else()
+    string(REGEX REPLACE " " "_" test_name ${example}_${example_args})
+  endif()
 
-IF(EXAMPLES_INSTALL)
+  # add example to regression tests
+  sundials_add_test(${test_name} ${example}
+    TEST_ARGS ${example_args}
+    EXAMPLE_TYPE ${example_type}
+    NODIFF)
+
+  # install example source files
+  if(EXAMPLES_INSTALL)
+    install(FILES ${example}.c
+      ../test_nvector.c
+      ../test_nvector.h
+      ${sundials_SOURCE_DIR}/src/sundials/sundials_nvector.c
+      DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp)
+  endif()
+
+endforeach(example_tuple ${nvector_openmp_examples})
+
+# Add the build and install targets for each example
+foreach(example_tuple ${nvector_openmp_fortran_examples})
+
+  # parse the example tuple
+  list(GET example_tuple 0 example)
+  list(GET example_tuple 1 example_args)
+  list(GET example_tuple 2 example_type)
+
+  # This is used to get around DLL linkage issue since we are
+  # manually including sundials_nvector.c here, which is normally in
+  # a library that is included.  If this is not set build system
+  # thinks nvector is externally linked.
+  if(WIN32)
+    add_definitions(-DBUILD_SUNDIALS_LIBRARY)
+  endif(WIN32)
+
+  # check if this example has already been added, only need to add
+  # example source files once for testing with different inputs
+  if(NOT TARGET ${example})
+    # example source files
+    add_executable(${example} ${example}.f90
+      ${sundials_SOURCE_DIR}/examples/test_utilities.f90
+      ${sundials_SOURCE_DIR}/examples/nvector/test_nvector.f90
+      $<TARGET_OBJECTS:sundials_generic_${LINK_LIBRARY_TYPE}_obj>
+      $<TARGET_OBJECTS:sundials_fgeneric_${LINK_LIBRARY_TYPE}_obj>)
+
+    # folder to organize targets in an IDE
+    set_target_properties(${example} PROPERTIES FOLDER "Examples")
+    set_target_properties(${example} PROPERTIES Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+    # libraries to link against
+    target_link_libraries(${example} ${SUNDIALS_LIBS})
+  endif()
+
+  # check if example args are provided and set the test name
+  if("${example_args}" STREQUAL "")
+    set(test_name ${example})
+  else()
+    string(REGEX REPLACE " " "_" test_name ${example}_${example_args})
+  endif()
+
+  # add example to regression tests
+  sundials_add_test(${test_name} ${example}
+    TEST_ARGS ${example_args}
+    EXAMPLE_TYPE ${example_type}
+    NODIFF)
+
+endforeach(example_tuple ${nvector_openmp_fortran_examples})
+
+if(EXAMPLES_INSTALL)
 
   # Install the README file
-  INSTALL(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp)
+  install(FILES DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp)
 
   # Prepare substitution variables for Makefile and/or CMakeLists templates
-  SET(SOLVER_LIB "sundials_nvecopenmp")
-  LIST2STRING(nvector_openmp_examples EXAMPLES)
-  LIST2STRING(nvector_examples_dependencies EXAMPLES_DEPENDENCIES)
+  set(SOLVER_LIB "sundials_nvecopenmp")
 
-  # Regardless of the platform we're on, we will generate and install 
-  # CMakeLists.txt file for building the examples. This file  can then 
+  examples2string(nvector_openmp_examples EXAMPLES)
+  examples2string(nvector_examples_dependencies EXAMPLES_DEPENDENCIES)
+
+  # Regardless of the platform we're on, we will generate and install
+  # CMakeLists.txt file for building the examples. This file  can then
   # be used as a template for the user's own programs.
 
   # generate CMakelists.txt in the binary directory
-  CONFIGURE_FILE(
-      ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_openmp_C_ex.in
-      ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/CMakeLists.txt
-      @ONLY
-      )
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/examples/templates/cmakelists_openmp_C_ex.in
+    ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/CMakeLists.txt
+    @ONLY
+    )
 
   # install CMakelists.txt
-  INSTALL(
+  install(
     FILES ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/CMakeLists.txt
     DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp
     )
 
-  # On UNIX-type platforms, we also  generate and install a makefile for 
-  # building the examples. This makefile can then be used as a template 
+  # On UNIX-type platforms, we also  generate and install a makefile for
+  # building the examples. This makefile can then be used as a template
   # for the user's own programs.
 
-  IF(UNIX)
+  if(UNIX)
     # generate Makefile and place it in the binary dir
-    CONFIGURE_FILE(
+    configure_file(
       ${PROJECT_SOURCE_DIR}/examples/templates/makefile_openmp_C_ex.in
       ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/Makefile_ex
       @ONLY
       )
     # install the configured Makefile_ex as Makefile
-    INSTALL(
-      FILES ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/Makefile_ex 
+    install(
+      FILES ${PROJECT_BINARY_DIR}/examples/nvector/C_openmp/Makefile_ex
       DESTINATION ${EXAMPLES_INSTALL_PATH}/nvector/C_openmp
       RENAME Makefile
       )
-  ENDIF(UNIX)
+  endif(UNIX)
 
-ENDIF(EXAMPLES_INSTALL)
+endif(EXAMPLES_INSTALL)
