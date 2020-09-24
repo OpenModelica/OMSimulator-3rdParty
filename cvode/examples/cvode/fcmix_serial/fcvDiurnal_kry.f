@@ -1,7 +1,14 @@
-C     ----------------------------------------------------------------
-C     $Revision: 4838 $
-C     $Date: 2016-08-03 10:10:51 -0700 (Wed, 03 Aug 2016) $
-C     ----------------------------------------------------------------
+C     --------------------------------------------------------------------
+C     SUNDIALS Copyright Start
+C     Copyright (c) 2002-2020, Lawrence Livermore National Security
+C     and Southern Methodist University.
+C     All rights reserved.
+C
+C     See the top-level LICENSE and NOTICE files for details.
+C
+C     SPDX-License-Identifier: BSD-3-Clause
+C     SUNDIALS Copyright End
+C     --------------------------------------------------------------------
 C     FCVODE Example Problem: 2D kinetics-transport, precond. Krylov
 C     solver. 
 C     
@@ -20,6 +27,7 @@ C     The problem is posed on the square
 C     0 .le. x .le. 20,    30 .le. y .le. 50   (all in km),
 C     with homogeneous Neumann boundary conditions, and for time t
 C     in 0 .le. t .le. 86400 sec (1 day).
+C
 C     The PDE system is treated by central differences on a uniform
 C     10 x 10 mesh, with simple polynomial initial profiles.
 C     The problem is solved with CVODE, with the BDF/GMRES method and
@@ -31,31 +39,30 @@ C     of the dense linear solver routines DGEFA and DGESL from LINPACK,
 C     and BLAS routines DCOPY and DSCAL.
 C     
 C     The second and third dimensions of U here must match the values
-C     of MX and MY, for consistency with the output statements
-C     below.
-C     ----------------------------------------------------------------
+C     of MX and MY, for consistency with the output statements below.
+C     --------------------------------------------------------------------
 C
       IMPLICIT NONE
 C
-      INTEGER MX, MY
+      INTEGER*4 MX, MY
       PARAMETER (MX=10, MY=10)
-      INTEGER LENIPAR, LENRPAR
+      INTEGER*4 LENIPAR, LENRPAR
       PARAMETER (LENIPAR=6+2*MX*MY, LENRPAR=12+8*MX*MY)
 C
-      INTEGER METH,ITMETH,IATOL,ITASK,IER,LNCFL,LNPS
-      INTEGER LNST,LNFE,LNSETUP,LNNI,LNCF,LQ,LH,LNPE,LNLI,LNETF
-      INTEGER JOUT,JPRETYPE,IGSTYPE,MAXL
+      INTEGER*4 METH,IATOL,ITASK,IER,LNCFL,LNPS
+      INTEGER*4 LNST,LNFE,LNSETUP,LNNI,LNCF,LQ,LH,LNPE,LNLI,LNETF
+      INTEGER*4 JOUT,JPRETYPE,IGSTYPE,MAXL
 C The following declaration specification should match C type long int.
       INTEGER*8 NEQ, IOUT(25), IPAR(LENIPAR)
-      INTEGER NST,NFE,NPSET,NPE,NPS,NNI,NETF
-      INTEGER NLI,NCFN,NCFL
+      INTEGER*4 NST,NFE,NPSET,NPE,NPS,NNI,NETF
+      INTEGER*4 NLI,NCFN,NCFL
       DOUBLE PRECISION ATOL,AVDIM,T,TOUT,TWOHR,RTOL,FLOOR,DELT
       DOUBLE PRECISION U(2,MX,MY),ROUT(10),RPAR(LENRPAR)
 C
       DATA TWOHR/7200.0D0/, RTOL/1.0D-5/, FLOOR/100.0D0/,
      &     JPRETYPE/1/, IGSTYPE/1/, MAXL/0/, DELT/0.0D0/
       DATA LNST/3/, LNFE/4/, LNETF/5/,  LNCF/6/, LNNI/7/, LNSETUP/8/, 
-     &     LQ/9/, LNPE/18/, LNLI/20/, LNPS/19/, LNCFL/21/
+     &     LQ/9/, LNPE/20/, LNLI/22/, LNPS/21/, LNCFL/23/
       DATA LH/2/
 C
 C     Load problem constants into IPAR, RPAR, and set initial values
@@ -65,7 +72,6 @@ C     Set other input arguments.
       NEQ = 2*MX*MY
       T = 0.0D0
       METH = 2
-      ITMETH = 2
       IATOL = 1
       ATOL = RTOL * FLOOR
       ITASK = 1
@@ -74,6 +80,7 @@ C
  10   FORMAT('Krylov example problem:'//
      &       ' Kinetics-transport, NEQ = ', I4/)
 C
+C     Initialize vector specification
       CALL FNVINITS(1, NEQ, IER)
       IF (IER .NE. 0) THEN
         WRITE(6,20) IER
@@ -81,24 +88,40 @@ C
         STOP
       ENDIF
 C
+C     Initialize SPGMR linear solver module
+      call FSUNSPGMRINIT(1, JPRETYPE, MAXL, IER)
+      IF (IER .NE. 0) THEN
+        WRITE(6,25) IER
+ 25     FORMAT(///' SUNDIALS_ERROR: FSUNSPGMRINIT IER = ', I5)
+        STOP
+      ENDIF
+      call FSUNSPGMRSETGSTYPE(1, IGSTYPE, IER)
+      IF (IER .NE. 0) THEN
+        WRITE(6,27) IER
+ 27     FORMAT(///' SUNDIALS_ERROR: FSUNSPGMRSETGSTYPE IER = ', I5)
+        STOP
+      ENDIF
+C     
 C     Initialize CVODE
-      CALL FCVMALLOC(T, U, METH, ITMETH, IATOL, RTOL, ATOL,
+      CALL FCVMALLOC(T, U, METH, IATOL, RTOL, ATOL,
      &     IOUT, ROUT, IPAR, RPAR, IER)
       IF (IER .NE. 0) THEN
         WRITE(6,30) IER
  30     FORMAT(///' SUNDIALS_ERROR: FCVMALLOC returned IER = ', I5)
         STOP
-        ENDIF
+      ENDIF
 C
-      CALL FCVSPGMR(JPRETYPE, IGSTYPE, MAXL, DELT, IER)
+C     attach linear solver module to CVLs interface
+      CALL FCVLSINIT(IER)
       IF (IER .NE. 0) THEN
         WRITE(6,40) IER
- 40     FORMAT(///' SUNDIALS_ERROR: FCVSPGMR returned IER = ', I5)
+ 40     FORMAT(///' SUNDIALS_ERROR: FCVLSINIT returned IER = ',I5)
         CALL FCVFREE
         STOP
       ENDIF
-C
-      CALL FCVSPILSSETPREC(1, IER)
+C     
+C     attach preconditioner to CVLs interface
+      CALL FCVLSSETPREC(1, IER)
 C
 C Loop over output points, call FCVODE, print sample solution values.
       TOUT = TWOHR
@@ -117,7 +140,7 @@ C
          IF (IER .NE. 0) THEN
             WRITE(6,60) IER, IOUT(15)
  60         FORMAT(///' SUNDIALS_ERROR: FCVODE returned IER = ', I5, /,
-     &           '                 Linear Solver returned IER = ', I5)
+     &             '                 Linear Solver returned IER = ', I5)
             CALL FCVFREE
             STOP
          ENDIF
@@ -165,12 +188,12 @@ C     Routine to set problem constants and initial values
 C
       IMPLICIT NONE
 C
-      INTEGER MX, MY
+      INTEGER*4 MX, MY
 C The following declaration specification should match C type long int.
       INTEGER*8 IPAR(*)
       DOUBLE PRECISION RPAR(*)
 C
-      INTEGER MM, JY, JX, P_IPP, P_BD, P_P
+      INTEGER*4 MM, JY, JX, P_IPP, P_BD, P_P
       DOUBLE PRECISION U0
       DIMENSION U0(2,MX,MY)
       DOUBLE PRECISION Q1, Q2, Q3, Q4, A3, A4, OM, C3, DY, HDCO
@@ -225,18 +248,18 @@ C
 C
 C     Set initial profiles.
       DO JY = 1, MY
-         Y = 30.0D0 + (JY - 1.0D0) * DY
-         CY = (0.1D0 * (Y - 40.0D0))**2
-         CY = 1.0D0 - CY + 0.5D0 * CY**2
-         DO JX = 1, MX
-            X = (JX - 1.0D0) * DX
-            CX = (0.1D0 * (X - 10.0D0))**2
-            CX = 1.0D0 - CX + 0.5D0 * CX**2
-            U0(1,JX,JY) = 1.0D6 * CX * CY
-            U0(2,JX,JY) = 1.0D12 * CX * CY
+        Y = 30.0D0 + (JY - 1.0D0) * DY
+        CY = (0.1D0 * (Y - 40.0D0))**2
+        CY = 1.0D0 - CY + 0.5D0 * CY**2
+        DO JX = 1, MX
+          X = (JX - 1.0D0) * DX
+          CX = (0.1D0 * (X - 10.0D0))**2
+          CX = 1.0D0 - CX + 0.5D0 * CX**2
+          U0(1,JX,JY) = 1.0D6 * CX * CY
+          U0(2,JX,JY) = 1.0D12 * CX * CY
          ENDDO
       ENDDO
-C     
+C
       RETURN
       END
 
@@ -250,10 +273,10 @@ C
       DOUBLE PRECISION T, U(2,*), UDOT(2,*), RPAR(*)
 C The following declaration specification should match C type long int.
       INTEGER*8 IPAR(*)
-      INTEGER IER
+      INTEGER*4 IER
 C
-      INTEGER ILEFT, IRIGHT
-      INTEGER JX, JY, MX, MY, MM, IBLOK0, IBLOK, IDN, IUP
+      INTEGER*4 ILEFT, IRIGHT
+      INTEGER*4 JX, JY, MX, MY, MM, IBLOK0, IBLOK, IDN, IUP
       DOUBLE PRECISION Q1, Q2, Q3, Q4, A3, A4, OM, C3, DY, HDCO
       DOUBLE PRECISION VDCO, HACO
       DOUBLE PRECISION C1, C2, C1DN, C2DN, C1UP, C2UP, C1LT, C2LT
@@ -347,19 +370,19 @@ C
 C     ----------------------------------------------------------------
 
       SUBROUTINE FCVPSET(T, U, FU, JOK, JCUR, GAMMA, H,
-     &                   IPAR, RPAR, V1, V2, V3, IER)
+     &                   IPAR, RPAR, IER)
 C     Routine to set and preprocess block-diagonal preconditioner.
 C     Note: The dimensions in /BDJ/ below assume at most 100 mesh points.
 C
       IMPLICIT NONE
 C
-      INTEGER IER, JOK, JCUR
+      INTEGER*4 IER, JOK, JCUR
       DOUBLE PRECISION T, U(2,*), FU(*), GAMMA, H
 C The following declaration specification should match C type long int.
       INTEGER*8 IPAR(*)
-      DOUBLE PRECISION RPAR(*), V1(*), V2(*), V3(*)
+      DOUBLE PRECISION RPAR(*)
 C
-      INTEGER MX, MY, MM, P_IPP, P_BD, P_P
+      INTEGER*4 MX, MY, MM, P_IPP, P_BD, P_P
       DOUBLE PRECISION Q1, Q2, Q3, Q4, C3, DY, HDCO, VDCO
 C
       IER = 0
@@ -411,19 +434,18 @@ C
 C     ----------------------------------------------------------------
       
       SUBROUTINE FCVPSOL(T, U, FU, R, Z, GAMMA, DELTA, LR,
-     &                   IPAR, RPAR, VTEMP, IER)
+     &                   IPAR, RPAR, IER)
 C     Routine to solve preconditioner linear system.
 C
       IMPLICIT NONE
 C
-      INTEGER IER, LR
+      INTEGER*4 IER, LR
 C The following declaration specification should match C type long int.
       INTEGER*8 IPAR(*)
       DOUBLE PRECISION T, U(*), FU(*), R(*), Z(2,*)
       DOUBLE PRECISION GAMMA, DELTA, RPAR(*)
-      DOUBLE PRECISION VTEMP(*)
 C
-      INTEGER MM, P_IPP, P_P
+      INTEGER*4 MM, P_IPP, P_P
 C
       IER = 0
 C
@@ -452,11 +474,11 @@ C     Routine to compute diagonal Jacobian blocks
 C
       IMPLICIT NONE
 C
-      INTEGER MX, MY, MM
+      INTEGER*4 MX, MY, MM
       DOUBLE PRECISION U(2,*), BD(2,2,MM)
       DOUBLE PRECISION Q1, Q2, Q3, Q4, C3, DY, HDCO, VDCO
 C
-      INTEGER JY, JX, IBLOK, IBLOK0
+      INTEGER*4 JY, JX, IBLOK, IBLOK0
       DOUBLE PRECISION C1, C2, CYDN, CYUP, DIAG, YDN, YUP
 C
       DO JY = 1, MY
@@ -487,12 +509,12 @@ C     Routine to perform LU decomposition on (P+I)
 C
       IMPLICIT NONE
 C
-      INTEGER IER
-      INTEGER MM
+      INTEGER*4 IER
+      INTEGER*4 MM
       INTEGER*8 IPP(2,MM)
       DOUBLE PRECISION P(2,2,MM)
 C
-      INTEGER I
+      INTEGER*4 I
 C
 C     Add identity matrix and do LU decompositions on blocks, in place.
       DO I = 1, MM
@@ -512,11 +534,11 @@ C     Routine for backsolve
 C
       IMPLICIT NONE
 C
-      INTEGER MM
+      INTEGER*4 MM
       INTEGER*8 IPP(2,MM)
       DOUBLE PRECISION P(2,2,MM), Z(2,MM)
 C      
-      INTEGER I
+      INTEGER*4 I
 C
       DO I = 1, MM
          CALL DGESL(P(1,1,I), 2, 2, IPP(1,I), Z(1,I), 0)

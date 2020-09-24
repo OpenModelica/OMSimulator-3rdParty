@@ -1,10 +1,16 @@
-/*
- * -----------------------------------------------------------------
- * $Revision:  $
- * $Date:  $
- * -----------------------------------------------------------------
+/* -----------------------------------------------------------------
  * Programmer(s): Ting Yan @ SMU
  *      Based on kinFoodWeb_kry.c and parallelized with OpenMP
+ * -----------------------------------------------------------------
+ * SUNDIALS Copyright Start
+ * Copyright (c) 2002-2020, Lawrence Livermore National Security
+ * and Southern Methodist University.
+ * All rights reserved.
+ *
+ * See the top-level LICENSE and NOTICE files for details.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SUNDIALS Copyright End
  * -----------------------------------------------------------------
  * Example (serial):
  *
@@ -13,10 +19,10 @@
  * population model, with predator-prey interaction and diffusion
  * on the unit square in two dimensions. The dependent variable
  * vector is the following:
- * 
+ *
  *       1   2         ns
  * c = (c , c ,  ..., c  )     (denoted by the variable cc)
- * 
+ *
  * and the PDE's are as follows:
  *
  *                    i       i
@@ -51,9 +57,9 @@
  *
  * The PDEs are discretized by central differencing on an MX by
  * MY mesh.
- * 
+ *
  * The nonlinear system is solved by KINSOL using the method
- * specified in local variable globalstrat.
+ * specified in the local variable globalstrat.
  *
  * The preconditioner matrix is a block-diagonal matrix based on
  * the partial derivatives of the interaction terms f only.
@@ -61,19 +67,19 @@
  * Constraints are imposed to make all components of the solution
  * positive.
  *
- * Optionally, we can set the number of threads from environment 
- * variable or command line. To check the current value for number
- * of threads from environment:
+ * Optionally, we can set the number of threads with an environment
+ * variable or from the command line. To check the current value
+ * for number of threads set by the environment variable:
  *      % echo $OMP_NUM_THREADS
  *
  * Execution:
  *
- * If the user want to use the default value or the number of threads 
- * from environment value:
- *      % ./kinFoodWeb_kry_omp 
- * If the user want to specify the number of threads to use
+ * If the user wants to use the default value or the number of
+ * threads set by the environment variable use
+ *      % ./kinFoodWeb_kry_omp
+ * If the user wants to specify the number of threads to use
  *      % ./kinFoodWeb_kry_omp num_threads
- * where num_threads is the number of threads the user want to use 
+ * where num_threads is the number of threads the user wants to use
  *
  * -----------------------------------------------------------------
  * References:
@@ -96,23 +102,28 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <kinsol/kinsol.h>
-#include <kinsol/kinsol_spgmr.h>
-#include <nvector/nvector_openmp.h>
-#include <sundials/sundials_dense.h>
-#include <sundials/sundials_types.h>
-#include <sundials/sundials_math.h>
+#include <kinsol/kinsol.h>             /* access to KINSOL func., consts.      */
+#include <nvector/nvector_openmp.h>    /* access to OpenMP N_Vector            */
+#include <sunlinsol/sunlinsol_spgmr.h> /* access to SPGMR SUNLinearSolver      */
+#include <sundials/sundials_dense.h>   /* use generic dense solver in precond. */
+#include <sundials/sundials_types.h>   /* defs. of realtype, sunindextype      */
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+/* helpful macros */
+
+#ifndef MAX
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
+#endif
+
 /* Problem Constants */
 
 #define NUM_SPECIES     6  /* must equal 2*(number of prey or predators)
-                              number of prey = number of predators       */ 
+                              number of prey = number of predators       */
 
-#define PI       RCONST(3.1415926535898)   /* pi */ 
+#define PI       RCONST(3.1415926535898)   /* pi */
 
 #define MX          8              /* MX = number of x mesh points */
 #define MY          8              /* MY = number of y mesh points */
@@ -130,7 +141,7 @@
 #define FTOL        RCONST(1.e-7)  /* ftol tolerance */
 #define STOL        RCONST(1.e-13) /* stol tolerance */
 #define THOUSAND    RCONST(1000.0) /* one thousand */
-#define ZERO        RCONST(0.)     /* 0. */
+#define ZERO        RCONST(0.0)    /* 0. */
 #define ONE         RCONST(1.0)    /* 1. */
 #define TWO         RCONST(2.0)    /* 2. */
 #define PREYIN      RCONST(1.0)    /* initial guess for prey concentrations. */
@@ -140,23 +151,23 @@
 
 /* IJ_Vptr is defined in order to translate from the underlying 3D structure
    of the dependent variable vector to the 1D storage scheme for an N-vector.
-   IJ_Vptr(vv,i,j) returns a pointer to the location in vv corresponding to 
+   IJ_Vptr(vv,i,j) returns a pointer to the location in vv corresponding to
    indices is = 0, jx = i, jy = j.    */
 
 #define IJ_Vptr(vv,i,j)   (&NV_Ith_OMP(vv, i*NUM_SPECIES + j*NSMX))
 
-/* Type : UserData 
+/* Type : UserData
    contains preconditioner blocks, pivot arrays, and problem constants */
 
 typedef struct {
   realtype **P[MX][MY];
-  long int *pivot[MX][MY];
+  sunindextype *pivot[MX][MY];
   realtype **acoef, *bcoef;
   N_Vector rates;
   realtype *cox, *coy;
   realtype ax, ay, dx, dy;
   realtype uround, sqruround;
-  long int mx, my, ns, np;
+  sunindextype mx, my, ns, np;
   int nthreads;
 } *UserData;
 
@@ -166,13 +177,11 @@ static int func(N_Vector cc, N_Vector fval, void *user_data);
 
 static int PrecSetupBD(N_Vector cc, N_Vector cscale,
                        N_Vector fval, N_Vector fscale,
-                       void *user_data,
-                       N_Vector vtemp1, N_Vector vtemp2);
+                       void *user_data);
 
-static int PrecSolveBD(N_Vector cc, N_Vector cscale, 
-                       N_Vector fval, N_Vector fscale, 
-                       N_Vector vv, void *user_data,
-                       N_Vector ftem);
+static int PrecSolveBD(N_Vector cc, N_Vector cscale,
+                       N_Vector fval, N_Vector fscale,
+                       N_Vector vv, void *user_data);
 
 /* Private Helper Functions */
 
@@ -180,14 +189,14 @@ static UserData AllocUserData(void);
 static void InitUserData(UserData data);
 static void FreeUserData(UserData data);
 static void SetInitialProfiles(N_Vector cc, N_Vector sc);
-static void PrintHeader(int globalstrategy, int maxl, int maxlrst, 
+static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
                         realtype fnormtol, realtype scsteptol);
 static void PrintOutput(N_Vector cc);
 static void PrintFinalStats(void *kmem);
-static void WebRate(realtype xx, realtype yy, realtype *cxy, realtype *ratesxy, 
+static void WebRate(realtype xx, realtype yy, realtype *cxy, realtype *ratesxy,
                     void *user_data);
-static realtype DotProd(long int size, realtype *x1, realtype *x2);
-static int check_flag(void *flagvalue, char *funcname, int opt);
+static realtype DotProd(sunindextype size, realtype *x1, realtype *x2);
+static int check_flag(void *flagvalue, const char *funcname, int opt);
 
 /*
  *--------------------------------------------------------------------
@@ -203,13 +212,15 @@ int main(int argc, char *argv[])
   UserData data;
   int flag, maxl, maxlrst;
   void *kmem;
+  SUNLinearSolver LS;
   int num_threads;
 
   cc = sc = constraints = NULL;
   kmem = NULL;
+  LS = NULL;
   data = NULL;
 
-  /* Allocate memory, and set problem data, initial values, tolerances */ 
+  /* Allocate memory, and set problem data, initial values, tolerances */
   globalstrategy = KIN_NONE;
 
   /* Set the number of threads to use */
@@ -218,7 +229,7 @@ int main(int argc, char *argv[])
   num_threads = omp_get_max_threads();    /* Overwrite with OMP_NUM_THREADS environment variable */
 #endif
   if (argc > 1)        /* overwrithe with command line value, if supplied */
-    num_threads = strtol(argv[1], NULL, 0);
+    num_threads = (int) strtol(argv[1], NULL, 0);
 
   data = AllocUserData();
   if (check_flag((void *)data, "AllocUserData", 2)) return(1);
@@ -261,21 +272,27 @@ int main(int argc, char *argv[])
 
   /* We no longer need the constraints vector since KINSetConstraints
      creates a private copy for KINSOL to use. */
-  N_VDestroy_OpenMP(constraints);
+  N_VDestroy(constraints);
 
-  /* Call KINSpgmr to specify the linear solver KINSPGMR with preconditioner
-     routines PrecSetupBD and PrecSolveBD. */
-  maxl = 15; 
+
+  /* Create SUNLinSol_SPGMR object with right preconditioning and the
+     maximum Krylov dimension maxl */
+  maxl = 15;
+  LS = SUNLinSol_SPGMR(cc, PREC_RIGHT, maxl);
+  if(check_flag((void *)LS, "SUNLinSol_SPGMR", 0)) return(1);
+
+  /* Attach the linear solver to KINSOL */
+  flag = KINSetLinearSolver(kmem, LS, NULL);
+  if (check_flag(&flag, "KINSetLinearSolver", 1)) return 1;
+
+  /* Set the maximum number of restarts */
   maxlrst = 2;
-  flag = KINSpgmr(kmem, maxl);
-  if (check_flag(&flag, "KINSpgmr", 1)) return(1);
+  flag = SUNLinSol_SPGMRSetMaxRestarts(LS, maxlrst);
+  if (check_flag(&flag, "SUNLinSol_SPGMRSetMaxRestarts", 1)) return(1);
 
-  flag = KINSpilsSetMaxRestarts(kmem, maxlrst);
-  if (check_flag(&flag, "KINSpilsSetMaxRestarts", 1)) return(1);
-  flag = KINSpilsSetPreconditioner(kmem,
-				   PrecSetupBD,
-				   PrecSolveBD);
-  if (check_flag(&flag, "KINSpilsSetPreconditioner", 1)) return(1);
+  /* Specify the preconditioner setup and solve routines */
+  flag = KINSetPreconditioner(kmem, PrecSetupBD, PrecSolveBD);
+  if (check_flag(&flag, "KINSetPreconditioner", 1)) return(1);
 
   /* Print out the problem size, solution parameters, initial guess. */
   PrintHeader(globalstrategy, maxl, maxlrst, fnormtol, scsteptol);
@@ -284,20 +301,21 @@ int main(int argc, char *argv[])
   flag = KINSol(kmem,           /* KINSol memory block */
                 cc,             /* initial guess on input; solution vector */
                 globalstrategy, /* global strategy choice */
-                sc,             /* scaling vector, for the variable cc */
+                sc,             /* scaling vector for the variable cc */
                 sc);            /* scaling vector for function values fval */
   if (check_flag(&flag, "KINSol", 1)) return(1);
 
   printf("\n\nComputed equilibrium species concentrations:\n");
   PrintOutput(cc);
 
-  /* Print final statistics and free memory */  
+  /* Print final statistics and free memory */
   PrintFinalStats(kmem);
   printf("num_threads = %i\n", num_threads);
 
-  N_VDestroy_OpenMP(cc);
-  N_VDestroy_OpenMP(sc);
+  N_VDestroy(cc);
+  N_VDestroy(sc);
   KINFree(&kmem);
+  SUNLinSolFree(LS);
   FreeUserData(data);
 
   return(0);
@@ -316,29 +334,29 @@ int main(int argc, char *argv[])
  *--------------------------------------------------------------------
  */
 
-/* 
- * System function for predator-prey system 
+/*
+ * System function for predator-prey system
  */
 
 static int func(N_Vector cc, N_Vector fval, void *user_data)
 {
   realtype xx, yy, delx, dely, *cxy, *rxy, *fxy, dcyli, dcyui, dcxli, dcxri;
-  long int jx, jy, is, idyu, idyl, idxr, idxl;
+  sunindextype jx, jy, is, idyu, idyl, idxr, idxl;
   UserData data;
-  
+
   data = (UserData)user_data;
   delx = data->dx;
   dely = data->dy;
-  
+
   /* Loop over all mesh points, evaluating rate array at each point*/
   for (jy = 0; jy < MY; jy++) {
-    
+
     yy = dely*jy;
 
     /* Set lower/upper index shifts, special at boundaries. */
     idyl = (jy != 0   ) ? NSMX : -NSMX;
     idyu = (jy != MY-1) ? NSMX : -NSMX;
-    
+
     for (jx = 0; jx < MX; jx++) {
 
       xx = delx*jx;
@@ -355,117 +373,118 @@ static int func(N_Vector cc, N_Vector fval, void *user_data)
       WebRate(xx, yy, cxy, rxy, user_data);
 
       for(is = 0; is < NUM_SPECIES; is++) {
-        
+
         /* Differencing in x direction */
         dcyli = *(cxy+is) - *(cxy - idyl + is) ;
         dcyui = *(cxy + idyu + is) - *(cxy+is);
-        
+
         /* Differencing in y direction */
         dcxli = *(cxy+is) - *(cxy - idxl + is);
         dcxri = *(cxy + idxr +is) - *(cxy+is);
-        
+
         /* Compute the total rate value at (xx,yy) */
         fxy[is] = (coy)[is] * (dcyui - dcyli) +
           (cox)[is] * (dcxri - dcxli) + rxy[is];
-        
+
       } /* end of is loop */
-      
+
     } /* end of jx loop */
-    
+
   } /* end of jy loop */
 
   return(0);
 }
 
 /*
- * Preconditioner setup routine. Generate and preprocess P. 
+ * Preconditioner setup routine. Generate and preprocess P.
  */
 
 static int PrecSetupBD(N_Vector cc, N_Vector cscale,
                        N_Vector fval, N_Vector fscale,
-                       void *user_data,
-                       N_Vector vtemp1, N_Vector vtemp2)
+                       void *user_data)
 {
   realtype r, r0, uround, sqruround, xx, yy, delx, dely, csave, fac;
   realtype *cxy, *scxy, **Pxy, *ratesxy, *Pxycol, perturb_rates[NUM_SPECIES];
-  long int i, j, jx, jy, ret;
+  sunindextype i, j, jx, jy, ret;
   UserData data;
-  
+
+  i = j = jx = jy = ret = 0;
+
   data = (UserData) user_data;
   delx = data->dx;
   dely = data->dy;
-  
+
   uround = data->uround;
   sqruround = data->sqruround;
   fac = N_VWL2Norm(fval, fscale);
   r0 = THOUSAND * uround * fac * NEQ;
   if(r0 == ZERO) r0 = ONE;
-  
+
   /* Loop over spatial points; get size NUM_SPECIES Jacobian block at each */
   for (jy = 0; jy < MY; jy++) {
     yy = jy*dely;
-    
+
     for (jx = 0; jx < MX; jx++) {
       xx = jx*delx;
       Pxy = (data->P)[jx][jy];
       cxy = IJ_Vptr(cc,jx,jy);
       scxy= IJ_Vptr(cscale,jx,jy);
       ratesxy = IJ_Vptr((data->rates),jx,jy);
-      
+
       /* Compute difference quotients of interaction rate fn. */
       for (j = 0; j < NUM_SPECIES; j++) {
-        
+
         csave = cxy[j];  /* Save the j,jx,jy element of cc */
-        r = SUNMAX(sqruround*SUNRabs(csave), r0/scxy[j]);
+        r = MAX(sqruround*fabs(csave), r0/scxy[j]);
         cxy[j] += r; /* Perturb the j,jx,jy element of cc */
         fac = ONE/r;
-        
+
         WebRate(xx, yy, cxy, perturb_rates, data);
-        
+
         /* Restore j,jx,jy element of cc */
         cxy[j] = csave;
-        
+
         /* Load the j-th column of difference quotients */
         Pxycol = Pxy[j];
-	
+
 #pragma omp parallel for default(shared) private(i)
         for (i = 0; i < NUM_SPECIES; i++)
           Pxycol[i] = (perturb_rates[i] - ratesxy[i]) * fac;
-        
-        
+
       } /* end of j loop */
-      
+
       /* Do LU decomposition of size NUM_SPECIES preconditioner block */
       ret = denseGETRF(Pxy, NUM_SPECIES, NUM_SPECIES, (data->pivot)[jx][jy]);
       if (ret != 0) return(1);
-      
+
     } /* end of jx loop */
-    
+
   } /* end of jy loop */
-  
-  return(0);  
+
+  return(0);
 }
 
 /*
- * Preconditioner solve routine 
+ * Preconditioner solve routine
  */
 
-static int PrecSolveBD(N_Vector cc, N_Vector cscale, 
-                       N_Vector fval, N_Vector fscale, 
-                       N_Vector vv, void *user_data,
-                       N_Vector ftem)
+static int PrecSolveBD(N_Vector cc, N_Vector cscale,
+                       N_Vector fval, N_Vector fscale,
+                       N_Vector vv, void *user_data)
 {
   realtype **Pxy, *vxy;
-  long int *piv, jx, jy;
+  sunindextype *piv, jx, jy;
   UserData data;
-  
+
+  jx = jy = 0;
+
   data = (UserData)user_data;
-  
-#pragma omp parallel for collapse(2) default(shared) private(jx, jy, Pxy, piv, vxy) schedule(static) 
+
+#pragma omp parallel for collapse(2) default(shared) private(jx, jy, Pxy, piv, vxy) schedule(static)
   for (jx=0; jx<MX; jx++) {
-    
+
     for (jy=0; jy<MY; jy++) {
-      
+
       /* For each (jx,jy), solve a linear system of size NUM_SPECIES.
          vxy is the address of the corresponding portion of the vector vv;
          Pxy is the address of the corresponding block of the matrix P;
@@ -474,50 +493,50 @@ static int PrecSolveBD(N_Vector cc, N_Vector cscale,
       Pxy = (data->P)[jx][jy];
       piv = (data->pivot)[jx][jy];
       denseGETRS(Pxy, NUM_SPECIES, piv, vxy);
-      
+
     } /* end of jy loop */
-    
+
   } /* end of jx loop */
-  
+
   return(0);
 }
 
 /*
- * Interaction rate function routine 
+ * Interaction rate function routine
  */
 
-static void WebRate(realtype xx, realtype yy, realtype *cxy, realtype *ratesxy, 
+static void WebRate(realtype xx, realtype yy, realtype *cxy, realtype *ratesxy,
                     void *user_data)
 {
-  long int i;
+  sunindextype i;
   realtype fac;
   UserData data;
-  
+
   data = (UserData)user_data;
-  
+
   for (i = 0; i<NUM_SPECIES; i++)
     ratesxy[i] = DotProd(NUM_SPECIES, cxy, acoef[i]);
-  
+
   fac = ONE + ALPHA * xx * yy;
-  
-#pragma omp parallel for default(shared) private(i) 
+
+#pragma omp parallel for default(shared) private(i)
   for (i = 0; i < NUM_SPECIES; i++)
-    ratesxy[i] = cxy[i] * ( bcoef[i] * fac + ratesxy[i] );  
+    ratesxy[i] = cxy[i] * ( bcoef[i] * fac + ratesxy[i] );
 }
 
 /*
- * Dot product routine for realtype arrays 
+ * Dot product routine for realtype arrays
  */
 
-static realtype DotProd(long int size, realtype *x1, realtype *x2)
+static realtype DotProd(sunindextype size, realtype *x1, realtype *x2)
 {
-  long int i;
+  sunindextype i;
   realtype *xx1, *xx2, temp = ZERO;
-  
+
   xx1 = x1; xx2 = x2;
   for (i = 0; i < size; i++) temp += (*xx1++) * (*xx2++);
 
-  return(temp);  
+  return(temp);
 }
 
 /*
@@ -527,7 +546,7 @@ static realtype DotProd(long int size, realtype *x1, realtype *x2)
  */
 
 /*
- * Allocate memory for data structure of type UserData 
+ * Allocate memory for data structure of type UserData
  */
 
 static UserData AllocUserData(void)
@@ -536,28 +555,29 @@ static UserData AllocUserData(void)
   UserData data;
 
   data = (UserData) malloc(sizeof *data);
-  
+
   for (jx=0; jx < MX; jx++) {
     for (jy=0; jy < MY; jy++) {
       (data->P)[jx][jy] = newDenseMat(NUM_SPECIES, NUM_SPECIES);
-      (data->pivot)[jx][jy] = newLintArray(NUM_SPECIES);
+      (data->pivot)[jx][jy] = newIndexArray(NUM_SPECIES);
     }
   }
+
   acoef = newDenseMat(NUM_SPECIES, NUM_SPECIES);
   bcoef = (realtype *)malloc(NUM_SPECIES * sizeof(realtype));
   cox   = (realtype *)malloc(NUM_SPECIES * sizeof(realtype));
   coy   = (realtype *)malloc(NUM_SPECIES * sizeof(realtype));
-  
+
   return(data);
 }
 
-/* 
- * Load problem constants in data 
+/*
+ * Load problem constants in data
  */
 
 static void InitUserData(UserData data)
 {
-  long int i, j, np;
+  sunindextype i, j, np;
   realtype *a1,*a2, *a3, *a4, dx2, dy2;
 
   data->mx = MX;
@@ -569,7 +589,7 @@ static void InitUserData(UserData data)
   data->dx = (data->ax)/(MX-1);
   data->dy = (data->ay)/(MY-1);
   data->uround = UNIT_ROUNDOFF;
-  data->sqruround = SUNRsqrt(data->uround);
+  data->sqruround = sqrt(data->uround);
 
   /* Set up the coefficients a and b plus others found in the equations */
   np = data->np;
@@ -602,34 +622,34 @@ static void InitUserData(UserData data)
 
     coy[i]=DPREY/dy2;
     coy[i+np]=DPRED/dy2;
-  }  
+  }
 }
 
-/* 
- * Free data memory 
+/*
+ * Free data memory
  */
 
 static void FreeUserData(UserData data)
 {
   int jx, jy;
-  
+
   for (jx=0; jx < MX; jx++) {
     for (jy=0; jy < MY; jy++) {
       destroyMat((data->P)[jx][jy]);
       destroyArray((data->pivot)[jx][jy]);
     }
   }
-  
+
   destroyMat(acoef);
   free(bcoef);
   free(cox);
   free(coy);
-  N_VDestroy_OpenMP(data->rates);
+  N_VDestroy(data->rates);
   free(data);
 }
 
-/* 
- * Set initial conditions in cc 
+/*
+ * Set initial conditions in cc
  */
 
 static void SetInitialProfiles(N_Vector cc, N_Vector sc)
@@ -637,7 +657,7 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   int i, jx, jy;
   realtype *cloc, *sloc;
   realtype  ctemp[NUM_SPECIES], stemp[NUM_SPECIES];
-  
+
   /* Initialize arrays ctemp and stemp used in the loading process */
   for (i = 0; i < NUM_SPECIES/2; i++) {
     ctemp[i] = PREYIN;
@@ -661,11 +681,11 @@ static void SetInitialProfiles(N_Vector cc, N_Vector sc)
   }
 }
 
-/* 
+/*
  * Print first lines of output (problem description)
  */
 
-static void PrintHeader(int globalstrategy, int maxl, int maxlrst, 
+static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
                         realtype fnormtol, realtype scsteptol)
 {
   printf("\nPredator-prey test problem --  KINSol (OpenMP version)\n\n");
@@ -678,7 +698,7 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
          maxl, maxlrst);
   printf("Preconditioning uses interaction-only block-diagonal matrix\n");
   printf("Positivity constraints imposed on all components \n");
-#if defined(SUNDIALS_EXTENDED_PRECISION) 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
   printf("Tolerance parameters:  fnormtol = %Lg   scsteptol = %Lg\n",
          fnormtol, scsteptol);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
@@ -690,30 +710,30 @@ static void PrintHeader(int globalstrategy, int maxl, int maxlrst,
 #endif
 
   printf("\nInitial profile of concentration\n");
-#if defined(SUNDIALS_EXTENDED_PRECISION) 
-  printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n", 
+#if defined(SUNDIALS_EXTENDED_PRECISION)
+  printf("At all mesh points:  %Lg %Lg %Lg   %Lg %Lg %Lg\n",
          PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
 #elif defined(SUNDIALS_DOUBLE_PRECISION)
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", 
+  printf("At all mesh points:  %g %g %g   %g %g %g\n",
          PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
 #else
-  printf("At all mesh points:  %g %g %g   %g %g %g\n", 
+  printf("At all mesh points:  %g %g %g   %g %g %g\n",
          PREYIN, PREYIN, PREYIN,
          PREDIN, PREDIN, PREDIN);
 #endif
 }
 
-/* 
- * Print sampled values of current cc 
+/*
+ * Print sampled values of current cc
  */
 
 static void PrintOutput(N_Vector cc)
 {
   int is, jx, jy;
   realtype *ct;
-  
+
   jy = 0; jx = 0;
   ct = IJ_Vptr(cc,jx,jy);
   printf("\nAt bottom left:");
@@ -729,7 +749,7 @@ static void PrintOutput(N_Vector cc)
     printf(" %g",ct[is]);
 #endif
   }
-  
+
   jy = MY-1; jx = MX-1;
   ct = IJ_Vptr(cc,jx,jy);
   printf("\n\nAt top right:");
@@ -748,35 +768,35 @@ static void PrintOutput(N_Vector cc)
   printf("\n\n");
 }
 
-/* 
- * Print final statistics contained in iopt 
+/*
+ * Print final statistics contained in iopt
  */
 
 static void PrintFinalStats(void *kmem)
 {
   long int nni, nfe, nli, npe, nps, ncfl, nfeSG;
   int flag;
-  
+
   flag = KINGetNumNonlinSolvIters(kmem, &nni);
   check_flag(&flag, "KINGetNumNonlinSolvIters", 1);
   flag = KINGetNumFuncEvals(kmem, &nfe);
   check_flag(&flag, "KINGetNumFuncEvals", 1);
-  flag = KINSpilsGetNumLinIters(kmem, &nli);
-  check_flag(&flag, "KINSpilsGetNumLinIters", 1);
-  flag = KINSpilsGetNumPrecEvals(kmem, &npe);
-  check_flag(&flag, "KINSpilsGetNumPrecEvals", 1);
-  flag = KINSpilsGetNumPrecSolves(kmem, &nps);
-  check_flag(&flag, "KINSpilsGetNumPrecSolves", 1);
-  flag = KINSpilsGetNumConvFails(kmem, &ncfl);
-  check_flag(&flag, "KINSpilsGetNumConvFails", 1);
-  flag = KINSpilsGetNumFuncEvals(kmem, &nfeSG);
-  check_flag(&flag, "KINSpilsGetNumFuncEvals", 1);
+  flag = KINGetNumLinIters(kmem, &nli);
+  check_flag(&flag, "KINGetNumLinIters", 1);
+  flag = KINGetNumPrecEvals(kmem, &npe);
+  check_flag(&flag, "KINGetNumPrecEvals", 1);
+  flag = KINGetNumPrecSolves(kmem, &nps);
+  check_flag(&flag, "KINGetNumPrecSolves", 1);
+  flag = KINGetNumLinConvFails(kmem, &ncfl);
+  check_flag(&flag, "KINGetNumLinConvFails", 1);
+  flag = KINGetNumLinFuncEvals(kmem, &nfeSG);
+  check_flag(&flag, "KINGetNumLinFuncEvals", 1);
 
   printf("Final Statistics.. \n");
   printf("nni    = %5ld    nli   = %5ld\n", nni, nli);
   printf("nfe    = %5ld    nfeSG = %5ld\n", nfe, nfeSG);
   printf("nps    = %5ld    npe   = %5ld     ncfl  = %5ld\n", nps, npe, ncfl);
-  
+
 }
 
 /*
@@ -786,16 +806,16 @@ static void PrintFinalStats(void *kmem)
  *    opt == 1 means SUNDIALS function returns a flag so check if
  *             flag >= 0
  *    opt == 2 means function allocates memory so check if returned
- *             NULL pointer 
+ *             NULL pointer
  */
 
-static int check_flag(void *flagvalue, char *funcname, int opt)
+static int check_flag(void *flagvalue, const char *funcname, int opt)
 {
   int *errflag;
 
   /* Check if SUNDIALS function returned NULL pointer - no memory allocated */
   if (opt == 0 && flagvalue == NULL) {
-    fprintf(stderr, 
+    fprintf(stderr,
             "\nSUNDIALS_ERROR: %s() failed - returned NULL pointer\n\n",
 	    funcname);
     return(1);
@@ -808,7 +828,7 @@ static int check_flag(void *flagvalue, char *funcname, int opt)
       fprintf(stderr,
               "\nSUNDIALS_ERROR: %s() failed with flag = %d\n\n",
 	      funcname, *errflag);
-      return(1); 
+      return(1);
     }
   }
 

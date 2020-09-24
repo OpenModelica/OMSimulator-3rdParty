@@ -1,27 +1,25 @@
 # ---------------------------------------------------------------
-# $Revision: 4713 $
-# $Date: 2016-03-28 07:20:43 -0700 (Mon, 28 Mar 2016) $
+# Programmer(S): Slaven Peles @ LLNL, Jean Sexton @ SMU
+#                Eddy Banks @ LLNL
 # ---------------------------------------------------------------
-# Programmer:  Slaven Peles @ LLNL, Jean Sexton @ SMU
-#              Eddy Banks @ LLNL
-# ---------------------------------------------------------------
-# LLNS Copyright Start
-# Copyright (c) 2014, Lawrence Livermore National Security
-# This work was performed under the auspices of the U.S. Department 
-# of Energy by Lawrence Livermore National Laboratory in part under 
-# Contract W-7405-Eng-48 and in part under Contract DE-AC52-07NA27344.
-# Produced at the Lawrence Livermore National Laboratory.
+# SUNDIALS Copyright Start
+# Copyright (c) 2002-2020, Lawrence Livermore National Security
+# and Southern Methodist University.
 # All rights reserved.
-# For details, see the LICENSE file.
-# LLNS Copyright End
+#
+# See the top-level LICENSE and NOTICE files for details.
+#
+# SPDX-License-Identifier: BSD-3-Clause
+# SUNDIALS Copyright End
 # ---------------------------------------------------------------
 # Hypre tests for SUNDIALS CMake-based configuration.
-# 
+# ---------------------------------------------------------------
+
 ### This is only set if running GUI - simply return first time enabled
-IF(HYPRE_DISABLED)
-  SET(HYPRE_DISABLED FALSE CACHE INTERNAL "GUI - now enabled" FORCE)
-  RETURN()
-ENDIF()
+if(HYPRE_DISABLED)
+  set(HYPRE_DISABLED FALSE CACHE INTERNAL "GUI - now enabled" FORCE)
+  return()
+endif()
 
 set(HYPRE_FOUND FALSE)
 
@@ -36,13 +34,13 @@ if(HYPRE_LIBRARIES)
   # Create the HYPRETest directory
   set(HYPRETest_DIR ${PROJECT_BINARY_DIR}/HYPRETest)
   file(MAKE_DIRECTORY ${HYPRETest_DIR})
-  # Create a CMakeLists.txt file 
+  # Create a CMakeLists.txt file
   file(WRITE ${HYPRETest_DIR}/CMakeLists.txt
-    "CMAKE_MINIMUM_REQUIRED(VERSION 2.2)\n"
+    "CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)\n"
     "PROJECT(ltest C)\n"
     "SET(CMAKE_VERBOSE_MAKEFILE ON)\n"
     "SET(CMAKE_BUILD_TYPE \"${CMAKE_BUILD_TYPE}\")\n"
-    "SET(CMAKE_C_COMPILER ${MPI_MPICC})\n"
+    "SET(CMAKE_C_COMPILER ${MPI_C_COMPILER})\n"
     "SET(CMAKE_C_FLAGS \"${CMAKE_C_FLAGS}\")\n"
     "SET(CMAKE_C_FLAGS_RELEASE \"${CMAKE_C_FLAGS_RELEASE}\")\n"
     "SET(CMAKE_C_FLAGS_DEBUG \"${CMAKE_C_FLAGS_DEBUG}\")\n"
@@ -51,19 +49,23 @@ if(HYPRE_LIBRARIES)
     "SET(CMAKE_EXE_LINKER_FLAGS \"${LINK_MATH_LIB}\")\n"
     "INCLUDE_DIRECTORIES(${HYPRE_INCLUDE_DIR})\n"
     "ADD_EXECUTABLE(ltest ltest.c)\n"
-    "TARGET_LINK_LIBRARIES(ltest ${HYPRE_LIBRARIES})\n")    
+    "TARGET_LINK_LIBRARIES(ltest ${HYPRE_LIBRARIES})\n")
   # Create a C source file which calls a hypre function
   file(WRITE ${HYPRETest_DIR}/ltest.c
     "\#include \"HYPRE_parcsr_ls.h\"\n"
     "int main(){\n"
     "HYPRE_ParVector par_b;\n"
     "HYPRE_IJVector b;\n"
-    "return(0);\n"
+    "par_b = NULL;\n"
+    "b = NULL;\n"
+    "if (par_b != NULL || b != NULL) return(1);\n"
+    "else return(0);\n"
     "}\n")
+
   # Attempt to link the "ltest" executable
   try_compile(LTEST_OK ${HYPRETest_DIR} ${HYPRETest_DIR} ltest OUTPUT_VARIABLE MY_OUTPUT)
-      
-  # To ensure we do not use stuff from the previous attempts, 
+
+  # To ensure we do not use stuff from the previous attempts,
   # we must remove the CMakeFiles directory.
   file(REMOVE_RECURSE ${HYPRETest_DIR}/CMakeFiles)
   # Process test result
@@ -74,6 +76,6 @@ if(HYPRE_LIBRARIES)
     message(STATUS "Checking if HYPRE works... FAILED")
   endif(LTEST_OK)
 else(HYPRE_LIBRARIES)
-  PRINT_WARNING("HYPRE LIBRARIES NOT Found. Please check library path" "${HYPRE_LIBRARY_DIR} ")
+  print_warning("HYPRE LIBRARIES NOT Found. Please check library path" "${HYPRE_LIBRARY_DIR} ")
   message(STATUS "Looking for HYPRE LIBRARY... FAILED")
 endif(HYPRE_LIBRARIES)
