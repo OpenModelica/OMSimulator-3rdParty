@@ -434,18 +434,39 @@ int fmi2_xml_handle_ScalarVariable(fmi2_xml_parser_context_t *context, const cha
     return 0;
 }
 
-int fmi2_xml_get_has_start(fmi2_xml_parser_context_t *context, fmi2_xml_variable_t* variable) {
+int fmi2_xml_get_has_start(fmi2_xml_parser_context_t* context, fmi2_xml_variable_t* variable)
+{
     int hasStart = fmi2_xml_is_attr_defined(context, fmi_attr_id_start);
-    if(!hasStart)  {
-        if (variable->initial != (char)fmi2_initial_enu_calculated) {
-            fmi2_xml_parse_error(context,
-                    "Start attribute is required for this causality, variability and initial combination");
+    if (!hasStart)
+    {
+        /* FMI spec. 2.0.2, page 57
+         * If initial = "exact" or "approx" or causality = "input", a start value
+         * must be provided.
+         * Variables with causality = "parameter" or "input", as well as variables with
+         * variability = "constant", must have a start value.*/
+        if (variable->initial == (char)fmi2_initial_enu_exact ||
+            variable->initial == (char)fmi2_initial_enu_approx ||
+            variable->causality == (char)fmi2_causality_enu_input ||
+            variable->causality == (char)fmi2_causality_enu_parameter ||
+            variable->variability == (char)fmi2_variability_enu_continuous)
+        {
+            fmi2_xml_parse_error(context, "Variable '%s' must have a start attribute due to combination of causality, variability and initial", variable->name);
             hasStart = 1;
         }
-    } else {
-        /* If initial = calculated, it is not allowed to provide a start value. */
-        if(variable->initial == (char)fmi2_initial_enu_calculated) {
-            fmi2_xml_parse_error(context, "Start attribute is not allowed for variables with initial='calculated'");
+    }
+    else
+    {
+        /* FMI spec. 2.0.2, page 57
+         * If initial = "calculated" or causality = "independent", it is not allowed
+         * to provide a start value. */
+        if (variable->initial == (char)fmi2_initial_enu_calculated)
+        {
+            fmi2_xml_parse_error(context, "Variable '%s' must not have a start attribute due to initial='calculated'", variable->name);
+            hasStart = 0;
+        }
+        else if (variable->causality == (char)fmi2_causality_enu_independent)
+        {
+            fmi2_xml_parse_error(context, "Variable '%s' must not have a start attribute due to causality='independent'", variable->name);
             hasStart = 0;
         }
     }
