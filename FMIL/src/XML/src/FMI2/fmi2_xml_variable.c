@@ -448,7 +448,7 @@ int fmi2_xml_get_has_start(fmi2_xml_parser_context_t* context, fmi2_xml_variable
             variable->initial == (char)fmi2_initial_enu_approx ||
             variable->causality == (char)fmi2_causality_enu_input ||
             variable->causality == (char)fmi2_causality_enu_parameter ||
-            variable->variability == (char)fmi2_variability_enu_continuous)
+            variable->variability == (char)fmi2_variability_enu_constant)
         {
             fmi2_xml_parse_error(context, "Variable '%s' must have a start attribute due to combination of causality, variability and initial", variable->name);
             hasStart = 1;
