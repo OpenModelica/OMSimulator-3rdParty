@@ -10,9 +10,9 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 
 - https://www.lua.org/download.html [version 5.3.4]
 
-## zlib
+## zlib/minizip
 
-- https://zlib.net/ [version 1.2.11]
+- https://github.com/madler/zlib/tree/master/contrib/minizip [version 1.2.11]
 
 ## PugiXML
 
