@@ -522,7 +522,6 @@ int do_extract_onefile(uf,filename,opt_extract_without_path,opt_overwrite,passwo
     int opt_overwrite;
     const char* password;
 {
-    MINIZIP_PRINT("do_extract_onefile %s\n", filename);
     int err = UNZ_OK;
     if (unzLocateFile(uf,filename,CASESENSITIVITY)!=UNZ_OK)
     {
@@ -666,4 +665,119 @@ int miniunz(argc,argv)
     unzClose(uf);
 
     return ret_value;
+}
+
+void miniunz_free(const char *ptr)
+{
+    free(ptr);
+}
+
+const char* miniunz_onefile_to_memory(const char* archive, const char* filename)
+{
+    unzFile uf=NULL;
+    char filename_inzip[256];
+    int err=UNZ_OK;
+    char* buf = NULL;
+    char* file_content = NULL;
+    char* file_content_tmp = NULL;
+    uInt size_buf;
+    uInt size_file_content = 0;
+    unz_file_info64 file_info;
+
+    if (archive == NULL)
+        return NULL;
+
+#ifdef USEWIN32IOAPI
+    zlib_filefunc64_def ffunc;
+#endif
+
+#ifdef USEWIN32IOAPI
+    fill_win32_filefunc64A(&ffunc);
+    uf = unzOpen2_64(archive, &ffunc);
+#else
+    uf = unzOpen64(archive);
+#endif
+
+    if (uf==NULL)
+    {
+        MINIZIP_PRINT("Cannot open %s\n", archive);
+        return NULL;
+    }
+    MINIZIP_PRINT("%s opened\n", archive);
+
+    if (unzLocateFile(uf, filename, CASESENSITIVITY) != UNZ_OK)
+    {
+        MINIZIP_PRINT("file %s not found in the zipfile\n", filename);
+        return NULL;
+    }
+
+    err = unzGetCurrentFileInfo64(uf, &file_info, filename_inzip, sizeof(filename_inzip), NULL, 0, NULL, 0);
+
+    if (err != UNZ_OK)
+    {
+        MINIZIP_PRINT("error %d with zipfile in unzGetCurrentFileInfo\n",err);
+        return NULL;
+    }
+
+    size_buf = WRITEBUFFERSIZE;
+    buf = (void*)malloc(size_buf);
+    if (buf==NULL)
+    {
+        MINIZIP_PRINT("Error allocating memory\n");
+        return UNZ_INTERNALERROR;
+    }
+
+    err = unzOpenCurrentFilePassword(uf, NULL);
+    if (err != UNZ_OK)
+    {
+        MINIZIP_PRINT("error %d with zipfile in unzOpenCurrentFilePassword\n",err);
+    }
+
+    MINIZIP_PRINT(" extracting: %s\n", filename);
+
+    do
+    {
+        err = unzReadCurrentFile(uf, buf, size_buf);
+        if (err<0)
+        {
+            MINIZIP_PRINT("error %d with zipfile in unzReadCurrentFile\n", err);
+            break;
+        }
+        if (err>0)
+        {
+            MINIZIP_PRINT("read %d bytes\n", err);
+            if (file_content_tmp != NULL)
+                miniunz_free(file_content_tmp);
+            file_content_tmp = file_content;
+            file_content = (void*)malloc(size_file_content + err + 1);
+            if (file_content == NULL)
+            {
+                MINIZIP_PRINT("Error allocating memory\n");
+                err = UNZ_ERRNO;
+                break;
+            }
+            if (file_content_tmp != NULL)
+                memcpy(file_content, file_content_tmp, size_file_content);
+            memcpy(file_content+size_file_content, buf, err);
+            file_content[size_file_content+err] = 0;
+            size_file_content += err;
+        }
+    }
+    while (err>0);
+
+    if (file_content_tmp != NULL)
+        miniunz_free(file_content_tmp);
+
+    if (buf != NULL)
+        miniunz_free(buf);
+
+    err = unzCloseCurrentFile(uf);
+    if (err != UNZ_OK)
+    {
+        MINIZIP_PRINT("error %d with zipfile in unzCloseCurrentFile\n",err);
+    }
+
+    unzClose(uf);
+    return file_content;
+
 }
