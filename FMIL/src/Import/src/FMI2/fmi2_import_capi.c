@@ -44,11 +44,11 @@ jm_status_enu_t fmi2_import_create_dllfmu(fmi2_import_t* fmu, fmi2_fmu_kind_enu_
 
 	if(fmu -> capi) {
 		if(fmi2_capi_get_fmu_kind(fmu -> capi) == fmuKind) {
-			jm_log_warning(fmu->callbacks, module, "FMU binary is already loaded"); 
+			jm_log_warning(fmu->callbacks, module, "FMU binary is already loaded");
 			return jm_status_success;
 		}
 		else
-			fmi2_import_destroy_dllfmu(fmu);		
+			fmi2_import_destroy_dllfmu(fmu);
 	}
 
 	if(fmuKind == fmi2_fmu_kind_me)
@@ -103,10 +103,10 @@ jm_status_enu_t fmi2_import_create_dllfmu(fmi2_import_t* fmu, fmi2_fmu_kind_enu_
 
 	/* Load the DLL handle */
 	if (fmu -> capi) {
-		jm_log_info(fmu->callbacks, module, 
+		jm_log_info(fmu->callbacks, module,
 			"Loading '" FMI_PLATFORM "' binary with '%s' platform types", fmi2_get_types_platform() );
 
-		if(fmi2_capi_load_dll(fmu -> capi) == jm_status_error) {		
+		if(fmi2_capi_load_dll(fmu -> capi) == jm_status_error) {
 			fmi2_capi_destroy_dllfmu(fmu -> capi);
 			fmu -> capi = NULL;
 		}
@@ -126,12 +126,12 @@ jm_status_enu_t fmi2_import_create_dllfmu(fmi2_import_t* fmu, fmi2_fmu_kind_enu_
 
 	/* Load the DLL functions */
 	if (fmi2_capi_load_fcn(fmu -> capi, fmi2_xml_get_capabilities(fmu->md)) == jm_status_error) {
-		fmi2_capi_free_dll(fmu -> capi);			
+		fmi2_capi_free_dll(fmu -> capi);
 		fmi2_capi_destroy_dllfmu(fmu -> capi);
 		fmu -> capi = NULL;
 		return jm_status_error;
 	}
-	jm_log_verbose(fmu->callbacks, module, "Successfully loaded all the interface functions"); 
+	jm_log_verbose(fmu->callbacks, module, "Successfully loaded all the interface functions");
 
 	return jm_status_success;
 }
@@ -144,14 +144,14 @@ void fmi2_import_set_debug_mode(fmi2_import_t* fmu, int mode) {
 }
 
 void fmi2_import_destroy_dllfmu(fmi2_import_t* fmu) {
-	
+
 	if (fmu == NULL) {
 		return;
 	}
 
-	
+
 	if(fmu -> capi) {
-		jm_log_verbose(fmu->callbacks, module, "Releasing FMU CAPI interface"); 
+		jm_log_verbose(fmu->callbacks, module, "Releasing FMU CAPI interface");
 
 		/* Free DLL handle */
 		fmi2_capi_free_dll(fmu -> capi);
@@ -187,7 +187,7 @@ jm_status_enu_t fmi2_import_instantiate(fmi2_import_t* fmu,
     fmi2_string_t fmuGUID = fmi2_import_get_GUID(fmu);
     fmi2_boolean_t loggingOn = (fmu->callbacks->log_level > jm_log_level_nothing);
     fmi2_component_t c;
-    if(!fmuResourceLocation) 
+    if(!fmuResourceLocation)
         fmuResourceLocation = fmu->resourceLocation;
     c = fmi2_capi_instantiate(fmu -> capi, instanceName, fmuType, fmuGUID,
                               fmuResourceLocation, visible, loggingOn);
@@ -290,10 +290,10 @@ fmi2_status_t fmi2_import_de_serialize_fmu_state  (fmi2_import_t* fmu, const fmi
 	return fmi2_capi_de_serialize_fmu_state (fmu -> capi,data,sz,s);
 }
 
-fmi2_status_t fmi2_import_get_directional_derivative(fmi2_import_t* fmu, const fmi2_value_reference_t v_ref[], size_t nv,
-                                                                   const fmi2_value_reference_t z_ref[], size_t nz,
-                                                                   const fmi2_real_t dv[], fmi2_real_t dz[]){
-	return fmi2_capi_get_directional_derivative(fmu -> capi,v_ref, nv, z_ref, nz, dv, dz);
+fmi2_status_t fmi2_import_get_directional_derivative(fmi2_import_t* fmu, const fmi2_value_reference_t vUnknown_ref[], size_t nUnknown,
+                                                                   const fmi2_value_reference_t vKnown_ref[], size_t nKnown,
+                                                                   const fmi2_real_t dvKnown[], fmi2_real_t dvUnknown[]){
+	return fmi2_capi_get_directional_derivative(fmu -> capi, vUnknown_ref, nUnknown, vKnown_ref, nKnown, dvKnown, dvUnknown);
 }
 
 /* FMI 2.0 ME functions */
@@ -346,11 +346,11 @@ fmi2_status_t fmi2_import_get_nominals_of_continuous_states(fmi2_import_t* fmu, 
 fmi2_status_t fmi2_import_set_real_input_derivatives(fmi2_import_t* fmu, const fmi2_value_reference_t vr[], size_t nvr, const fmi2_integer_t order[], const  fmi2_real_t value[]) {
 	return fmi2_capi_set_real_input_derivatives(fmu -> capi, vr, nvr, order, value);
 }
-                                                  
+
 fmi2_status_t fmi2_import_get_real_output_derivatives(fmi2_import_t* fmu, const fmi2_value_reference_t vr[], size_t nvr, const fmi2_integer_t order[], fmi2_real_t value[]) {
 	return fmi2_capi_get_real_output_derivatives(fmu -> capi, vr, nvr, order, value);
 }
-                                              
+
 fmi2_status_t fmi2_import_cancel_step(fmi2_import_t* fmu) {
 	return fmi2_capi_cancel_step(fmu -> capi);
 }

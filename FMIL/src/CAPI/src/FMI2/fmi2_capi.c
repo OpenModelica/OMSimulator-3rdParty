@@ -462,10 +462,10 @@ fmi2_status_t fmi2_capi_de_serialize_fmu_state  (fmi2_capi_t* fmu, const fmi2_by
 	return fmu->fmi2DeSerializeFMUstate (fmu -> c,data,sz,s);
 }
 
-fmi2_status_t fmi2_capi_get_directional_derivative(fmi2_capi_t* fmu, const fmi2_value_reference_t v_ref[], size_t nv,
-                                                                   const fmi2_value_reference_t z_ref[], size_t nz,
-                                                                   const fmi2_real_t dv[], fmi2_real_t dz[]){
-	return fmu->fmi2GetDirectionalDerivative(fmu -> c, z_ref, nz, v_ref, nv, dv, dz);
+fmi2_status_t fmi2_capi_get_directional_derivative(fmi2_capi_t* fmu, const fmi2_value_reference_t vUnknown_ref[], size_t nUnknown,
+                                                                   const fmi2_value_reference_t vKnown_ref[], size_t nKnown,
+                                                                   const fmi2_real_t dvKnown[], fmi2_real_t dvUnknown[]){
+	return fmu->fmi2GetDirectionalDerivative(fmu -> c, vUnknown_ref, nUnknown, vKnown_ref, nKnown, dvKnown, dvUnknown);
 }
 
 
