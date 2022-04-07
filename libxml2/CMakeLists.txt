@@ -607,7 +607,7 @@ if(LIBXML2_WITH_PYTHON)
 		COMMAND
 		${Python_EXECUTABLE}
 		${CMAKE_CURRENT_SOURCE_DIR}/python/generator.py
-		${CMAKE_CURRENT_SOURCE_DIR}/doc/libxml2-api.xml
+		# ${CMAKE_CURRENT_SOURCE_DIR}/doc/libxml2-api.xml
 		${CMAKE_CURRENT_SOURCE_DIR}/python/libxml2-python-api.xml
 		WORKING_DIRECTORY
 		${CMAKE_CURRENT_BINARY_DIR}
@@ -653,9 +653,9 @@ if(LIBXML2_WITH_PYTHON)
 endif()
 
 install(FILES libxml.3 DESTINATION ${CMAKE_INSTALL_MANDIR}/man3 COMPONENT documentation)
-install(FILES doc/xmlcatalog.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT documentation)
-install(FILES doc/xmllint.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT documentation)
-install(DIRECTORY doc/ DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libxml2 COMPONENT documentation PATTERN Makefile.* EXCLUDE)
+# install(FILES doc/xmlcatalog.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT documentation)
+# install(FILES doc/xmllint.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 COMPONENT documentation)
+# install(DIRECTORY doc/ DESTINATION ${CMAKE_INSTALL_DATADIR}/doc/libxml2 COMPONENT documentation PATTERN Makefile.* EXCLUDE)
 
 configure_package_config_file(
 	libxml2-config.cmake.cmake.in libxml2-config.cmake

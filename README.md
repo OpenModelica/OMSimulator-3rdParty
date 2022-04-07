@@ -33,3 +33,7 @@ OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 ## Xerces-c (Apache Xerces-C validating XML parser)
 
 - https://github.com/apache/xerces-c/archive/refs/tags/v3.2.3.zip [version 3.2.3]
+
+## libxml2-c - an XML toolkit implemented in C, originally developed for the GNOME Project.
+
+- https://gitlab.gnome.org/GNOME/libxml2 [version 2.9.11]
