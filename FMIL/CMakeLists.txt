@@ -26,7 +26,7 @@ set(FMILIBRARYHOME ${FMILibrary_SOURCE_DIR})
 set(FMILIBRARYBUILD ${FMILibrary_BINARY_DIR})
 
 # User configuration options and parameters
-SET(FMILIB_INSTALL_PREFIX ${FMILibrary_BINARY_DIR}/../install CACHE PATH "Prefix prepended to install directories")
+SET(FMILIB_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Prefix prepended to install directories")
 set(FMILIB_THIRDPARTYLIBS  ${FMILibrary_SOURCE_DIR}/ThirdParty CACHE PATH "Path to the ThirdParty library dir" )
 set(FMILIB_FMI_STANDARD_HEADERS  ${FMILIB_THIRDPARTYLIBS}/FMI/default CACHE PATH "Path to the FMI standard headers dir" )
 
@@ -84,7 +84,10 @@ IF(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE ${FMILIB_DEFAULT_BUILD_TYPE})
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
-SET(CMAKE_INSTALL_PREFIX ${FMILIB_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories" FORCE)
+# Install following GNU conventions (i.e., bin, lib, include, share ...)
+include(GNUInstallDirs)
+
+# SET(CMAKE_INSTALL_PREFIX ${FMILIB_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories" FORCE)
 
 # debug_message is used to trace the build script
 function(debug_message)
@@ -301,41 +304,38 @@ endif()
 
 file(COPY "${FMILIBRARYHOME}/Config.cmake/fmilib.h" DESTINATION "${FMILibrary_BINARY_DIR}")
 
-install(TARGETS ${FMILIB_TARGETS}
-	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib
-	RUNTIME DESTINATION lib
-)
-install(FILES 
+install(TARGETS ${FMILIB_TARGETS} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+install(FILES
 			"${FMILIBRARYHOME}/FMILIB_Readme.txt"
 			"${FMILIBRARYHOME}/FMILIB_License.txt"
 			"${FMILIBRARYHOME}/FMILIB_Acknowledgements.txt"
 		DESTINATION doc)
-		
-install(FILES 
-			"${FMILibrary_BINARY_DIR}/fmilib_config.h" 
-			"${FMILibrary_BINARY_DIR}/fmilib.h" 
-		DESTINATION include)
 
-install(DIRECTORY 
-	${FMIIMPORTDIR}/include 
-	${JMUTILDIR}/include
-	DESTINATION .
+install(FILES
+			"${FMILibrary_BINARY_DIR}/fmilib_config.h"
+			"${FMILibrary_BINARY_DIR}/fmilib.h"
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(DIRECTORY
+	${FMIIMPORTDIR}/include/
+	${JMUTILDIR}/include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.h")
 
 if(FMILIB_INSTALL_SUBLIBS)
-	install(DIRECTORY 
-		${FMICAPIDIR}/include 	
-		${FMIXMLDIR}/include 
-		${FMIZIPDIR}/include
-		DESTINATION .
+	install(DIRECTORY
+		${FMICAPIDIR}/include/
+		${FMIXMLDIR}/include/
+		${FMIZIPDIR}/include/
+		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING PATTERN "*.h")
 endif()
-	
-install(DIRECTORY 
+
+install(DIRECTORY
 	${FMILIB_FMI_STANDARD_HEADERS}/FMI1
 	${FMILIB_FMI_STANDARD_HEADERS}/FMI2
-	DESTINATION include
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     FILES_MATCHING PATTERN "*.h")
 
 function(append_file_context file_out file_in)
