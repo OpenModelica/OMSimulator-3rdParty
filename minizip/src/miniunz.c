@@ -592,7 +592,7 @@ const char* miniunz_onefile_to_memory(const char* archive, const char* filename)
     if (buf==NULL)
     {
         MINIZIP_PRINT("Error allocating memory\n");
-        return UNZ_INTERNALERROR;
+        return NULL;
     }
 
     err = unzOpenCurrentFilePassword(uf, NULL);
