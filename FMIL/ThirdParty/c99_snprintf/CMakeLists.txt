@@ -13,10 +13,10 @@
 
 if(NOT C99SNPRINTFDIR)
     set(C99SNPRINTFDIR ${FMILIBRARYHOME}/ThirdParty/c99_snprintf)
-    set(C99SNPRINTF_LIBRARIES c99snprintf)    
+    set(C99SNPRINTF_LIBRARIES c99snprintf)
 
-INCLUDE (CheckIncludeFiles) 
-CHECK_INCLUDE_FILES(stdarg.h HAVE_STDARG_H) 
+INCLUDE (CheckIncludeFiles)
+CHECK_INCLUDE_FILES(stdarg.h HAVE_STDARG_H)
 CHECK_INCLUDE_FILES(stdlib.h HAVE_STDLIB_H)
 CHECK_INCLUDE_FILES(stddef.h HAVE_STDDEF_H)
 CHECK_INCLUDE_FILES(stdint.h HAVE_STDINT_H)
@@ -38,23 +38,23 @@ FMIL_EVAL_CONDITION(HAVE_VASPRINTF  HAVE_VASPRINTF_SYM OR HAVE_VASPRINTF_FCN)
 FMIL_EVAL_CONDITION(HAVE_ASPRINTF   HAVE_ASPRINTF_SYM  OR HAVE_ASPRINTF_FCN)
 
 CHECK_FUNCTION_EXISTS(localeconv    	HAVE_LOCALECONV)
- 
- INCLUDE (CheckTypeSize) 
+
+ INCLUDE (CheckTypeSize)
  # SET(CMAKE_EXTRA_INCLUDE_FILES header)
 #CHECK_TYPE_SIZE(type variable)
-# SET(CMAKE_EXTRA_INCLUDE_FILES) 
+# SET(CMAKE_EXTRA_INCLUDE_FILES)
  CHECK_TYPE_SIZE("long double" HAVE_LONG_DOUBLE)
  CHECK_TYPE_SIZE("long long int" 	HAVE_LONG_LONG_INT)
  CHECK_TYPE_SIZE("unsigned long long int"   	HAVE_UNSIGNED_LONG_LONG_INT)
- 
+
 SET(CMAKE_EXTRA_INCLUDE_FILES locale.h)
 CHECK_TYPE_SIZE("struct lconv" LCONV)
 SET(CMAKE_EXTRA_INCLUDE_FILES)
 include(CheckStructHasMember)
 CHECK_STRUCT_HAS_MEMBER ("struct lconv" decimal_point locale.h HAVE_LCONV_DECIMAL_POINT)
 CHECK_STRUCT_HAS_MEMBER ("struct lconv" thousands_sep locale.h HAVE_LCONV_THOUSANDS_SEP)
-INCLUDE (CheckSymbolExists) 
-    
+INCLUDE (CheckSymbolExists)
+
 CHECK_TYPE_SIZE(intmax_t 	HAVE_INTMAX_T)
 CHECK_TYPE_SIZE(uintmax_t   	HAVE_UINTMAX_T)
 CHECK_TYPE_SIZE(uintptr_t  	HAVE_UINTPTR_T)
@@ -117,13 +117,12 @@ endif()
 
 add_definitions(${DEFINES})
 
-file(WRITE ${CMAKE_BINARY_DIR}/c99snprintf_defs "${DEFINES}")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/c99snprintf_defs "${DEFINES}")
 
 add_library(c99snprintf c99-snprintf_1.1/snprintf.c)
 
-if(CYGWIN) 
+if(CYGWIN)
 message("not tested")
 endif(CYGWIN)
 
 endif()
-

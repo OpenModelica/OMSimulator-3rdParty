@@ -44,6 +44,8 @@ set(XML_ME_PATH ${FMU_DUMMY_FOLDER}/modelDescription_me.xml)
 set(XML_CS_PATH ${FMU_DUMMY_FOLDER}/modelDescription_cs.xml)
 set(XML_CS_TC_PATH ${FMU_DUMMY_FOLDER}/modelDescription_cs_tc.xml)
 set(XML_MF_PATH ${FMU_DUMMY_FOLDER}/modelDescription_malformed.xml)
+set(TYPE_DEFINITIONS_MODEL_DESC_DIR ${RTTESTDIR}/FMI1/parser_test_xmls/type_definitions)
+set(VARIABLE_BAD_TYPE_VARIABILITY_MODEL_DESC_DIR ${RTTESTDIR}/FMI1/parser_test_xmls/variable_bad_type_variability)
 
 set(SHARED_LIBRARY_ME_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}fmu1_dll_me${CMAKE_SHARED_LIBRARY_SUFFIX})
 set(SHARED_LIBRARY_CS_PATH ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}fmu1_dll_cs${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -64,8 +66,20 @@ compress_fmu("${TEST_OUTPUT_FOLDER}" "${FMU_DUMMY_ME_MODEL_IDENTIFIER}" "me" "fm
 compress_fmu("${TEST_OUTPUT_FOLDER}" "${FMU_DUMMY_CS_MODEL_IDENTIFIER}" "cs" "fmu1_dll_cs" "${XML_CS_PATH}" "${SHARED_LIBRARY_CS_PATH}")
 compress_fmu("${TEST_OUTPUT_FOLDER}" "${FMU_DUMMY_CS_MODEL_IDENTIFIER}" "cs_tc" "fmu1_dll_cs" "${XML_CS_TC_PATH}" "${SHARED_LIBRARY_CS_PATH}")
 
+add_executable(fmi1_variable_bad_type_variability_test ${RTTESTDIR}/FMI1/fmi1_variable_bad_type_variability_test.c)
+target_link_libraries(fmi1_variable_bad_type_variability_test ${FMILIBFORTEST})
+
+add_executable (fmi1_import_default_experiment_test ${RTTESTDIR}/FMI1/fmi1_import_default_experiment_test.c)
+target_link_libraries (fmi1_import_default_experiment_test  ${FMILIBFORTEST}  )
+add_executable(fmi1_type_definitions_test ${RTTESTDIR}/FMI1/fmi1_import_type_definitions_test.c)
+target_link_libraries(fmi1_type_definitions_test ${FMILIBFORTEST})
+
 add_executable (fmi1_xml_parsing_test ${RTTESTDIR}/FMI1/fmi1_xml_parsing_test.c)
 target_link_libraries (fmi1_xml_parsing_test  ${FMILIBFORTEST}  )
+if(FMILIB_TEST_LOCALE)
+    target_compile_definitions(fmi1_xml_parsing_test PRIVATE -DFMILIB_TEST_LOCALE)
+endif()
+
 add_executable (fmi_import_xml_test ${RTTESTDIR}/FMI1/fmi_import_xml_test.c)
 target_link_libraries (fmi_import_xml_test  ${FMILIBFORTEST}  )
 
@@ -83,7 +97,10 @@ to_native_c_path("${TEST_OUTPUT_FOLDER}/${FMU_DUMMY_CS_MODEL_IDENTIFIER}_cs_tc.f
 # set(FMU_TEMPFOLDER ${TEST_OUTPUT_FOLDER}/tempfolder)
 to_native_c_path(${TEST_OUTPUT_FOLDER}/tempfolder FMU_TEMPFOLDER)
 
+add_test(ctest_fmi1_variable_bad_type_variability_test fmi1_variable_bad_type_variability_test ${VARIABLE_BAD_TYPE_VARIABILITY_MODEL_DESC_DIR})
+add_test(ctest_fmi1_xml_parsing_test fmi1_import_default_experiment_test ${RTTESTDIR}/FMI1/parser_test_xmls/default_experiment/)
 add_test(ctest_fmi1_xml_parsing_test fmi1_xml_parsing_test ${RTTESTDIR}/FMI1/parser_test_xmls/)
+add_test(ctest_fmi1_type_definitions_test fmi1_type_definitions_test ${TYPE_DEFINITIONS_MODEL_DESC_DIR})
 ADD_TEST(ctest_fmi_import_me_test fmi_import_me_test ${FMU_ME_PATH} ${FMU_TEMPFOLDER})
 ADD_TEST(ctest_fmi_import_cs_test fmi_import_cs_test ${FMU_CS_PATH} ${FMU_TEMPFOLDER} "modelDescription_cs.xml")
 ADD_TEST(ctest_fmi_import_cs_tc_test fmi_import_cs_test ${FMU_CS_TC_PATH} ${FMU_TEMPFOLDER} "modelDescription_cs_tc.xml")
@@ -104,7 +121,15 @@ set(logger_output_file "${TEST_OUTPUT_FOLDER}/fmi1_logger_test_output.txt")
 set(logger_reference_file "${RTTESTDIR}/FMI1/fmi1_logger_test_output.txt")
 
 add_test(ctest_fmi1_logger_test_run fmi1_logger_test ${FMU_ME_PATH} ${FMU_TEMPFOLDER} ${logger_output_file})
-add_test(ctest_fmi1_logger_test_check ${CMAKE_COMMAND} -E compare_files ${logger_output_file}  ${logger_reference_file})
+
+if(NOT CMAKE_GENERATOR STREQUAL "MSYS Makefiles")
+    # Skip test for MinGW, since we know it won't pass due to issues with long log messages and vsnprintf.
+    add_test(ctest_fmi1_logger_test_check ${CMAKE_COMMAND} -E compare_files ${logger_output_file}  ${logger_reference_file})
+    SET_TESTS_PROPERTIES (
+        ctest_fmi1_logger_test_check
+        PROPERTIES DEPENDS ctest_fmi1_logger_test_run
+    )
+endif()
 
 set_target_properties(
 	fmi_import_me_test 
@@ -114,12 +139,8 @@ set_target_properties(
 	fmi1_capi_me_test
 	fmi1_logger_test
     fmi1_xml_parsing_test
+    fmi1_import_default_experiment_test
     PROPERTIES FOLDER "Test/FMI1")
-
-SET_TESTS_PROPERTIES ( 
-	ctest_fmi1_logger_test_check	
-	PROPERTIES DEPENDS ctest_fmi1_logger_test_run 	
-)
 
 if(FMILIB_BUILD_BEFORE_TESTS)
 	SET_TESTS_PROPERTIES ( 
@@ -132,6 +153,8 @@ if(FMILIB_BUILD_BEFORE_TESTS)
 		ctest_fmi1_capi_me_test
 		ctest_fmi1_logger_test_run
 		ctest_fmi1_xml_parsing_test
+        ctest_fmi1_type_definitions_test
+        ctest_fmi1_variable_bad_type_variability_test
 		PROPERTIES DEPENDS ctest_build_all)
 endif()
 
