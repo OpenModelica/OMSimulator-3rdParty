@@ -133,34 +133,4 @@ if(LUA_BUILD_COMPILER)
     list(APPEND TARGETS_TO_INSTALL luac)
 endif()
 
-install(TARGETS ${TARGETS_TO_INSTALL}
-        EXPORT LuaTargets
-)
-
 install(DIRECTORY include/ TYPE INCLUDE)
-
-include(CMakePackageConfigHelpers)
-
-get_target_property(LUA_EXPORT_LIBRARY Lua::Library ALIASED_TARGET)
-write_basic_package_version_file(
-    LuaConfigVersion.cmake
-    VERSION ${PACKAGE_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-
-install(EXPORT LuaTargets
-        FILE LuaTargets.cmake
-        DESTINATION "lib/cmake"
-        NAMESPACE Lua::
-)
-
-configure_package_config_file(
-    LuaConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/LuaConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake"
-)
-
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/LuaConfig.cmake"
-              "${CMAKE_CURRENT_BINARY_DIR}/LuaConfigVersion.cmake"
-        DESTINATION "lib/cmake"
-)
