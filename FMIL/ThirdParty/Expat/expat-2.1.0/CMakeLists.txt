@@ -37,7 +37,8 @@ endif(BUILD_tests)
 
 include(ConfigureChecks.cmake)
 
-include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/lib)
+# expat_config.h is generated in the build folder of expat ITSELF!. So we add ${CMAKE_CURRENT_BINARY_DIR}
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/lib)
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
 endif(MSVC)
@@ -45,8 +46,8 @@ endif(MSVC)
 set(expat_SRCS
     lib/xmlparse.c
     lib/xmlrole.c
-    lib/xmltok.c 
-    lib/xmltok_impl.c 
+    lib/xmltok.c
+    lib/xmltok_impl.c
     lib/xmltok_ns.c
 )
 
@@ -61,10 +62,13 @@ else(BUILD_shared)
 endif(BUILD_shared)
 
 add_library(expat ${_SHARED} ${expat_SRCS})
+target_include_directories(expat PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 
-install(TARGETS expat RUNTIME DESTINATION bin
-                      LIBRARY DESTINATION lib
-                      ARCHIVE DESTINATION lib)
+if(NOT BUILD_shared)
+  target_compile_definitions(expat PUBLIC XML_STATIC)
+endif()
+
+install(TARGETS expat DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix "\${prefix}/bin")
@@ -72,8 +76,8 @@ set(libdir "\${prefix}/lib")
 set(includedir "\${prefix}/include")
 configure_file(expat.pc.in ${CMAKE_CURRENT_BINARY_DIR}/expat.pc)
 
-install(FILES lib/expat.h lib/expat_external.h DESTINATION include)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/expat.pc DESTINATION lib/pkgconfig)
+install(FILES lib/expat.h lib/expat_external.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/expat.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 
 

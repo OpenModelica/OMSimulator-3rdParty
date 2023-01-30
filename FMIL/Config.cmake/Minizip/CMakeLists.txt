@@ -8,11 +8,11 @@ set(SKIP_INSTALL_FILES ON)
 if(NOT FMILIB_INSTALL_SUBLIBS)
 	set(SKIP_INSTALL_LIBRARIES ON)
 endif()
-add_subdirectory("${FMILIB_THIRDPARTYLIBS}/Zlib/zlib-1.2.6" "${FMILibrary_BINARY_DIR}/zlib")
+# add_subdirectory("${FMILIB_THIRDPARTYLIBS}/Zlib/zlib-1.2.6" "${FMILibrary_BINARY_DIR}/zlib")
 
-if(CMAKE_CL_64)
-	set_target_properties(zlib PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
-endif()
+# if(CMAKE_CL_64)
+# 	set_target_properties(zlib PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
+# endif()
 
 if(CMAKE_HOST_APPLE)
 set(PLATFORM __APPLE__)
@@ -30,7 +30,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 endif()
 
-include_directories("${FMILIB_THIRDPARTYLIBS}/Zlib/zlib-1.2.6" "${FMILibrary_BINARY_DIR}/zlib")
+# include_directories("${FMILIB_THIRDPARTYLIBS}/Zlib/zlib-1.2.6" "${FMILibrary_BINARY_DIR}/zlib")
 set(SOURCE
   ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/ioapi.c
   ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/miniunz.c
@@ -46,7 +46,7 @@ endif(WIN32)
 
 set(HEADERS
   ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/crypt.h
-  ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/ioapi.h  
+  ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/ioapi.h
   ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/miniunz.h
   #${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/mztools.h
   ${FMILIB_THIRDPARTYLIBS}/Minizip/minizip/unzip.h
@@ -58,12 +58,17 @@ endif(WIN32)
 
 add_library(minizip ${SOURCE} ${HEADERS})
 
-target_link_libraries(minizip zlib)
+if(OPENMODELICA_NEW_CMAKE_BUILD)
+  target_link_libraries(minizip zlib)
+else()
+  target_link_libraries(minizip ${OMC_ZLIB_LIBRARY})
+  target_include_directories(minizip PUBLIC ${OMC_ZLIB_INCLUDE_DIR})
+endif()
 
 if(FMILIB_INSTALL_SUBLIBS)
 	install(TARGETS minizip
         ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib 
+        LIBRARY DESTINATION lib
 	)
 endif()
 
