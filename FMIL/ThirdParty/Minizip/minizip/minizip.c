@@ -71,11 +71,17 @@
 #define WRITEBUFFERSIZE (16384)
 #define MAXFILENAME (256)
 
+// MODIFICATION: Replace all print statements with this macro for better control
+#if !defined(MINIZIP_PRINT)
+//#define MINIZIP_PRINT(...) printf(__VA_ARGS__)
+#define MINIZIP_PRINT(...) ((void)0)
+#endif
+
 /* MODIFICATION Replace all stdout prints with this function for better control */
 static int minizip_printf( const char * format, ... )
 {
 	return 1;
-} 
+}
 
 #ifdef _WIN32
 uLong filetime(f, tmzip, dt)
