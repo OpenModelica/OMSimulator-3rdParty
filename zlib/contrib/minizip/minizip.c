@@ -70,12 +70,6 @@
 #define WRITEBUFFERSIZE (16384)
 #define MAXFILENAME (256)
 
-// MODIFICATION: Replace all print statements with this macro for better control
-#if !defined(MINIZIP_PRINT)
-//#define MINIZIP_PRINT(...) printf(__VA_ARGS__)
-#define MINIZIP_PRINT(...) ((void)0)
-#endif
-
 #ifdef _WIN32
 static int filetime(f, tmzip, dt)
     const char *f;          /* name of file to get info on */
@@ -172,13 +166,13 @@ static int check_exist_file(filename)
 
 static void do_banner()
 {
-    MINIZIP_PRINT("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
-    MINIZIP_PRINT("more info on MiniZip at http://www.winimage.com/zLibDll/minizip.html\n\n");
+    printf("MiniZip 1.1, demo of zLib + MiniZip64 package, written by Gilles Vollant\n");
+    printf("more info on MiniZip at http://www.winimage.com/zLibDll/minizip.html\n\n");
 }
 
 static void do_help()
 {
-    MINIZIP_PRINT("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
+    printf("Usage : minizip [-o] [-a] [-0 to -9] [-p password] [-j] file.zip [files_to_add]\n\n" \
            "  -o  Overwrite existing file.zip\n" \
            "  -a  Append to existing file.zip\n" \
            "  -0  Store only\n" \
@@ -210,7 +204,7 @@ static int getFileCrc(const char* filenameinzip,void*buf,unsigned long size_buf,
             if (size_read < size_buf)
                 if (feof(fin)==0)
             {
-                MINIZIP_PRINT("error in reading %s\n",filenameinzip);
+                printf("error in reading %s\n",filenameinzip);
                 err = ZIP_ERRNO;
             }
 
@@ -224,7 +218,7 @@ static int getFileCrc(const char* filenameinzip,void*buf,unsigned long size_buf,
         fclose(fin);
 
     *result_crc=calculate_crc;
-    MINIZIP_PRINT("file %s crc %lx\n", filenameinzip, calculate_crc);
+    printf("file %s crc %lx\n", filenameinzip, calculate_crc);
     return err;
 }
 
@@ -239,7 +233,7 @@ static int isLargeFile(const char* filename)
     FSEEKO_FUNC(pFile, 0, SEEK_END);
     pos = (ZPOS64_T)FTELLO_FUNC(pFile);
 
-                MINIZIP_PRINT("File : %s is %lld bytes\n", filename, pos);
+                printf("File : %s is %lld bytes\n", filename, pos);
 
     if(pos >= 0xffffffff)
      largeFile = 1;
@@ -250,7 +244,7 @@ static int isLargeFile(const char* filename)
  return largeFile;
 }
 
-int minizip(argc,argv)
+int main(argc,argv)
     int argc;
     char *argv[];
 {
@@ -314,7 +308,7 @@ int minizip(argc,argv)
     buf = (void*)malloc(size_buf);
     if (buf==NULL)
     {
-        MINIZIP_PRINT("Error allocating memory\n");
+        printf("Error allocating memory\n");
         return ZIP_INTERNALERROR;
     }
 
@@ -355,7 +349,7 @@ int minizip(argc,argv)
                 {
                     char answer[128];
                     int ret;
-                    MINIZIP_PRINT("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
+                    printf("The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ",filename_try);
                     ret = scanf("%1s",answer);
                     if (ret != 1)
                     {
@@ -387,11 +381,11 @@ int minizip(argc,argv)
 
         if (zf == NULL)
         {
-            MINIZIP_PRINT("error opening %s\n",filename_try);
+            printf("error opening %s\n",filename_try);
             err= ZIP_ERRNO;
         }
         else
-            MINIZIP_PRINT("creating %s\n",filename_try);
+            printf("creating %s\n",filename_try);
 
         for (i=zipfilenamearg+1;(i<argc) && (err==ZIP_OK);i++)
         {
@@ -464,14 +458,14 @@ int minizip(argc,argv)
                                  password,crcFile, zip64);
 
                 if (err != ZIP_OK)
-                    MINIZIP_PRINT("error in opening %s in zipfile\n",filenameinzip);
+                    printf("error in opening %s in zipfile\n",filenameinzip);
                 else
                 {
                     fin = FOPEN_FUNC(filenameinzip,"rb");
                     if (fin==NULL)
                     {
                         err=ZIP_ERRNO;
-                        MINIZIP_PRINT("error in opening %s for reading\n",filenameinzip);
+                        printf("error in opening %s for reading\n",filenameinzip);
                     }
                 }
 
@@ -483,7 +477,7 @@ int minizip(argc,argv)
                         if (size_read < size_buf)
                             if (feof(fin)==0)
                         {
-                            MINIZIP_PRINT("error in reading %s\n",filenameinzip);
+                            printf("error in reading %s\n",filenameinzip);
                             err = ZIP_ERRNO;
                         }
 
@@ -492,7 +486,7 @@ int minizip(argc,argv)
                             err = zipWriteInFileInZip (zf,buf,(unsigned)size_read);
                             if (err<0)
                             {
-                                MINIZIP_PRINT("error in writing %s in the zipfile\n",
+                                printf("error in writing %s in the zipfile\n",
                                                  filenameinzip);
                             }
 
@@ -508,14 +502,14 @@ int minizip(argc,argv)
                 {
                     err = zipCloseFileInZip(zf);
                     if (err!=ZIP_OK)
-                        MINIZIP_PRINT("error in closing %s in the zipfile\n",
+                        printf("error in closing %s in the zipfile\n",
                                     filenameinzip);
                 }
             }
         }
         errclose = zipClose(zf,NULL);
         if (errclose != ZIP_OK)
-            MINIZIP_PRINT("error in closing %s\n",filename_try);
+            printf("error in closing %s\n",filename_try);
     }
     else
     {
