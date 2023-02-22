@@ -13,23 +13,23 @@ if (${FMI4C_BUILD_DOCUMENTATION})
     add_subdirectory(doc)
 endif()
 
-if(NOT FMI4C_USE_INCLUDED_ZLIB)
-    find_package(ZLIB MODULE)
-endif()
+# if(NOT FMI4C_USE_INCLUDED_ZLIB)
+#     find_package(ZLIB MODULE)
+# endif()
 # If zlib can not be found in the system, then build local version
-if (NOT ZLIB_FOUND)
-    set(zlib_dir "3rdparty/zlib")
-    message(STATUS "Using included ZLIB: ${zlib_dir}")
-    # Must use position independent code if intend to include static zlib into shared (dll) fmi4c lib
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-    # Add bundled sources, (EXCLUDE_FROM_ALL prevents zlib from being installed with fmi4c)
-    add_subdirectory(${zlib_dir} EXCLUDE_FROM_ALL)
-    # We highjack the zlibstatic target from the original build system, but it does not have the include directory properties set, so lets add them here
-    set_target_properties(zlibstatic PROPERTIES
-                                     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/${zlib_dir};${CMAKE_CURRENT_BINARY_DIR}/${zlib_dir}")
-    # Use alias to match name that find-module uses
-    add_library(ZLIB::ZLIB ALIAS zlibstatic)
-endif()
+# if (NOT ZLIB_FOUND)
+#     set(zlib_dir "3rdparty/zlib")
+#     message(STATUS "Using included ZLIB: ${zlib_dir}")
+#     # Must use position independent code if intend to include static zlib into shared (dll) fmi4c lib
+#     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#     # Add bundled sources, (EXCLUDE_FROM_ALL prevents zlib from being installed with fmi4c)
+#     add_subdirectory(${zlib_dir} EXCLUDE_FROM_ALL)
+#     # We highjack the zlibstatic target from the original build system, but it does not have the include directory properties set, so lets add them here
+#     set_target_properties(zlibstatic PROPERTIES
+#                                      INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/${zlib_dir};${CMAKE_CURRENT_BINARY_DIR}/${zlib_dir}")
+#     # Use alias to match name that find-module uses
+#     add_library(ZLIB::ZLIB ALIAS zlibstatic)
+# endif()
 
 set(SRCFILES
     src/fmi4c.c
@@ -79,7 +79,7 @@ target_include_directories(${target_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 target_include_directories(${target_name} PRIVATE src)
 
 # Internal dependecy (PRIVATE) on zlib and ${CMAKE_DL_LIBS}) for libdl on Linux
-target_link_libraries(${target_name} PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
+# target_link_libraries(${target_name} PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
 
 install(TARGETS ${target_name}
         RUNTIME DESTINATION bin
@@ -89,13 +89,13 @@ install(DIRECTORY include
         DESTINATION .)
 install(DIRECTORY 3rdparty/fmi
         DESTINATION include)
-# If building a static library, also include the local static zlib if it was built
-if (NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
-    install(TARGETS zlibstatic
-            RUNTIME DESTINATION bin
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib)
-endif()
+# # If building a static library, also include the local static zlib if it was built
+# if (NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
+#     install(TARGETS zlibstatic
+#             RUNTIME DESTINATION bin
+#             LIBRARY DESTINATION lib
+#             ARCHIVE DESTINATION lib)
+# endif()
 
 if (${FMI4C_BUILD_TEST})
   enable_testing()
