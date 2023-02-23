@@ -47,15 +47,15 @@ set(SRCFILES
     include/fmi4c_functions_fmi1.h
     include/fmi4c_functions_fmi2.h
     include/fmi4c_functions_fmi3.h
-    3rdparty/minizip/miniunz.c
-    3rdparty/minizip/ioapi.c
-    3rdparty/minizip/mztools.c
-    3rdparty/minizip/unzip.c
+    # 3rdparty/minizip/miniunz.c
+    # 3rdparty/minizip/ioapi.c
+    # 3rdparty/minizip/mztools.c
+    # 3rdparty/minizip/unzip.c
     3rdparty/ezxml/ezxml.c
     3rdparty/ezxml/ezxml.h)
-if (WIN32)
-    SET(SRCFILES ${SRCFILES} 3rdparty/minizip/iowin32.c)
-endif()
+# if (WIN32)
+#     SET(SRCFILES ${SRCFILES} 3rdparty/minizip/iowin32.c)
+# endif()
 
 if (FMI4C_BUILD_SHARED)
     add_library(${target_name} SHARED ${SRCFILES})
@@ -77,6 +77,8 @@ endif()
 target_include_directories(${target_name} PUBLIC include)
 target_include_directories(${target_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/3rdparty>)
 target_include_directories(${target_name} PRIVATE src)
+target_include_directories(${target_name} PUBLIC ${OMS_MINIZIP_INCLUDE_DIR})
+target_link_libraries(${target_name} PUBLIC ${OMS_MINIZIP_LIBRARY})
 target_include_directories(${target_name} PUBLIC ${OMS_ZLIB_INCLUDE_DIR})
 target_link_libraries(${target_name} PUBLIC ${OMS_ZLIB_LIBRARY})
 
