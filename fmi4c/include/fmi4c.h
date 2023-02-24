@@ -17,6 +17,8 @@
 
 #ifdef _WIN32
 #include <direct.h>
+// Define WIN32_LEAN_AND_MEAN on the compilation commands to avoid any chance of someone including windows.h
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
