@@ -19,8 +19,12 @@ list(APPEND MINIZIP_SOURCES minizip.c)
 list(APPEND MINIZIP_SOURCES unzip.c)
 list(APPEND MINIZIP_SOURCES zip.c)
 
+if (WIN32)
+    list(APPEND MINIZIP_SOURCES iowin32.c)
+endif()
+
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(minizip STATIC ${MINIZIP_SOURCES})
 
 install(TARGETS minizip DESTINATION lib/)
-install(FILES minizip.h miniunz.h DESTINATION include/)
+install(FILES minizip.h miniunz.h DESTINATION include/minizip)
