@@ -37,7 +37,7 @@ endif(BUILD_tests)
 
 include(ConfigureChecks.cmake)
 
-include_directories(${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR}/lib)
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -wd4996)
 endif(MSVC)
@@ -45,8 +45,8 @@ endif(MSVC)
 set(expat_SRCS
     lib/xmlparse.c
     lib/xmlrole.c
-    lib/xmltok.c 
-    lib/xmltok_impl.c 
+    lib/xmltok.c
+    lib/xmltok_impl.c
     lib/xmltok_ns.c
 )
 
@@ -62,9 +62,7 @@ endif(BUILD_shared)
 
 add_library(expat ${_SHARED} ${expat_SRCS})
 
-install(TARGETS expat RUNTIME DESTINATION bin
-                      LIBRARY DESTINATION lib
-                      ARCHIVE DESTINATION lib)
+install(TARGETS expat)
 
 set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix "\${prefix}/bin")

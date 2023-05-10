@@ -16,11 +16,11 @@
 # ---------------------------------------------------------------
 
 # Add all of the shared SUNDIALS components
-add_subdirectory(sundials)
-add_subdirectory(nvector)
-add_subdirectory(sunmatrix)
-add_subdirectory(sunlinsol)
-add_subdirectory(sunnonlinsol)
+#add_subdirectory(sundials)
+#add_subdirectory(nvector)
+#add_subdirectory(sunmatrix)
+#add_subdirectory(sunlinsol)
+#add_subdirectory(sunnonlinsol)
 
 # ARKODE library
 if(BUILD_ARKODE)
