@@ -1,11 +1,10 @@
 #!/bin/sh
 # Run this to generate all the initial makefiles, etc.
 
-srcdir=`dirname $0`
-test -z "$srcdir" && srcdir=. 
-
 THEDIR=`pwd`
-cd $srcdir
+cd `dirname $0`
+srcdir=`pwd`
+
 DIE=0
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
@@ -16,7 +15,8 @@ DIE=0
 	DIE=1
 }
 
-(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+(libtoolize --version) < /dev/null > /dev/null 2>&1 ||
+(glibtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have libtool installed to compile libxml."
 	echo "Download the appropriate package for your distribution,"
@@ -67,6 +67,15 @@ fi
 # Replaced by autoreconf below
 autoreconf -if -Wall
 
+if ! grep -q pkg.m4 aclocal.m4; then
+    cat <<EOF
+
+Couldn't find pkg.m4 from pkg-config. Install the appropriate package for
+your distribution or set ACLOCAL_PATH to the directory containing pkg.m4.
+EOF
+    exit 1
+fi
+
 cd $THEDIR
 
 if test x$OBJ_DIR != x; then
@@ -76,6 +85,11 @@ fi
 
 if test -z "$NOCONFIGURE"; then
     $srcdir/configure $EXTRA_ARGS "$@"
-    echo
-    echo "Now type 'make' to compile libxml2."
+    if test "$?" -ne 0; then
+        echo
+        echo "Configure script failed, check config.log for more info."
+    else
+        echo
+        echo "Now type 'make' to compile libxml2."
+    fi
 fi
