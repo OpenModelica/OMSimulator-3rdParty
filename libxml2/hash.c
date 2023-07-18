@@ -11,7 +11,7 @@
  *
  * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
  * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
- * MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS AND
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS AND
  * CONTRIBUTORS ACCEPT NO RESPONSIBILITY IN ANY CONCEIVABLE MANNER.
  *
  * Author: breese@users.sourceforge.net
@@ -21,19 +21,15 @@
 #include "libxml.h"
 
 #include <string.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_TIME_H
 #include <time.h>
-#endif
 
 /*
  * Following http://www.ocert.org/advisories/ocert-2011-003.html
  * it seems that having hash randomization might be a good idea
  * when using XML with untrusted data
  */
-#if defined(HAVE_RAND) && defined(HAVE_SRAND) && defined(HAVE_TIME)
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 #define HASH_RANDOMIZATION
 #endif
 
@@ -42,6 +38,8 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/xmlerror.h>
 #include <libxml/globals.h>
+
+#include "private/dict.h"
 
 #define MAX_HASH_LEN 8
 
@@ -78,11 +76,15 @@ struct _xmlHashTable {
  * xmlHashComputeKey:
  * Calculate the hash key
  */
+#ifdef __clang__
+ATTRIBUTE_NO_SANITIZE("unsigned-integer-overflow")
+ATTRIBUTE_NO_SANITIZE("unsigned-shift-base")
+#endif
 static unsigned long
 xmlHashComputeKey(xmlHashTablePtr table, const xmlChar *name,
 	          const xmlChar *name2, const xmlChar *name3) {
     unsigned long value = 0L;
-    char ch;
+    unsigned long ch;
 
 #ifdef HASH_RANDOMIZATION
     value = table->random_seed;
@@ -90,31 +92,35 @@ xmlHashComputeKey(xmlHashTablePtr table, const xmlChar *name,
     if (name != NULL) {
 	value += 30 * (*name);
 	while ((ch = *name++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     value = value ^ ((value << 5) + (value >> 3));
     if (name2 != NULL) {
 	while ((ch = *name2++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     value = value ^ ((value << 5) + (value >> 3));
     if (name3 != NULL) {
 	while ((ch = *name3++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     return (value % table->size);
 }
 
+#ifdef __clang__
+ATTRIBUTE_NO_SANITIZE("unsigned-integer-overflow")
+ATTRIBUTE_NO_SANITIZE("unsigned-shift-base")
+#endif
 static unsigned long
 xmlHashComputeQKey(xmlHashTablePtr table,
 		   const xmlChar *prefix, const xmlChar *name,
 		   const xmlChar *prefix2, const xmlChar *name2,
 		   const xmlChar *prefix3, const xmlChar *name3) {
     unsigned long value = 0L;
-    char ch;
+    unsigned long ch;
 
 #ifdef HASH_RANDOMIZATION
     value = table->random_seed;
@@ -126,37 +132,37 @@ xmlHashComputeQKey(xmlHashTablePtr table,
 
     if (prefix != NULL) {
 	while ((ch = *prefix++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
-	value = value ^ ((value << 5) + (value >> 3) + (unsigned long)':');
+	value = value ^ ((value << 5) + (value >> 3) + ':');
     }
     if (name != NULL) {
 	while ((ch = *name++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     value = value ^ ((value << 5) + (value >> 3));
     if (prefix2 != NULL) {
 	while ((ch = *prefix2++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
-	value = value ^ ((value << 5) + (value >> 3) + (unsigned long)':');
+	value = value ^ ((value << 5) + (value >> 3) + ':');
     }
     if (name2 != NULL) {
 	while ((ch = *name2++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     value = value ^ ((value << 5) + (value >> 3));
     if (prefix3 != NULL) {
 	while ((ch = *prefix3++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
-	value = value ^ ((value << 5) + (value >> 3) + (unsigned long)':');
+	value = value ^ ((value << 5) + (value >> 3) + ':');
     }
     if (name3 != NULL) {
 	while ((ch = *name3++) != 0) {
-	    value = value ^ ((value << 5) + (value >> 3) + (unsigned long)ch);
+	    value = value ^ ((value << 5) + (value >> 3) + ch);
 	}
     }
     return (value % table->size);
@@ -173,6 +179,8 @@ xmlHashComputeQKey(xmlHashTablePtr table,
 xmlHashTablePtr
 xmlHashCreate(int size) {
     xmlHashTablePtr table;
+
+    xmlInitParser();
 
     if (size <= 0)
         size = 256;
@@ -607,8 +615,24 @@ xmlHashAddEntry3(xmlHashTablePtr table, const xmlChar *name,
         entry->name3 = (xmlChar *) name3;
     } else {
 	entry->name = xmlStrdup(name);
-	entry->name2 = xmlStrdup(name2);
-	entry->name3 = xmlStrdup(name3);
+        if (entry->name == NULL) {
+            entry->name2 = NULL;
+            goto error;
+        }
+        if (name2 == NULL) {
+            entry->name2 = NULL;
+        } else {
+	    entry->name2 = xmlStrdup(name2);
+            if (entry->name2 == NULL)
+                goto error;
+        }
+        if (name3 == NULL) {
+            entry->name3 = NULL;
+        } else {
+	    entry->name3 = xmlStrdup(name3);
+            if (entry->name3 == NULL)
+                goto error;
+        }
     }
     entry->payload = userdata;
     entry->next = NULL;
@@ -624,6 +648,13 @@ xmlHashAddEntry3(xmlHashTablePtr table, const xmlChar *name,
 	xmlHashGrow(table, MAX_HASH_LEN * table->size);
 
     return(0);
+
+error:
+    xmlFree(entry->name2);
+    xmlFree(entry->name);
+    if (insert != NULL)
+        xmlFree(entry);
+    return(-1);
 }
 
 /**
@@ -737,8 +768,24 @@ xmlHashUpdateEntry3(xmlHashTablePtr table, const xmlChar *name,
         entry->name3 = (xmlChar *) name3;
     } else {
 	entry->name = xmlStrdup(name);
-	entry->name2 = xmlStrdup(name2);
-	entry->name3 = xmlStrdup(name3);
+        if (entry->name == NULL) {
+            entry->name2 = NULL;
+            goto error;
+        }
+        if (name2 == NULL) {
+            entry->name2 = NULL;
+        } else {
+	    entry->name2 = xmlStrdup(name2);
+            if (entry->name2 == NULL)
+                goto error;
+        }
+        if (name3 == NULL) {
+            entry->name3 = NULL;
+        } else {
+	    entry->name3 = xmlStrdup(name3);
+            if (entry->name3 == NULL)
+                goto error;
+        }
     }
     entry->payload = userdata;
     entry->next = NULL;
@@ -750,6 +797,13 @@ xmlHashUpdateEntry3(xmlHashTablePtr table, const xmlChar *name,
 	insert->next = entry;
     }
     return(0);
+
+error:
+    xmlFree(entry->name2);
+    xmlFree(entry->name);
+    if (insert != NULL)
+        xmlFree(entry);
+    return(-1);
 }
 
 /**
@@ -1135,5 +1189,3 @@ xmlHashRemoveEntry3(xmlHashTablePtr table, const xmlChar *name,
     }
 }
 
-#define bottom_hash
-#include "elfgcchack.h"

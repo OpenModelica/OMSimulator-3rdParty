@@ -1,5 +1,5 @@
 /**
- * xzlib.c: front end for the transparent suport of lzma compression
+ * xzlib.c: front end for the transparent support of lzma compression
  *          at the I/O layer, based on an example file from lzma project
  *
  * See Copyright for the status of this software.
@@ -11,14 +11,9 @@
 #ifdef LIBXML_LZMA_ENABLED
 
 #include <string.h>
-#ifdef HAVE_ERRNO_H
+#include <stdlib.h>
 #include <errno.h>
-#endif
 
-
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -27,9 +22,8 @@
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>
+#elif defined (_WIN32)
+#include <io.h>
 #endif
 #ifdef LIBXML_ZLIB_ENABLED
 #include <zlib.h>
@@ -38,7 +32,7 @@
 #include <lzma.h>
 #endif
 
-#include "xzlib.h"
+#include "private/xzlib.h"
 #include <libxml/xmlmemory.h>
 
 /* values for xz_state how */
@@ -71,7 +65,7 @@ typedef struct {
     int err;                    /* error code */
     char *msg;                  /* error message */
     /* lzma stream */
-    int init;                   /* is the iniflate stream initialized */
+    int init;                   /* is the inflate stream initialized */
     lzma_stream strm;           /* stream structure in-place (not a pointer) */
     char padding1[32];          /* padding allowing to cope with possible
                                    extensions of above structure without
@@ -139,6 +133,7 @@ static xzFile
 xz_open(const char *path, int fd, const char *mode ATTRIBUTE_UNUSED)
 {
     xz_statep state;
+    off_t offset;
 
     /* allocate xzFile structure to return */
     state = xmlMalloc(sizeof(xz_state));
@@ -173,9 +168,11 @@ xz_open(const char *path, int fd, const char *mode ATTRIBUTE_UNUSED)
     }
 
     /* save the current position for rewinding (only if reading) */
-    state->start = lseek(state->fd, 0, SEEK_CUR);
-    if (state->start == (uint64_t) - 1)
+    offset = lseek(state->fd, 0, SEEK_CUR);
+    if (offset == -1)
         state->start = 0;
+    else
+        state->start = offset;
 
     /* initialize stream */
     xz_reset(state);
@@ -389,6 +386,10 @@ xz_head(xz_statep state)
     int flags;
     unsigned len;
 
+    /* Avoid unused variable warning if features are disabled. */
+    (void) flags;
+    (void) len;
+
     /* allocate read buffers and inflate memory */
     if (state->size == 0) {
         /* allocate buffers */
@@ -536,6 +537,10 @@ xz_decomp(xz_statep state)
 
     lzma_action action = LZMA_RUN;
 
+    /* Avoid unused variable warning if features are disabled. */
+    (void) crc;
+    (void) len;
+
     /* fill output buffer up to end of deflate stream */
     had = strm->avail_out;
     do {
@@ -562,6 +567,10 @@ xz_decomp(xz_statep state)
                          "internal error: inflate stream corrupt");
                 return -1;
             }
+            /*
+             * FIXME: Remapping a couple of error codes and falling through
+             * to the LZMA error handling looks fragile.
+             */
             if (ret == Z_MEM_ERROR)
                 ret = LZMA_MEM_ERROR;
             if (ret == Z_DATA_ERROR)
@@ -585,6 +594,11 @@ xz_decomp(xz_statep state)
         }
         if (ret == LZMA_PROG_ERROR) {
             xz_error(state, LZMA_PROG_ERROR, "compression error");
+            return -1;
+        }
+        if ((state->how != GZIP) &&
+            (ret != LZMA_OK) && (ret != LZMA_STREAM_END)) {
+            xz_error(state, ret, "lzma error");
             return -1;
         }
     } while (strm->avail_out && ret != LZMA_STREAM_END);
