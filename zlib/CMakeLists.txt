@@ -152,10 +152,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(zlibstatic STATIC ${ZLIB_SRCS} ${ZLIB_PUBLIC_HDRS} ${ZLIB_PRIVATE_HDRS})
 
 set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
-    install(TARGETS zlibstatic
-            RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-            ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-            LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
 
-install(FILES ${ZLIB_PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
+install(TARGETS zlibstatic)
+install(FILES ${ZLIB_PUBLIC_HDRS} TYPE INCLUDE)
 

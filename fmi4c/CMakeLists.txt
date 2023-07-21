@@ -77,22 +77,15 @@ endif()
 target_include_directories(${target_name} PUBLIC include)
 target_include_directories(${target_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/3rdparty>)
 target_include_directories(${target_name} PRIVATE src)
-target_include_directories(${target_name} PUBLIC ${OMS_MINIZIP_INCLUDE_DIR})
-target_link_libraries(${target_name} PUBLIC ${OMS_MINIZIP_LIBRARY})
-target_include_directories(${target_name} PUBLIC ${OMS_ZLIB_INCLUDE_DIR})
-target_link_libraries(${target_name} PUBLIC ${OMS_ZLIB_LIBRARY})
+target_link_libraries(${target_name} PUBLIC zlibstatic)
+target_link_libraries(${target_name} PUBLIC minizip)
 
 # Internal dependecy (PRIVATE) on zlib and ${CMAKE_DL_LIBS}) for libdl on Linux
 # target_link_libraries(${target_name} PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
 
-install(TARGETS ${target_name}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
-install(DIRECTORY include
-        DESTINATION .)
-install(DIRECTORY 3rdparty/fmi
-        DESTINATION include)
+install(TARGETS ${target_name})
+install(DIRECTORY include TYPE INCLUDE)
+install(DIRECTORY 3rdparty/fmi TYPE INCLUDE)
 # # If building a static library, also include the local static zlib if it was built
 # if (NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
 #     install(TARGETS zlibstatic
