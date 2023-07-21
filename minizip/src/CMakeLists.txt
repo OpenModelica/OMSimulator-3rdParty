@@ -26,5 +26,7 @@ endif()
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_library(minizip STATIC ${MINIZIP_SOURCES})
 
-install(TARGETS minizip DESTINATION lib/)
-install(FILES minizip.h miniunz.h DESTINATION include/minizip)
+target_include_directories(minizip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(TARGETS minizip)
+install(FILES minizip.h miniunz.h TYPE INCLUDE)
