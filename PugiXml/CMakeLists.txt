@@ -1,0 +1,6 @@
+
+
+add_library(pugixml_header_only INTERFACE)
+
+target_include_directories(pugixml_header_only INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(pugixml_header_only INTERFACE PUGIXML_HEADER_ONLY)
