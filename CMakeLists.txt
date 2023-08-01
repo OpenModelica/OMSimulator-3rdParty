@@ -2,7 +2,7 @@
 ## Sundials
 option(SUNDIALS_BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(SUNDIALS_EXAMPLES_ENABLE_C "Build SUNDIALS C examples" OFF)
-add_subdirectory(sundials-5.4.0)
+add_subdirectory(sundials-5.4.0 EXCLUDE_FROM_ALL)
 
 ## Sundials thoughtfully has organized its headers cleanly in one include/ directory
 ## Take advantage of that to transitively provide the headers when an external target links to
@@ -25,20 +25,26 @@ target_compile_definitions(sundials_interface_static INTERFACE LINK_SUNDIALS_STA
 target_link_libraries(sundials_cvode_static PUBLIC sundials_interface_static)
 target_link_libraries(sundials_kinsol_static PUBLIC sundials_interface_static)
 
+add_library(oms::3rd::cvode ALIAS sundials_cvode_static)
+add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
+
 #########################################################################
 ## zlib.
 ## Used by minizip and fmi4c. It should be added before them.
-add_subdirectory(zlib)
+add_subdirectory(zlib EXCLUDE_FROM_ALL)
+add_library(oms::3rd::zlib ALIAS zlibstatic)
 
 #########################################################################
 ## minizip.
-add_subdirectory(minizip)
+add_subdirectory(minizip EXCLUDE_FROM_ALL)
+add_library(oms::3rd::minizip ALIAS minizip)
 
 #########################################################################
 ## fmi4c.
 option(FMI4C_BUILD_SHARED OFF)
 option(FMI4C_USE_INCLUDED_ZLIB OFF)
-add_subdirectory(fmi4c)
+add_subdirectory(fmi4c EXCLUDE_FROM_ALL)
+add_library(oms::3rd::fmi4c ALIAS fmi4c)
 
 #########################################################################
 ## libxml2.
@@ -51,14 +57,20 @@ option(LIBXML2_WITH_PROGRAMS OFF)
 if(MSVC)
   option(LIBXML2_WITH_ICONV OFF)
 endif()
-add_subdirectory(libxml2)
+add_subdirectory(libxml2 EXCLUDE_FROM_ALL)
 
 #########################################################################
 ## Lua.
 option(LUA_ENABLE_SHARED OFF)
-add_subdirectory(Lua)
+add_subdirectory(Lua EXCLUDE_FROM_ALL)
+add_library(oms::3rd::lua ALIAS lua_static)
 
 #########################################################################
 ## PugiXml.
-add_subdirectory(PugiXml)
+add_subdirectory(PugiXml EXCLUDE_FROM_ALL)
+add_library(oms::3rd::pugixml::header ALIAS pugixml_header_only)
 
+#########################################################################
+## CTPL.
+add_subdirectory(CTPL EXCLUDE_FROM_ALL)
+add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
