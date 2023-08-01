@@ -13,9 +13,11 @@
 *.gcno
 *.gcov
 
+/build/
 /example
 /example64
 /examplesh
+/install/
 /libz.so*
 /minigzip
 /minigzip64
