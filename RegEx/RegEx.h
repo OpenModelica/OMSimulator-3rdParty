@@ -28,10 +28,10 @@
  * See the full OSMC Public License conditions for more details.
  *
  */
- 
+
 #ifndef _OMS_REGEX_H_
 #define _OMS_REGEX_H_
- 
+
 #include <regex>
 
 // adrpo: crap regex handling
@@ -60,9 +60,16 @@
 
 #else
 
-#include <boost/regex.hpp>
-#define oms_regex boost::regex
-#define oms_regex_match boost::regex_match
+// We probably do not need to depend on Boost just for regex anymore.
+// If the standard regex library is not deemed suitable (unlikely)
+// by the checks above, then just report and error so we can take
+// another look at this regex issue.
+#error "The regex library is not usable by OMSimulator. Please report an issue at https://github.com/OpenModelica/OMSimulator/issues/new?assignees=&labels=&projects=&template=bug_report.md"
+
+// #include <boost/regex.hpp>
+// #define oms_regex boost::regex
+// #define oms_regex_match boost::regex_match
+
 
 #endif
 
