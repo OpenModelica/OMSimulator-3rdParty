@@ -1,32 +1,16 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(minizip)
 
-IF(WIN32 AND MSVC)
-  set(PLATFORM_STRING "win")
-ELSEIF(WIN32 AND MINGW)
-  set(PLATFORM_STRING "mingw")
-ELSEIF(APPLE)
-  set(PLATFORM_STRING "mac")
-ELSE()
-  set(PLATFORM_STRING "linux")
-ENDIF()
-
-include_directories(../install/${PLATFORM_STRING}/include/)
-
-list(APPEND MINIZIP_SOURCES ioapi.c)
-list(APPEND MINIZIP_SOURCES miniunz.c)
-list(APPEND MINIZIP_SOURCES minizip.c)
-list(APPEND MINIZIP_SOURCES unzip.c)
-list(APPEND MINIZIP_SOURCES zip.c)
+set(MINIZIP_SOURCES ioapi.c
+                    miniunz.c
+                    minizip.c
+                    unzip.c
+                    zip.c)
 
 if (WIN32)
     list(APPEND MINIZIP_SOURCES iowin32.c)
 endif()
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-add_library(minizip STATIC ${MINIZIP_SOURCES})
+add_library(oms_minizip STATIC ${MINIZIP_SOURCES})
 
-target_include_directories(minizip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-install(TARGETS minizip)
-install(FILES minizip.h miniunz.h TYPE INCLUDE)
+target_include_directories(oms_minizip PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
