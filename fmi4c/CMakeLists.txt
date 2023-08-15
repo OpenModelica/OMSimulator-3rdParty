@@ -78,7 +78,7 @@ target_include_directories(${target_name} PUBLIC include)
 target_include_directories(${target_name} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/3rdparty>)
 target_include_directories(${target_name} PRIVATE src)
 target_link_libraries(${target_name} PUBLIC zlibstatic)
-target_link_libraries(${target_name} PUBLIC minizip)
+target_link_libraries(${target_name} PUBLIC oms_minizip)
 
 # Internal dependecy (PRIVATE) on zlib and ${CMAKE_DL_LIBS}) for libdl on Linux
 # target_link_libraries(${target_name} PRIVATE ZLIB::ZLIB ${CMAKE_DL_LIBS})
