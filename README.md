@@ -2,10 +2,6 @@
 
 OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
 
-## FMIL (FMILibrary)
-
-- https://svn.jmodelica.org/FMILibrary/trunk/ [revision 10948]
-
 ## Lua
 
 - https://www.lua.org/download.html [version 5.3.4]
