@@ -30,8 +30,6 @@ endif()
 add_library(oms::3rd::cvode ALIAS sundials_cvode_static)
 add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 
-
-
 #########################################################################
 ## zlib.
 ## Used by minizip and fmi4c. It should be added before them.
@@ -42,7 +40,6 @@ add_library(oms::3rd::zlib ALIAS zlibstatic)
 ## minizip.
 add_subdirectory(minizip EXCLUDE_FROM_ALL)
 add_library(oms::3rd::minizip ALIAS oms_minizip)
-
 
 #########################################################################
 ## fmi4c.
