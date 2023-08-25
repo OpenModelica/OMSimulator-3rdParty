@@ -49,19 +49,6 @@ add_subdirectory(fmi4c EXCLUDE_FROM_ALL)
 add_library(oms::3rd::fmi4c ALIAS fmi4c)
 
 #########################################################################
-## libxml2.
-option(BUILD_SHARED_LIBS OFF)
-option(LIBXML2_WITH_PYTHON OFF)
-option(LIBXML2_WITH_ZLIB OFF)
-option(LIBXML2_WITH_LZMA OFF)
-option(LIBXML2_WITH_TESTS OFF)
-option(LIBXML2_WITH_PROGRAMS OFF)
-if(MSVC)
-  option(LIBXML2_WITH_ICONV OFF)
-endif()
-add_subdirectory(libxml2 EXCLUDE_FROM_ALL)
-
-#########################################################################
 ## Lua.
 option(LUA_ENABLE_SHARED OFF)
 add_subdirectory(Lua EXCLUDE_FROM_ALL)
