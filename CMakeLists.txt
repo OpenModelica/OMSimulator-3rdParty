@@ -63,8 +63,3 @@ add_library(oms::3rd::pugixml::header ALIAS pugixml_header_only)
 ## CTPL.
 add_subdirectory(CTPL EXCLUDE_FROM_ALL)
 add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
-
-#########################################################################
-## RegEx.
-add_subdirectory(RegEx EXCLUDE_FROM_ALL)
-add_library(oms::3rd::regex ALIAS oms_regex)
