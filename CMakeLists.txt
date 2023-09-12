@@ -1,6 +1,6 @@
 #########################################################################
 ## Sundials
-if(NOT OPENMODELICA_SUPERPROJECT)
+if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   option(SUNDIALS_BUILD_SHARED_LIBS "Build shared libraries" OFF)
   option(SUNDIALS_EXAMPLES_ENABLE_C "Build SUNDIALS C examples" OFF)
   add_subdirectory(sundials-5.4.0 EXCLUDE_FROM_ALL)
