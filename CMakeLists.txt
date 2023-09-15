@@ -60,6 +60,12 @@ add_subdirectory(PugiXml EXCLUDE_FROM_ALL)
 add_library(oms::3rd::pugixml::header ALIAS pugixml_header_only)
 
 #########################################################################
+## xerces
+option(BUILD_SHARED_LIBS OFF)
+add_subdirectory(xerces EXCLUDE_FROM_ALL)
+add_library(oms::3rd::xerces ALIAS xerces-c)
+
+#########################################################################
 ## CTPL.
 add_subdirectory(CTPL EXCLUDE_FROM_ALL)
 add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
