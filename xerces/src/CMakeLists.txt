@@ -1289,7 +1289,7 @@ elseif(UNIX)
   # set the version in the filename, and create the symlink at install
   # time.  Note: could be dropped when the SONAME is updated and
   # libtool compatibility is no longer required.
-  if(BUILD_SHARED_LIBS)
+  if(XERCES_BUILD_SHARED_LIBS)
     set_target_properties(xerces-c PROPERTIES OUTPUT_NAME "xerces-c-${INTERFACE_VERSION_D}")
     file(GENERATE
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/InstallLibrarySymlink.cmake"

@@ -20,7 +20,7 @@
 # Option for selection of shared or static libraries, exported as
 # cache variable
 
-set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries")
+set(XERCES_BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries")
 
 # Add a d postfix to Debug libraries on Windows
 
@@ -35,7 +35,7 @@ set(XERCES_PLATFORM_IMPORT)
 set(XERCES_TEMPLATE_EXTERN extern)
 set(XERCES_DLL_EXPORT)
 set(XERCES_STATIC_LIBRARY)
-if(NOT BUILD_SHARED_LIBS)
+if(NOT XERCES_BUILD_SHARED_LIBS)
   set(XERCES_STATIC_LIBRARY 1)
 else()
   if(WIN32)
