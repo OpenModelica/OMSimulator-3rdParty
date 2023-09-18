@@ -63,6 +63,10 @@ add_library(oms::3rd::pugixml::header ALIAS pugixml_header_only)
 ## xerces
 option(XERCES_BUILD_SHARED_LIBS OFF)
 add_subdirectory(xerces EXCLUDE_FROM_ALL)
+### xerces does not include the target directories by default, so we have to externally add the include directories
+target_include_directories(xerces-c INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/xerces/src)
+### Xerces_autoconf_config.hpp is generated at build directory and we have to include it
+target_include_directories(xerces-c INTERFACE ${CMAKE_CURRENT_BINARY_DIR}/xerces/src)
 add_library(oms::3rd::xerces ALIAS xerces-c)
 
 #########################################################################

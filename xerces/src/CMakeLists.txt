@@ -1316,17 +1316,17 @@ else()
   set(xerces_config_dir "${CMAKE_INSTALL_LIBDIR}/cmake/XercesC")
 endif()
 
-install(TARGETS xerces-c
-  EXPORT XercesCConfigInternal
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  COMPONENT "runtime"
-  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-install(EXPORT XercesCConfigInternal
-        DESTINATION "${xerces_config_dir}"
-        NAMESPACE "xerces_"
-        COMPONENT "development")
+# install(TARGETS xerces-c
+#   EXPORT XercesCConfigInternal
+#   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#   COMPONENT "runtime"
+#   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+# install(EXPORT XercesCConfigInternal
+#         DESTINATION "${xerces_config_dir}"
+#         NAMESPACE "xerces_"
+#         COMPONENT "development")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
