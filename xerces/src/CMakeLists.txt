@@ -1341,13 +1341,13 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/XercesCConfig.cmake
               ${CMAKE_CURRENT_BINARY_DIR}/XercesCConfigVersion.cmake
               DESTINATION "${xerces_config_dir}")
 
-foreach(hdr IN LISTS libxerces_c_HEADERS)
-  get_filename_component(hdrdir "${hdr}" DIRECTORY)
-  install(
-    FILES "${hdr}"
-    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${hdrdir}"
-    COMPONENT "development")
-endforeach()
+# foreach(hdr IN LISTS libxerces_c_HEADERS)
+#   get_filename_component(hdrdir "${hdr}" DIRECTORY)
+#   install(
+#     FILES "${hdr}"
+#     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${hdrdir}"
+#     COMPONENT "development")
+# endforeach()
 
 # Source file grouping (for IDE project layout)
 set(source_files ${libxerces_c_SOURCES} ${libxerces_c_HEADERS})
@@ -1373,8 +1373,8 @@ unset(group_files)
 
 # Make sure cmake-generated Xerces_autoconf_config.hpp and
 # XercesVersion.hpp end up in a proper place when installed.
-install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/xercesc/util/Xerces_autoconf_config.hpp"
-        "${CMAKE_CURRENT_BINARY_DIR}/xercesc/util/XercesVersion.hpp"
-  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/xercesc/util"
-  COMPONENT "development")
+# install(
+#   FILES "${CMAKE_CURRENT_BINARY_DIR}/xercesc/util/Xerces_autoconf_config.hpp"
+#         "${CMAKE_CURRENT_BINARY_DIR}/xercesc/util/XercesVersion.hpp"
+#   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/xercesc/util"
+#   COMPONENT "development")

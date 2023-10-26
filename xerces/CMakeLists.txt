@@ -165,10 +165,10 @@ set(libdir "${CMAKE_INSTALL_FULL_LIBDIR}")
 set(includedir "${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/xerces-c.pc.in
                ${CMAKE_CURRENT_BINARY_DIR}/xerces-c.pc)
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/xerces-c.pc
-  DESTINATION "${PKGCONFIGDIR}"
-  COMPONENT "development")
+# install(
+#   FILES ${CMAKE_CURRENT_BINARY_DIR}/xerces-c.pc
+#   DESTINATION "${PKGCONFIGDIR}"
+#   COMPONENT "development")
 
 # Process subdirectories
 add_subdirectory(src)
