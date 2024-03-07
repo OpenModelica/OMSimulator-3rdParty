@@ -1599,9 +1599,26 @@ bool loadFunctionsFmi1(fmiHandle *fmu)
     strncat(dllPath, ".so", sizeof(dllPath)-strlen(dllPath)-1);
 #endif
 #ifdef _WIN32
+    char dllDirectory[FILENAME_MAX];
+    dllDirectory[0] = '\0';
+    strncat(dllDirectory, fmu->unzippedLocation, sizeof(dllDirectory)-strlen(dllDirectory)-1);
+    strncat(dllDirectory, "\\binaries\\win64\\", sizeof(dllDirectory)-strlen(dllDirectory)-1);
+
+    BOOL success = SetDllDirectoryA(dllDirectory);
+    if (!success) {
+        fprintf(stderr, "Loading DLL %s failed:\nFailed to set DLL directory %s", dllPath, dllDirectory);
+        return false;
+    }
+
     HINSTANCE dll = LoadLibraryA(dllPath);
     if(NULL == dll) {
-        printf("Loading DLL failed: %s\n",dllPath);
+        DWORD error = GetLastError();
+        LPSTR message = NULL;
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
+        fprintf(stderr, "Failed to load DLL %s:\n%s", dllPath, message);
+        LocalFree(message);
         return false;
     }
 #else
@@ -1715,9 +1732,26 @@ bool loadFunctionsFmi2(fmiHandle *fmu, fmi2Type fmuType)
     strncat(dllPath, ".so", sizeof(dllPath)-strlen(dllPath)-1);
 #endif
 #ifdef _WIN32
+    char dllDirectory[FILENAME_MAX];
+    dllDirectory[0] = '\0';
+    strncat(dllDirectory, fmu->unzippedLocation, sizeof(dllDirectory)-strlen(dllDirectory)-1);
+    strncat(dllDirectory, "\\binaries\\win64\\", sizeof(dllDirectory)-strlen(dllDirectory)-1);
+
+    BOOL success = SetDllDirectoryA(dllDirectory);
+    if (!success) {
+        fprintf(stderr, "Loading DLL %s failed:\nFailed to set DLL directory %s", dllPath, dllDirectory);
+        return false;
+    }
+
     HINSTANCE dll = LoadLibraryA(dllPath);
     if(NULL == dll) {
-        printf("Loading DLL failed: %s\n", dllPath);
+        DWORD error = GetLastError();
+        LPSTR message = NULL;
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
+        fprintf(stderr, "Failed to load DLL %s:\n%s", dllPath, message);
+        LocalFree(message);
         return false;
     }
 #else
@@ -1839,9 +1873,26 @@ bool loadFunctionsFmi3(fmiHandle *fmu, fmi3Type fmuType)
 #endif
 
 #ifdef _WIN32
+    char dllDirectory[FILENAME_MAX];
+    dllDirectory[0] = '\0';
+    strncat(dllDirectory, fmu->unzippedLocation, sizeof(dllDirectory)-strlen(dllDirectory)-1);
+    strncat(dllDirectory, "\\binaries\\x86_64-windows\\", sizeof(dllDirectory)-strlen(dllDirectory)-1);
+
+    BOOL success = SetDllDirectoryA(dllDirectory);
+    if (!success) {
+        fprintf(stderr, "Loading DLL %s failed:\nFailed to set DLL directory %s", dllPath, dllDirectory);
+        return false;
+    }
+
     HINSTANCE dll = LoadLibraryA(dllPath);
     if(NULL == dll) {
-        printf("Loading DLL failed: %s\n", dllPath);
+        DWORD error = GetLastError();
+        LPSTR message = NULL;
+        FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+            NULL, error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&message, 0, NULL);
+        fprintf(stderr, "Failed to load DLL %s:\n%s", dllPath, message);
+        LocalFree(message);
         return false;
     }
 #else
