@@ -1,6 +1,6 @@
 # OMSimulator-3rdParty
 
-OpenModelica FMI &amp; TLM simulator - third party sources used by OMSimulator
+OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 
 ## CTPL
 
