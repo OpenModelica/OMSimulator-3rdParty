@@ -47,6 +47,7 @@
 #include <time.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 # include <direct.h>
@@ -359,7 +360,7 @@ int minizip(argc,argv)
                     ret = scanf("%1s",answer);
                     if (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                        return -1; //exit(EXIT_FAILURE);
                     }
                     rep = answer[0] ;
                     if ((rep>='a') && (rep<='z'))
