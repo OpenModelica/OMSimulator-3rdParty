@@ -11,8 +11,6 @@
 
 #include <stdlib.h>
 #ifdef _WIN32
-    // Define WIN32_LEAN_AND_MEAN on the compilation commands to avoid any chance of someone including windows.h
-    #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
 #else
     #include <dlfcn.h>
@@ -30,7 +28,15 @@ typedef struct {
     fmi1DataType datatype;
     const char *name;
     const char *description;
+    const char *quantity;
+    const char *unit;
+    const char *displayUnit;
+    bool relativeQuantity;
+    double min;
+    double max;
+    double nominal;
     int64_t valueReference;
+    bool hasStartValue;
     fmi1Real startReal;
     fmi1Integer startInteger;
     fmi1Boolean startBoolean;
@@ -42,12 +48,25 @@ typedef struct {
 } fmi1VariableHandle;
 
 typedef struct {
+    const char* displayUnit;
+    double gain;
+    double offset;
+} fmi1DisplayUnitHandle;
+
+typedef struct {
+    const char* unit;
+    fmi1DisplayUnitHandle *displayUnits;
+    size_t numberOfDisplayUnits;
+} fmi1BaseUnitHandle;
+
+typedef struct {
     fmi2DataType datatype;
     const char *name;
     const char *description;
     const char *quantity;
     const char *unit;
     const char *displayUnit;
+    bool hasStartValue;
     fmi2Real startReal;
     fmi2Integer startInteger;
     fmi2Boolean startBoolean;
@@ -62,6 +81,32 @@ typedef struct {
 } fmi2VariableHandle;
 
 typedef struct {
+    int kg;
+    int m;
+    int s;
+    int A;
+    int K;
+    int mol;
+    int cd;
+    int rad;
+    double factor;
+    double offset;
+} fmi2BaseUnitHandle;
+
+typedef struct {
+    const char* name;
+    double factor;
+    double offset;
+} fmi2DisplayUnitHandle;
+
+typedef struct {
+    const char* name;
+    fmi2BaseUnitHandle *baseUnit;
+    fmi2DisplayUnitHandle *displayUnits;
+    size_t numberOfDisplayUnits;
+} fmi2UnitHandle;
+
+typedef struct {
     fmi3DataType datatype;
     const char *name;
     const char *description;
@@ -73,6 +118,7 @@ typedef struct {
     double min;
     double max;
     double nominal;
+    bool hasStartValue;
     fmi3Float64 startFloat64;
     fmi3Float32 startFloat32;
     fmi3Int64 startInt64;
@@ -175,6 +221,9 @@ typedef struct {
     double defaultStartTime;
     double defaultStopTime;
     double defaultTolerance;
+
+    int numberOfBaseUnits;
+    fmi1BaseUnitHandle *baseUnits;
 
     int numberOfVariables;
     fmi1VariableHandle *variables;
@@ -289,6 +338,9 @@ typedef struct {
     double defaultStopTime;
     double defaultTolerance;
     double defaultStepSize;
+
+    int numberOfUnits;
+    fmi2UnitHandle *units;
 
     int numberOfContinuousStates;
 

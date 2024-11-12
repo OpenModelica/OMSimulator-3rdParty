@@ -1,23 +1,32 @@
-#include <stdlib.h>
-#include <string.h>
 #include "fmi4c_utils.h"
 #include "fmi4c_common.h"
 
+#include <stdlib.h>
+#include <string.h>
+#ifdef _MSC_VER
+#include "dirent/dirent.h"
+#else
+#include <dirent.h>
+#include <sys/stat.h>
+#endif
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 //! @brief Concatenates model name and function name into "modelName_functionName" (for FMI 1)
 //! @param modelName FMU model name
 //! @param functionName Function name
+//! @param concatBuffer A buffer in which to concatenate modelName_functionName, this buffer must be FILENAME_MAX big
 //! @returns Full (concatenated) function name
-const char* getFunctionName(const char* modelName, const char* functionName) {
-    if(modelName == NULL || modelName[0] == '\0') {
-        return functionName;    //!< Do not change function name if model name is empty
+const char* getFunctionName(const char* modelName, const char* functionName, char* concatBuffer) {
+    if(modelName == NULL || strlen(modelName) == 0) {
+        // Do not change function name if model name is empty, in this case there is no need to use the buffer
+        return functionName;
     }
-    char* fullName = (char*)malloc(strlen(modelName)+strlen(functionName)+2);
-    strncpy(fullName, modelName, strlen(modelName)+strlen(functionName)+2);
-    fullName[strlen(modelName)] = '\0';
-    strncat(fullName,  "_", strlen(modelName)+strlen(functionName)+2);
-    strncat(fullName, functionName, strlen(modelName)+strlen(functionName)+2);
-    return fullName;
+    strncpy(concatBuffer, modelName, FILENAME_MAX-1);
+    strncat(concatBuffer,  "_", FILENAME_MAX-strlen(concatBuffer)-1);
+    strncat(concatBuffer, functionName, FILENAME_MAX-strlen(concatBuffer)-1);
+    return concatBuffer;
 }
 
 //! @brief Parses specified XML attribute and assigns it to target
@@ -194,16 +203,22 @@ bool parseModelStructureElement(fmi3ModelStructureElement *output, ezxml_t *elem
     output->numberOfDependencies = 0;
     const char* dependencies = NULL;
     if(parseStringAttributeEzXml(*element, "dependencies", &dependencies)) {
+
+        if(dependencies == NULL || dependencies[0] == '\0') {
+            //If dependencies is empty, no need to parse further
+            return true;
+        }
+
+        //Duplicate the dependencies string to make it mutable
         char* nonConstDependencies = _strdup(dependencies);
         free((char*)dependencies);
 
-        //Count number of dependencies
-        if(nonConstDependencies != NULL) {
-            output->numberOfDependencies = 1;
+        if (nonConstDependencies == NULL) {
+            return false; //strdup failed, handle as an error
         }
-        else {
-            return true;
-        }
+
+        //Count the number of dependencies based on space-delimited tokens
+        output->numberOfDependencies = 1;
         for(int i=0; nonConstDependencies[i]; ++i) {
             if(nonConstDependencies[i] == ' ') {
                 ++output->numberOfDependencies;
@@ -279,4 +294,112 @@ bool parseModelStructureElement(fmi3ModelStructureElement *output, ezxml_t *elem
     }
 
     return true;
+}
+
+//! @brief Remove a directory (including all files and sub directories)
+//! @param rootDirPath The path to the directory to remove
+//! @param expectedDirNamePrefix Optional directory name prefix to avoid removing unintended root dir. Set to Null to ignore.
+//! @returns 0 if removed OK else a system error code or -1
+int removeDirectoryRecursively(const char* rootDirPath, const char *expectedDirNamePrefix) {
+    // If expectedDirNamePrefix is set, ensure that the name of the directory being removed starts with this prefix
+    // This is just an optional sanity check to prevent unexpected removal of the wrong directory
+    if (expectedDirNamePrefix != NULL) {
+        int dsp; // Dir separator position
+        for (dsp=(int)strlen(rootDirPath); dsp>-1; dsp--) {
+            if ( rootDirPath[dsp] == '/' || rootDirPath[dsp] == '\\' ) {
+                break;
+            }
+        }
+        dsp++; // Advance to first char after separator (or first char if no separator found)
+
+        if (strncmp(expectedDirNamePrefix, rootDirPath+dsp, strlen(expectedDirNamePrefix)) != 0) {
+            printf("Directory name prefix '%s' mismatch, refusing to remove directory '%s'\n", expectedDirNamePrefix, rootDirPath);
+            return 1;
+        }
+    }
+
+    DIR* dir = opendir(rootDirPath);
+    int rc = -1;
+    if (dir) {
+        struct dirent *entry = readdir(dir);
+        while(entry) {
+            // Avoid recursing upwards
+            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) {
+                entry = readdir(dir);
+                continue;
+            }
+
+            // Determine full path to file or directory for current entry
+            size_t fullPathLength = strlen(rootDirPath)+ strlen(entry->d_name) + 2;
+            char* fullPath = malloc(fullPathLength);
+            snprintf(fullPath, fullPathLength, "%s/%s", rootDirPath, entry->d_name);
+
+            // Figure out if entry represents a directory or not
+            bool entryIsDir;
+            struct stat statbuf;
+#ifdef _DIRENT_HAVE_D_TYPE
+            entryIsDir = (entry->d_type == DT_DIR);
+            // On some filesystems d_type is not set, then use stat to check the type
+            if (entry->d_type == DT_UNKNOWN) {
+                if (!stat(fullPath, &statbuf)) {
+                    entryIsDir = S_ISDIR(statbuf.st_mode);
+                }
+            }
+#else
+            // On some systems d_type is note present, in which case stats is used
+            if (!stat(fullPath, &statbuf)) {
+                entryIsDir = S_ISDIR(statbuf.st_mode);
+            }
+#endif
+            // Recurse on directory, else unlink file
+            if (entryIsDir) {
+                rc = removeDirectoryRecursively(fullPath, NULL);
+            }
+            else {
+                // --- For debug ---
+                //printf("Debug: Would unlink: %s\n", fullPath);
+                //rc = 0;
+                // -----------------
+#ifdef _WIN32
+                rc = _unlink(fullPath);
+#else
+                rc = unlink(fullPath);
+#endif
+                if (rc != 0) {
+                    perror("Error");
+                    printf("Could not remove '%s'\n", fullPath);
+                }
+            }
+            free(fullPath);
+            if (rc != 0) {
+                break;
+            }
+            entry = readdir(dir);
+        }
+        closedir(dir);
+        if (rc == 0) {
+            // --- For debug ---
+            //printf("Debug: Would rmdir: %s\n", rootDirPath);
+            //rc = 0;
+            // -----------------
+#ifdef _WIN32
+            rc = RemoveDirectoryA(rootDirPath);
+            // RemoveDirectoryA returns non-zero on success so we swap it so that rest of the code works as expected (return code 0 = OK)
+            rc = (rc == 0) ? 1 : 0;
+#else
+            rc = rmdir(rootDirPath);
+#endif
+            if (rc != 0) {
+                perror("Error");
+            }
+        }
+        if (rc != 0) {
+            printf("Could not remove '%s'\n", rootDirPath);
+        }
+    }
+    else {
+        perror("Error");
+        printf("Could not access '%s' for removal\n", rootDirPath);
+    }
+    return rc;
 }
