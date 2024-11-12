@@ -4,9 +4,7 @@
 #include "fmi4c_placeholders.h"
 #include "fmi4c_utils.h"
 
-#ifdef FMI4C_WITH_MINIZIP
-#include "minizip/miniunz.h"
-#endif
+#include "miniunz.h"
 #include "ezxml/ezxml.h"
 
 #include <sys/stat.h>
@@ -4320,21 +4318,21 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        printf("Resource location: %s\n", fmu->resourcesLocation);
+        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
     else if(fmu->version == fmiVersion2) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
         strncat(resourcesLocation, "/resources", FILENAME_MAX-8-strlen(unzippLocation)-1);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        printf("Resource location: %s\n", fmu->resourcesLocation);
+        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
     else {
         char resourcesLocation[FILENAME_MAX] = "";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX);
         strncat(resourcesLocation, "/resources/", FILENAME_MAX-strlen(unzippLocation)-1);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        printf("Resource location: %s\n", fmu->resourcesLocation);
+        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
 
     ezxml_free(rootElement);
@@ -5850,4 +5848,3 @@ fmi3ValueReference fmi3_getModelStructureEventIndicatorDependencyKind(fmiHandle 
     }
     return 0;
 }
-

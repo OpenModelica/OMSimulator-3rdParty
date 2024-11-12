@@ -67,21 +67,6 @@ set(SRCFILES
     3rdparty/ezxml/ezxml.c
     3rdparty/ezxml/ezxml.h)
 
-if (NOT FMI4C_USE_SYSTEM_ZIP)
-
-    list(APPEND SRCFILES
-            3rdparty/minizip/miniunz.c
-            3rdparty/minizip/ioapi.c
-            3rdparty/minizip/mztools.c
-            3rdparty/minizip/unzip.c
-    )
-
-    if (WIN32)
-        list(APPEND SRCFILES 3rdparty/minizip/iowin32.c)
-    endif()
-
-endif ()
-
 if (MSVC)
     list(APPEND SRCFILES 3rdparty/dirent/dirent.h)
 endif()
@@ -114,11 +99,10 @@ target_include_directories(fmi4c
 
 # Internal dependency (PRIVATE) on libdl on Linux
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
-if (NOT FMI4C_USE_SYSTEM_ZIP)
-    # Internal dependency (PRIVATE) on zlib
-    target_link_libraries(fmi4c PRIVATE ZLIB::ZLIB)
-    target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
-endif()
+
+# Internal dependency (PRIVATE) on zlib
+target_link_libraries(fmi4c PUBLIC oms::3rd::minizip)
+target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
 
 if (FMI4C_BUILD_TEST)
     enable_testing()
@@ -139,15 +123,5 @@ configure_package_config_file(cmake/config.cmake.in
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fmi4c-config.cmake"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
 
-install(TARGETS fmi4c EXPORT "fmi4c-targets")
 install(DIRECTORY "include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(DIRECTORY "3rdparty/fmi" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-
-# If building a static library, also include the local static zlib if it was built
-if (NOT FMI4C_USE_SYSTEM_ZIP AND NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
-    install(TARGETS zlibstatic EXPORT "fmi4c-targets")
-endif()
-
-install(EXPORT "fmi4c-targets"
-        NAMESPACE "fmi4c::"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
