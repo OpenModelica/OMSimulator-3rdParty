@@ -75,7 +75,7 @@ const char* fmi4c_getErrorMessages()
 }
 
 void freeDuplicatedConstChar(const char* ptr) {
-  if(ptr == NULL) {
+  if(ptr != NULL) {
       free((void*)ptr);
   }
 }
@@ -667,7 +667,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                     freeDuplicatedConstChar(initial);
                     return false;
                 }
-                freeDuplicatedConstChar(variability);
+                freeDuplicatedConstChar(initial);
             }
             else {
                 // calculate the initial value according to fmi specification 2.2 table page 51
@@ -1593,8 +1593,10 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 }
                 else if(variability) {
                     printf("Unknown variability: %s\n", variability);
+                    freeDuplicatedConstChar(variability);
                     return false;
                 }
+                freeDuplicatedConstChar(variability);
             }
 
             //Parse arguments common to all except clock type
@@ -4165,6 +4167,13 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
 
     // Decide location for where to unzip
     char unzippLocation[FILENAME_MAX] = {0};
+
+    bool instanceNameIsAlphaNumeric = true;
+    for(int i=0; i<strlen(instanceName); ++i) {
+        if(!isalnum(instanceName[i])) {
+            instanceNameIsAlphaNumeric = false;
+        }
+    }
 #ifdef _WIN32
     DWORD len = GetTempPathA(FILENAME_MAX, unzippLocation);
     if (len == 0) {
@@ -4179,6 +4188,10 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     }
 
     strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
+    if(instanceNameIsAlphaNumeric) {
+        strncat(unzippLocation, instanceName, FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzippLocation, "_", FILENAME_MAX-strlen(unzippLocation)-1);
+    }
     char * ds = strrchr(tempFileName, '\\');
     if (ds) {
         strncat(unzippLocation, ds+1, FILENAME_MAX-strlen(unzippLocation)-1);
@@ -4224,6 +4237,10 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     }
 
     strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
+    if(instanceNameIsAlphaNumeric) {
+        strncat(unzippLocation, instanceName, FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzippLocation, "_", FILENAME_MAX-strlen(unzippLocation)-1);
+    }
     strncat(unzippLocation, "XXXXXX", FILENAME_MAX-strlen(unzippLocation)-1); // XXXXXX is for unique name by mkdtemp
     mkdtemp(unzippLocation);
 
@@ -4550,8 +4567,17 @@ void fmi4c_freeFmu(fmiHandle *fmu)
         for(int i=0; i<fmu->fmi1.numberOfVariables; ++i) {
             freeDuplicatedConstChar(fmu->fmi1.variables[i].name);
             freeDuplicatedConstChar(fmu->fmi1.variables[i].description);
+            freeDuplicatedConstChar(fmu->fmi1.variables[i].unit);
         }
         free(fmu->fmi1.variables);
+        for(int i=0; i<fmu->fmi1.numberOfBaseUnits; ++i) {
+            freeDuplicatedConstChar(fmu->fmi1.baseUnits[i].unit);
+            for(int j=0; j<fmu->fmi1.baseUnits[i].numberOfDisplayUnits; ++j) {
+                freeDuplicatedConstChar(fmu->fmi1.baseUnits[i].displayUnits[j].displayUnit);
+            }
+            free(fmu->fmi1.baseUnits[i].displayUnits);
+        }
+        free(fmu->fmi1.baseUnits);
         freeDuplicatedConstChar(fmu->fmi1.modelName);
         freeDuplicatedConstChar(fmu->fmi1.modelIdentifier);
         freeDuplicatedConstChar(fmu->fmi1.guid);
@@ -4568,6 +4594,7 @@ void fmi4c_freeFmu(fmiHandle *fmu)
             freeDuplicatedConstChar(fmu->fmi2.variables[i].description);
         }
         free(fmu->fmi2.variables);
+        freeDuplicatedConstChar(fmu->fmi2.fmiVersion_);
         freeDuplicatedConstChar(fmu->fmi2.modelName);
         freeDuplicatedConstChar(fmu->fmi2.guid);
         freeDuplicatedConstChar(fmu->fmi2.description);
