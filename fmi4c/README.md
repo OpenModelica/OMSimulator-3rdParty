@@ -16,8 +16,8 @@ The library is intended to be lightweight, easy to implement and to have an intu
 ## Third Party Dependencies
 Dependencies have been chosen to minimize implementation effort and to make the code easy to understand.
 - [ezxml](https://github.com/lxfontes/ezxml)
-- [zlib](https://github.com/madler/zlib)
-- [minizip](http://www.winimage.com/zLibDll/minizip.html)
+- [zlib](https://github.com/madler/zlib) (optional)
+- [minizip](http://www.winimage.com/zLibDll/minizip.html) (optional)
 
 ## API Example
 

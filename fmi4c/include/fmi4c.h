@@ -17,8 +17,6 @@
 
 #ifdef _WIN32
 #include <direct.h>
-// Define WIN32_LEAN_AND_MEAN on the compilation commands to avoid any chance of someone including windows.h
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
@@ -49,6 +47,13 @@ FMI4C_DLLAPI const char* fmi4c_getErrorMessages();
 
 // FMI 1 wrapper functions
 FMI4C_DLLAPI fmi1Type fmi1_getType(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getModelName(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getModelIdentifier(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getGuid(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getDescription(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getAuthor(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getGenerationTool(fmiHandle *fmu);
+FMI4C_DLLAPI const char* fmi1_getGenerationDateAndTime(fmiHandle *fmu);
 FMI4C_DLLAPI int fmi1_getNumberOfContinuousStates(fmiHandle *fmu);
 FMI4C_DLLAPI int fmi1_getNumberOfEventIndicators(fmiHandle *fmu);
 FMI4C_DLLAPI bool fmi1_defaultStartTimeDefined(fmiHandle *fmu);
@@ -67,6 +72,11 @@ FMI4C_DLLAPI const char* fmi1_getVariableDescription(fmi1VariableHandle* var);
 FMI4C_DLLAPI const char* fmi1_getVariableQuantity(fmi1VariableHandle* var);
 FMI4C_DLLAPI const char* fmi1_getVariableUnit(fmi1VariableHandle* var);
 FMI4C_DLLAPI const char* fmi1_getVariableDisplayUnit(fmi1VariableHandle* var);
+FMI4C_DLLAPI bool fmi1_getVariableRelativeQuantity(fmi1VariableHandle* var);
+FMI4C_DLLAPI fmi1Real fmi1_getVariableMin(fmi1VariableHandle* var);
+FMI4C_DLLAPI fmi1Real fmi1_getVariableMax(fmi1VariableHandle* var);
+FMI4C_DLLAPI fmi1Real fmi1_getVariableNominal(fmi1VariableHandle* var);
+FMI4C_DLLAPI bool fmi1_getVariableHasStartValue(fmi1VariableHandle* var);
 FMI4C_DLLAPI fmi1Real fmi1_getVariableStartReal(fmi1VariableHandle* var);
 FMI4C_DLLAPI fmi1Integer fmi1_getVariableStartInteger(fmi1VariableHandle* var);
 FMI4C_DLLAPI fmi1Boolean fmi1_getVariableStartBoolean(fmi1VariableHandle* var);
@@ -82,6 +92,12 @@ FMI4C_DLLAPI const char* fmi1_getTypesPlatform(fmiHandle* fmu);
 FMI4C_DLLAPI const char* fmi1_getVersion(fmiHandle* fmu);
 FMI4C_DLLAPI fmi1Status fmi1_setDebugLogging(fmiHandle* fmu, fmi1Boolean);
 
+FMI4C_DLLAPI int fmi1_getNumberOfBaseUnits(fmiHandle *fmu);
+FMI4C_DLLAPI fmi1BaseUnitHandle *fmi1_getBaseUnitByIndex(fmiHandle *fmu, int i);
+FMI4C_DLLAPI const char* fmi1_getBaseUnitUnit(fmi1BaseUnitHandle *baseUnit);
+FMI4C_DLLAPI int fmi1_getNumberOfDisplayUnits(fmi1BaseUnitHandle *baseUnit);
+FMI4C_DLLAPI void fmi1_getDisplayUnitByIndex(fmi1BaseUnitHandle *baseUnit, int id, const char **displayUnit, double *gain, double *offset);
+
 FMI4C_DLLAPI fmi1Status fmi1_getReal(fmiHandle* fmu, const fmi1ValueReference valueReferences[], size_t nValueReferences, fmi1Real values[]);
 FMI4C_DLLAPI fmi1Status fmi1_getInteger(fmiHandle* fmu, const fmi1ValueReference valueReferences[], size_t nValueReferences, fmi1Integer values[]);
 FMI4C_DLLAPI fmi1Status fmi1_getBoolean(fmiHandle* fmu, const fmi1ValueReference valueReferences[], size_t nValueReferences, fmi1Boolean values[]);
@@ -92,7 +108,7 @@ FMI4C_DLLAPI fmi1Status fmi1_setInteger(fmiHandle* fmu, const fmi1ValueReference
 FMI4C_DLLAPI fmi1Status fmi1_setBoolean(fmiHandle* fmu, const fmi1ValueReference valueReferences[], size_t nValueReferences, const fmi1Boolean values[]);
 FMI4C_DLLAPI fmi1Status fmi1_setString(fmiHandle* fmu, const fmi1ValueReference valueReferences[], size_t nValueReferences, const fmi1String values[]);
 
-FMI4C_DLLAPI bool fmi1_instantiateSlave(fmiHandle *fmu, fmi1String mimeType, fmi1Real timeOut, fmi1Boolean visible, fmi1Boolean interactive, fmi1CallbackLogger_t logger, fmi1CallbackAllocateMemory_t allocateMemory, fmi1CallbackFreeMemory_t freeMemory, fmi1StepFinished_t stepFinished, fmi3Boolean loggingOn);
+FMI4C_DLLAPI bool fmi1_instantiateSlave(fmiHandle *fmu, fmi1String mimeType, fmi1Real timeOut, fmi1Boolean visible, fmi1Boolean interactive, fmi1CallbackLogger_t logger, fmi1CallbackAllocateMemory_t allocateMemory, fmi1CallbackFreeMemory_t freeMemory, fmi1StepFinished_t stepFinished, fmi1Boolean loggingOn);
 FMI4C_DLLAPI fmi1Status fmi1_initializeSlave(fmiHandle* fmu, fmi1Real startTime, fmi1Boolean stopTimeDefined, fmi1Real stopTime);
 FMI4C_DLLAPI fmi1Status fmi1_terminateSlave(fmiHandle* fmu);
 FMI4C_DLLAPI fmi1Status fmi1_resetSlave(fmiHandle* fmu);
@@ -154,6 +170,7 @@ FMI4C_DLLAPI int fmi2_getVariableDerivativeIndex(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableQuantity(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableUnit(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableDisplayUnit(fmi2VariableHandle* var);
+FMI4C_DLLAPI bool fmi2_getVariableHasStartValue(fmi2VariableHandle* var);
 FMI4C_DLLAPI fmi2Real fmi2_getVariableStartReal(fmi2VariableHandle* var);
 FMI4C_DLLAPI fmi2Integer fmi2_getVariableStartInteger(fmi2VariableHandle* var);
 FMI4C_DLLAPI fmi2Boolean fmi2_getVariableStartBoolean(fmi2VariableHandle* var);
@@ -204,6 +221,14 @@ FMI4C_DLLAPI fmi2Status fmi2_enterInitializationMode(fmiHandle* fmu);
 FMI4C_DLLAPI fmi2Status fmi2_exitInitializationMode(fmiHandle* fmu);
 FMI4C_DLLAPI fmi2Status fmi2_terminate(fmiHandle* fmu);
 FMI4C_DLLAPI fmi2Status fmi2_reset(fmiHandle* fmu);
+
+FMI4C_DLLAPI int fmi2_getNumberOfUnits(fmiHandle *fmu);
+FMI4C_DLLAPI fmi2UnitHandle *fmi2_getUnitByIndex(fmiHandle *fmu, int i);
+FMI4C_DLLAPI const char* fmi2_getUnitName(fmi2UnitHandle *unit);
+FMI4C_DLLAPI bool fmi2_hasBaseUnit(fmi2UnitHandle *unit);
+FMI4C_DLLAPI void fmi2_getBaseUnit(fmi2UnitHandle *unit, double *factor, double *offset, int *kg, int *m, int *s, int *A, int *K, int *mol, int *cd, int *rad);
+FMI4C_DLLAPI int fmi2_getNumberOfDisplayUnits(fmi2UnitHandle *unit);
+FMI4C_DLLAPI void fmi2_getDisplayUnitByIndex(fmi2UnitHandle *unit, int id, const char **name, double *factor, double *offset);
 
 FMI4C_DLLAPI fmi2Status fmi2_getReal(fmiHandle* fmu, const fmi2ValueReference valueReferences[], size_t nValueReferences, fmi2Real values[]);
 FMI4C_DLLAPI fmi2Status fmi2_getInteger(fmiHandle* fmu, const fmi2ValueReference valueReferences[], size_t nValueReferences, fmi2Integer values[]);
@@ -303,6 +328,7 @@ FMI4C_DLLAPI const char *fmi3_getVariableDescription(fmi3VariableHandle* var);
 FMI4C_DLLAPI const char *fmi3_getVariableQuantity(fmi3VariableHandle* var);
 FMI4C_DLLAPI const char *fmi3_getVariableUnit(fmi3VariableHandle* var);
 FMI4C_DLLAPI const char *fmi3_getVariableDisplayUnit(fmi3VariableHandle* var);
+FMI4C_DLLAPI bool fmi3_getVariableHasStartValue(fmi3VariableHandle* var);
 FMI4C_DLLAPI fmi3Float64 fmi3_getVariableStartFloat64(fmi3VariableHandle* var);
 FMI4C_DLLAPI fmi3Float32 fmi3_getVariableStartFloat32(fmi3VariableHandle *var);
 FMI4C_DLLAPI fmi3Int64 fmi3_getVariableStartInt64(fmi3VariableHandle *var);
@@ -365,59 +391,59 @@ FMI4C_DLLAPI void fmi3_getFloat32Type(fmiHandle* fmu,
                                       const char** quantity,
                                       const char** unit,
                                       const char** displayUnit,
-                                      bool* relativeQuantity,
-                                      bool* unbounded,
-                                      double* min,
-                                      double* max,
-                                      double* nominal);
+                                      bool *relativeQuantity,
+                                      bool *unbounded,
+                                      float *min,
+                                      float *max,
+                                      float *nominal);
 FMI4C_DLLAPI void fmi3_getInt64Type(fmiHandle *fmu,
                                     const char *name,
                                     const char** description,
                                     const char** quantity,
-                                    double* min,
-                                    double* max);
+                                    int64_t* min,
+                                    int64_t* max);
 FMI4C_DLLAPI void fmi3_getInt32Type(fmiHandle *fmu,
                                     const char *name,
                                     const char** description,
                                     const char** quantity,
-                                    double* min,
-                                    double* max);
+                                    int32_t* min,
+                                    int32_t* max);
 FMI4C_DLLAPI void fmi3_getInt16Type(fmiHandle *fmu,
                                     const char *name,
                                     const char** description,
                                     const char** quantity,
-                                    double* min,
-                                    double* max);
+                                    int16_t* min,
+                                    int16_t* max);
 FMI4C_DLLAPI void fmi3_getInt8Type(fmiHandle *fmu,
                                    const char *name,
                                    const char** description,
                                    const char** quantity,
-                                   double* min,
-                                   double* max);
+                                   int8_t* min,
+                                   int8_t* max);
 FMI4C_DLLAPI void fmi3_getUInt64Type(fmiHandle *fmu,
                                      const char *name,
                                      const char** description,
                                      const char** quantity,
-                                     double* min,
-                                     double* max);
+                                     uint64_t* min,
+                                     uint64_t* max);
 FMI4C_DLLAPI void fmi3_getUInt32Type(fmiHandle *fmu,
                                      const char *name,
                                      const char** description,
                                      const char** quantity,
-                                     double* min,
-                                     double* max);
+                                     uint32_t* min,
+                                     uint32_t* max);
 FMI4C_DLLAPI void fmi3_getUInt16Type(fmiHandle *fmu,
                                      const char *name,
                                      const char** description,
                                      const char** quantity,
-                                     double* min,
-                                     double* max);
+                                     uint16_t* min,
+                                     uint16_t* max);
 FMI4C_DLLAPI void fmi3_getUInt8Type(fmiHandle *fmu,
                                     const char *name,
                                     const char** description,
                                     const char** quantity,
-                                    double* min,
-                                    double* max);
+                                    uint8_t* min,
+                                    uint8_t* max);
 FMI4C_DLLAPI void fmi3_getBooleanType(fmiHandle *fmu,
                                       const char *name,
                                       const char **description);
@@ -600,7 +626,7 @@ FMI4C_DLLAPI fmi3Status fmi3_getFloat64(fmiHandle *fmu,
 FMI4C_DLLAPI fmi3Status fmi3_setFloat64(fmiHandle *fmu,
                                        const fmi3ValueReference valueReferences[],
                                        size_t nValueReferences,
-                                       fmi3Float64 values[],
+                                       const fmi3Float64 values[],
                                        size_t nValues);
 
 FMI4C_DLLAPI fmi3Status fmi3_enterInitializationMode(fmiHandle *fmu,

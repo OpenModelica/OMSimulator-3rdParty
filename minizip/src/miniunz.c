@@ -139,6 +139,8 @@ static int mymkdir(dirname)
     ret = mkdir (dirname,0775);
 #elif __APPLE__
     ret = mkdir (dirname,0775);
+#else
+#error Unknown platform
 #endif
     return ret;
 }
@@ -397,7 +399,7 @@ static int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,pa
                     ret = scanf("%1s",answer);
                     if (ret != 1)
                     {
-                       exit(EXIT_FAILURE);
+                        return -1; //exit(EXIT_FAILURE);
                     }
                     rep = answer[0] ;
                     if ((rep>='a') && (rep<='z'))
@@ -764,7 +766,7 @@ int miniunz(argc,argv)
 #endif
         {
           MINIZIP_PRINT("Error changing into %s, aborting\n", dirname);
-          exit(-1);
+          return -1; //exit(-1);
         }
 
         if (filename_to_extract == NULL)
