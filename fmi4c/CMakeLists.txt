@@ -11,9 +11,12 @@ option(FMI4C_BUILD_TEST "Build test executable" OFF)
 option(FMI4C_BUILD_SHARED "Build as shared library (DLL)" ON)
 option(FMI4C_USE_SYSTEM_ZIP "Use system utilities for unzipping" ON)
 option(FMI4C_USE_EXTERNAL_MINIZIP "Use minizip target provided by FMI4C_EXTERNAL_MINIZIP" OFF)
-set(FMI4C_EXTERNAL_MINIZIP "" CACHE STRING "Defines an external target for minizip.")
 #this option is only enabled when FMI4C_USE_SYSTEM_ZIP=OFF
 cmake_dependent_option(FMI4C_USE_INCLUDED_ZLIB "Use the included zlib (statically linked) even if a system version is available" OFF "NOT FMI4C_USE_SYSTEM_ZIP" OFF)
+
+if (NOT DEFINED FMI4C_EXTERNAL_MINIZIP)
+    set(FMI4C_EXTERNAL_MINIZIP "" CACHE STRING "Defines an external target for minizip.")
+endif()
 
 # Set default debug postfix
 if (NOT CMAKE_DEBUG_POSTFIX)
