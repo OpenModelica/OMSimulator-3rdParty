@@ -57,8 +57,18 @@ target_include_directories(fmi4c
 # Internal dependency (PRIVATE) on libdl on Linux
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
 
-target_link_libraries(fmi4c PUBLIC oms::3rd::minizip)
-target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+if(FMI4C_USE_EXTERNAL_MINIZIP)
+    message(STATUS "Using external MINIZIP: oms::3rd::minizip")
+    target_link_libraries(fmi4c PUBLIC oms::3rd::minizip)
+    target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+else()
+    message(STATUS "NOT using external MINIZIP")
+    if (NOT FMI4C_USE_SYSTEM_ZIP)
+        # Internal dependency (PRIVATE) on zlib
+        target_link_libraries(fmi4c PRIVATE ZLIB::ZLIB)
+        target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+    endif()
+endif()
 
 if (FMI4C_BUILD_TEST)
     enable_testing()
