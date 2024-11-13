@@ -44,6 +44,8 @@ add_library(oms::3rd::minizip ALIAS oms_minizip)
 #########################################################################
 ## fmi4c.
 option(FMI4C_BUILD_SHARED OFF)
+option(FMI4C_USE_SYSTEM_ZIP OFF)
+option(FMI4C_USE_EXTERNAL_MINIZIP ON)
 set(FMI4C_EXTERNAL_MINIZIP oms::3rd::minizip)
 add_subdirectory(fmi4c EXCLUDE_FROM_ALL)
 add_library(oms::3rd::fmi4c ALIAS fmi4c)

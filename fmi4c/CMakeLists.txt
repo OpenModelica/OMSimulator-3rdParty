@@ -6,6 +6,7 @@ include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
+option(FMI4C_USE_EXTERNAL_MINIZIP "Use minizip target provided by FMI4C_EXTERNAL_MINIZIP" OFF)
 set(FMI4C_EXTERNAL_MINIZIP "" CACHE STRING "Defines an external target for minizip.")
 
 option(FMI4C_BUILD_DOCUMENTATION "Build Doxygen documentation" OFF)
@@ -24,7 +25,7 @@ if (FMI4C_BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
 
-if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
     if (NOT FMI4C_USE_SYSTEM_ZIP)
         if(NOT FMI4C_USE_INCLUDED_ZLIB)
             find_package(ZLIB MODULE)
@@ -55,23 +56,9 @@ endif()
 set(SRCFILES
     src/fmi4c.c
     src/fmi4c_utils.c
-    src/fmi4c_private.h
-    src/fmi4c_utils.h
-    src/fmi4c_placeholders.h
-    include/fmi4c.h
-    include/fmi4c_public.h
-    include/fmi4c_common.h
-    include/fmi4c_types.h
-    include/fmi4c_types_fmi1.h
-    include/fmi4c_types_fmi2.h
-    include/fmi4c_types_fmi3.h
-    include/fmi4c_functions_fmi1.h
-    include/fmi4c_functions_fmi2.h
-    include/fmi4c_functions_fmi3.h
-    3rdparty/ezxml/ezxml.c
-    3rdparty/ezxml/ezxml.h)
+    3rdparty/ezxml/ezxml.c)
 
-if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
     if (NOT FMI4C_USE_SYSTEM_ZIP)
 
         list(APPEND SRCFILES
@@ -118,7 +105,7 @@ target_include_directories(fmi4c
 # Internal dependency (PRIVATE) on libdl on Linux
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
 
-if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
     if (NOT FMI4C_USE_SYSTEM_ZIP)
         # Internal dependency (PRIVATE) on zlib
         target_link_libraries(fmi4c PRIVATE ZLIB::ZLIB)
@@ -149,14 +136,14 @@ configure_package_config_file(cmake/config.cmake.in
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fmi4c-config.cmake"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
 
-if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
     install(TARGETS fmi4c EXPORT "fmi4c-targets")
 endif()
 
 install(DIRECTORY "include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(DIRECTORY "3rdparty/fmi" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
     # If building a static library, also include the local static zlib if it was built
     if (NOT FMI4C_USE_SYSTEM_ZIP AND NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
         install(TARGETS zlibstatic EXPORT "fmi4c-targets")
