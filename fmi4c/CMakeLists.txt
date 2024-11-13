@@ -10,6 +10,7 @@ option(FMI4C_BUILD_DOCUMENTATION "Build Doxygen documentation" OFF)
 option(FMI4C_BUILD_TEST "Build test executable" OFF)
 option(FMI4C_BUILD_SHARED "Build as shared library (DLL)" ON)
 option(FMI4C_USE_SYSTEM_ZIP "Use system utilities for unzipping" ON)
+option(FMI4C_USE_EXTERNAL_MINIZIP "Use minizip target provided by FMI4C_EXTERNAL_MINIZIP" OFF)
 #this option is only enabled when FMI4C_USE_SYSTEM_ZIP=OFF
 cmake_dependent_option(FMI4C_USE_INCLUDED_ZLIB "Use the included zlib (statically linked) even if a system version is available" OFF "NOT FMI4C_USE_SYSTEM_ZIP" OFF)
 
@@ -78,5 +79,20 @@ configure_package_config_file(cmake/config.cmake.in
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fmi4c-config.cmake"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
 
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
+    install(TARGETS fmi4c EXPORT "fmi4c-targets")
+endif()
+
 install(DIRECTORY "include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(DIRECTORY "3rdparty/fmi" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
+    # If building a static library, also include the local static zlib if it was built
+    if (NOT FMI4C_USE_SYSTEM_ZIP AND NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
+        install(TARGETS zlibstatic EXPORT "fmi4c-targets")
+    endif()
+
+    install(EXPORT "fmi4c-targets"
+            NAMESPACE "fmi4c::"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
+endif()
