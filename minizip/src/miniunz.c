@@ -759,7 +759,6 @@ int miniunz(argc,argv)
         ret_value = do_list(uf);
     else if (opt_do_extract==1)
     {
-        makedir(dirname);
 #ifdef _WIN32
         if (opt_extractdir && _chdir(dirname))
 #else
