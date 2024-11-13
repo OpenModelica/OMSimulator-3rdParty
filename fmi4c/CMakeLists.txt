@@ -11,6 +11,7 @@ option(FMI4C_BUILD_TEST "Build test executable" OFF)
 option(FMI4C_BUILD_SHARED "Build as shared library (DLL)" ON)
 option(FMI4C_USE_SYSTEM_ZIP "Use system utilities for unzipping" ON)
 option(FMI4C_USE_EXTERNAL_MINIZIP "Use minizip target provided by FMI4C_EXTERNAL_MINIZIP" OFF)
+set(FMI4C_EXTERNAL_MINIZIP "" CACHE STRING "Defines an external target for minizip.")
 #this option is only enabled when FMI4C_USE_SYSTEM_ZIP=OFF
 cmake_dependent_option(FMI4C_USE_INCLUDED_ZLIB "Use the included zlib (statically linked) even if a system version is available" OFF "NOT FMI4C_USE_SYSTEM_ZIP" OFF)
 
@@ -107,8 +108,8 @@ endif()
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
 
 if(FMI4C_USE_EXTERNAL_MINIZIP)
-    message(STATUS "Using external MINIZIP: oms::3rd::minizip")
-    target_link_libraries(fmi4c PUBLIC oms::3rd::minizip)
+    message(STATUS "Using external MINIZIP: ${FMI4C_EXTERNAL_MINIZIP}")
+    target_link_libraries(fmi4c PUBLIC ${FMI4C_EXTERNAL_MINIZIP})
     target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
 else()
     message(STATUS "NOT using external MINIZIP")
