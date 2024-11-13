@@ -23,10 +23,55 @@ if (FMI4C_BUILD_DOCUMENTATION)
     add_subdirectory(doc)
 endif()
 
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
+    if (NOT FMI4C_USE_SYSTEM_ZIP)
+        if(NOT FMI4C_USE_INCLUDED_ZLIB)
+            find_package(ZLIB MODULE)
+            message(STATUS "ZLIB_FOUND: ${ZLIB_FOUND}")
+            message(STATUS "ZLIB_INCLUDE_DIRS: ${ZLIB_INCLUDE_DIRS}")
+            message(STATUS "ZLIB_VERSION: ${ZLIB_VERSION} ${ZLIB_VERSION_STRING}")
+            message(STATUS "ZLIB_LIBRARIES: ${ZLIB_LIBRARIES}")
+        endif()
+        # If zlib can not be found in the system, then build local version
+        if (NOT ZLIB_FOUND)
+            set(zlib_dir "3rdparty/zlib")
+            message(STATUS "Building and using included ZLIB: ${zlib_dir}")
+            # Must use position independent code if intend to include static zlib into shared (dll) fmi4c lib
+            set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+            # Add bundled sources, (EXCLUDE_FROM_ALL prevents zlib from being installed with fmi4c)
+            add_subdirectory(${zlib_dir} EXCLUDE_FROM_ALL)
+            # We highjack the zlibstatic target from the original build system, but it does not have the include directory properties set, so lets add them here
+            set_target_properties(zlibstatic
+                    PROPERTIES
+                    INTERFACE_INCLUDE_DIRECTORIES
+                    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${zlib_dir}>;$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${zlib_dir}>")
+            # Use alias to match name that find-module uses
+            add_library(ZLIB::ZLIB ALIAS zlibstatic)
+        endif()
+    endif()
+endif()
+
 set(SRCFILES
     src/fmi4c.c
     src/fmi4c_utils.c
     3rdparty/ezxml/ezxml.c)
+
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
+    if (NOT FMI4C_USE_SYSTEM_ZIP)
+
+        list(APPEND SRCFILES
+                3rdparty/minizip/miniunz.c
+                3rdparty/minizip/ioapi.c
+                3rdparty/minizip/mztools.c
+                3rdparty/minizip/unzip.c
+        )
+
+        if (WIN32)
+            list(APPEND SRCFILES 3rdparty/minizip/iowin32.c)
+        endif()
+
+    endif ()
+endif()
 
 if (FMI4C_BUILD_SHARED)
     add_library(fmi4c SHARED ${SRCFILES})
@@ -53,6 +98,10 @@ target_include_directories(fmi4c
         PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
+
+if(NOT FMI4C_USE_EXTERNAL_MINIZIP)
+    target_include_directories(fmi4c PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty>/minizip")
+endif()
 
 # Internal dependency (PRIVATE) on libdl on Linux
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
