@@ -4,7 +4,9 @@
 #include "fmi4c_placeholders.h"
 #include "fmi4c_utils.h"
 
+#ifdef FMI4C_WITH_MINIZIP
 #include "miniunz.h"
+#endif
 #include "ezxml/ezxml.h"
 
 #include <sys/stat.h>
@@ -4177,7 +4179,6 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     }
 
     strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
-    strncat(unzippLocation, "_", FILENAME_MAX-strlen(unzippLocation)-1);
     char * ds = strrchr(tempFileName, '\\');
     if (ds) {
         strncat(unzippLocation, ds+1, FILENAME_MAX-strlen(unzippLocation)-1);
@@ -4223,7 +4224,7 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     }
 
     strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
-    strncat(unzippLocation, "_XXXXXX", FILENAME_MAX-strlen(unzippLocation)-1); // XXXXXX is for unique name by mkdtemp
+    strncat(unzippLocation, "XXXXXX", FILENAME_MAX-strlen(unzippLocation)-1); // XXXXXX is for unique name by mkdtemp
     mkdtemp(unzippLocation);
 
 #ifndef FMI4C_WITH_MINIZIP
@@ -4316,21 +4317,18 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
     else if(fmu->version == fmiVersion2) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
         strncat(resourcesLocation, "/resources", FILENAME_MAX-8-strlen(unzippLocation)-1);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
     else {
         char resourcesLocation[FILENAME_MAX] = "";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX);
         strncat(resourcesLocation, "/resources/", FILENAME_MAX-strlen(unzippLocation)-1);
         fmu->resourcesLocation = _strdup(resourcesLocation);
-        //printf("Resource location: %s\n", fmu->resourcesLocation);
     }
 
     ezxml_free(rootElement);

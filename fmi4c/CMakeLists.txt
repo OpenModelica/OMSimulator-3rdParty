@@ -6,6 +6,8 @@ include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
+set(FMI4C_EXTERNAL_MINIZIP "" CACHE STRING "Defines an external target for minizip.")
+
 option(FMI4C_BUILD_DOCUMENTATION "Build Doxygen documentation" OFF)
 option(FMI4C_BUILD_TEST "Build test executable" OFF)
 option(FMI4C_BUILD_SHARED "Build as shared library (DLL)" ON)
@@ -67,8 +69,21 @@ set(SRCFILES
     3rdparty/ezxml/ezxml.c
     3rdparty/ezxml/ezxml.h)
 
-if (MSVC)
-    list(APPEND SRCFILES 3rdparty/dirent/dirent.h)
+if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+    if (NOT FMI4C_USE_SYSTEM_ZIP)
+
+        list(APPEND SRCFILES
+                3rdparty/minizip/miniunz.c
+                3rdparty/minizip/ioapi.c
+                3rdparty/minizip/mztools.c
+                3rdparty/minizip/unzip.c
+        )
+
+        if (WIN32)
+            list(APPEND SRCFILES 3rdparty/minizip/iowin32.c)
+        endif()
+
+    endif ()
 endif()
 
 if (FMI4C_BUILD_SHARED)
@@ -92,6 +107,7 @@ target_include_directories(fmi4c
         PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdparty>/minizip"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
@@ -100,9 +116,17 @@ target_include_directories(fmi4c
 # Internal dependency (PRIVATE) on libdl on Linux
 target_link_libraries(fmi4c PRIVATE ${CMAKE_DL_LIBS})
 
-# Internal dependency (PRIVATE) on zlib
-target_link_libraries(fmi4c PUBLIC oms::3rd::minizip)
-target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+    if (NOT FMI4C_USE_SYSTEM_ZIP)
+        # Internal dependency (PRIVATE) on zlib
+        target_link_libraries(fmi4c PRIVATE ZLIB::ZLIB)
+        target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+    endif()
+else()
+    message(STATUS "Using external MINIZIP: ${FMI4C_EXTERNAL_MINIZIP}")
+    target_link_libraries(fmi4c PUBLIC ${FMI4C_EXTERNAL_MINIZIP})
+    target_compile_definitions(fmi4c PRIVATE FMI4C_WITH_MINIZIP)
+endif()
 
 if (FMI4C_BUILD_TEST)
     enable_testing()
@@ -123,5 +147,20 @@ configure_package_config_file(cmake/config.cmake.in
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/fmi4c-config.cmake"
         DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
 
+if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+    install(TARGETS fmi4c EXPORT "fmi4c-targets")
+endif()
+
 install(DIRECTORY "include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 install(DIRECTORY "3rdparty/fmi" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+if("${FMI4C_EXTERNAL_MINIZIP}" STREQUAL "")
+    # If building a static library, also include the local static zlib if it was built
+    if (NOT FMI4C_USE_SYSTEM_ZIP AND NOT FMI4C_BUILD_SHARED AND TARGET zlibstatic)
+        install(TARGETS zlibstatic EXPORT "fmi4c-targets")
+    endif()
+
+    install(EXPORT "fmi4c-targets"
+            NAMESPACE "fmi4c::"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/fmi4c")
+endif()
