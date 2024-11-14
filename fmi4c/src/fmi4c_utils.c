@@ -44,6 +44,9 @@ const char* getFunctionName(const char* modelName, const char* functionName, cha
 bool parseStringAttributeEzXml(ezxml_t element, const char *attributeName, const char **target)
 {
     if(ezxml_attr(element, attributeName)) {
+        if (*target) {
+            free((void*)*target);  // Free previous memory if allocated
+        }
         (*target) = _strdup(ezxml_attr(element, attributeName));
         return true;
     }
