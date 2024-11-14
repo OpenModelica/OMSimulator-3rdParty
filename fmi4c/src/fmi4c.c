@@ -80,7 +80,6 @@ void freeDuplicatedConstChar(const char* ptr) {
   }
 }
 
-
 //! @brief Parses modelDescription.xml for FMI 1
 //! @param fmu FMU handle
 //! @returns True if parsing was successful
@@ -129,15 +128,15 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
     }
 
     //Parse attributes in <fmiModelDescription>
-    parseStringAttributeEzXml(rootElement, "modelName",                 &fmu->fmi1.modelName);
-    parseStringAttributeEzXml(rootElement, "modelIdentifier",           &fmu->fmi1.modelIdentifier);
-    parseStringAttributeEzXml(rootElement, "guid",                      &fmu->fmi1.guid);
-    parseStringAttributeEzXml(rootElement, "description",               &fmu->fmi1.description);
-    parseStringAttributeEzXml(rootElement, "author",                    &fmu->fmi1.author);
-    parseStringAttributeEzXml(rootElement, "version",                   &fmu->fmi1.version);
-    parseStringAttributeEzXml(rootElement, "generationTool",            &fmu->fmi1.generationTool);
-    parseStringAttributeEzXml(rootElement, "generationDateAndTime",     &fmu->fmi1.generationDateAndTime);
-    parseStringAttributeEzXml(rootElement, "variableNamingConvention",  &fmu->fmi1.variableNamingConvention);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "modelName",                 &fmu->fmi1.modelName,                  fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "modelIdentifier",           &fmu->fmi1.modelIdentifier,            fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "guid",                      &fmu->fmi1.guid,                       fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "description",               &fmu->fmi1.description,                fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "author",                    &fmu->fmi1.author,                     fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "version",                   &fmu->fmi1.version,                    fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationTool",            &fmu->fmi1.generationTool,             fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationDateAndTime",     &fmu->fmi1.generationDateAndTime,      fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "variableNamingConvention",  &fmu->fmi1.variableNamingConvention,   fmu);
     parseInt32AttributeEzXml(rootElement, "numberOfContinuousStates",   &fmu->fmi1.numberOfContinuousStates);
     parseInt32AttributeEzXml(rootElement, "numberOfEventIndicators",    &fmu->fmi1.numberOfEventIndicators);
 
@@ -177,7 +176,7 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
             }
         }
         if(fmu->fmi1.numberOfBaseUnits > 0) {
-            fmu->fmi1.baseUnits = malloc(fmu->fmi1.numberOfBaseUnits*sizeof(fmi1BaseUnitHandle));
+            fmu->fmi1.baseUnits = mallocAndRememberPointer(fmu, fmu->fmi1.numberOfBaseUnits*sizeof(fmi1BaseUnitHandle));
         }
         int i=0;
         for(ezxml_t baseUnitElement = unitDefinitionsElement->child; baseUnitElement; baseUnitElement = baseUnitElement->ordered) {
@@ -187,7 +186,7 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
             fmi1BaseUnitHandle baseUnit;
             baseUnit.unit = NULL;
             baseUnit.displayUnits = NULL;
-            parseStringAttributeEzXml(baseUnitElement, "unit", &baseUnit.unit);
+            parseStringAttributeEzXmlAndRememberPointer(baseUnitElement, "unit", &baseUnit.unit, fmu);
             baseUnit.numberOfDisplayUnits = 0;
             for(ezxml_t unitSubElement = baseUnitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "DisplayUnitDefinition")) {
@@ -195,14 +194,14 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
                 }
             }
             if(baseUnit.numberOfDisplayUnits > 0) {
-                baseUnit.displayUnits = malloc(baseUnit.numberOfDisplayUnits*sizeof(fmi1DisplayUnitHandle));
+                baseUnit.displayUnits = mallocAndRememberPointer(fmu, baseUnit.numberOfDisplayUnits*sizeof(fmi1DisplayUnitHandle));
             }
             int j=0;
             for(ezxml_t unitSubElement = baseUnitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "DisplayUnitDefinition")) {
                     baseUnit.displayUnits[j].gain = 1;
                     baseUnit.displayUnits[j].offset = 0;
-                    parseStringAttributeEzXml(unitSubElement,  "displayUnit",      &baseUnit.displayUnits[j].displayUnit);
+                    parseStringAttributeEzXmlAndRememberPointer(unitSubElement,  "displayUnit",      &baseUnit.displayUnits[j].displayUnit, fmu);
                     parseFloat64AttributeEzXml(unitSubElement, "factor",    &baseUnit.displayUnits[j].gain);
                     parseFloat64AttributeEzXml(unitSubElement, "offset",    &baseUnit.displayUnits[j].offset);
                 }
@@ -239,9 +238,9 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
             var.startBoolean = 0;
             var.startString = "";
 
-            parseStringAttributeEzXml(varElement, "name", &var.name);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
             parseInt64AttributeEzXml(varElement, "valueReference", &var.valueReference);
-            parseStringAttributeEzXml(varElement, "description", &var.description);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "description", &var.description, fmu);
 
             var.causality = fmi1CausalityInternal;
             const char* causality = NULL;
@@ -318,9 +317,9 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
                     var.hasStartValue = true;
                 }
                 parseBooleanAttributeEzXml(realElement, "fixed", &var.fixed);
-                parseStringAttributeEzXml(realElement, "quantity", &var.quantity);
-                parseStringAttributeEzXml(realElement, "unit", &var.unit);
-                parseStringAttributeEzXml(realElement, "displayUnit", &var.displayUnit);
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "quantity", &var.quantity, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "unit", &var.unit, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "displayUnit", &var.displayUnit, fmu);
                 parseBooleanAttributeEzXml(realElement, "relativeQuantity", &var.relativeQuantity);
                 parseFloat64AttributeEzXml(realElement, "min", &var.min);
                 parseFloat64AttributeEzXml(realElement, "max", &var.max);
@@ -353,7 +352,7 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
             if(stringElement) {
                 fmu->fmi1.hasStringVariables = true;
                 var.datatype = fmi1DataTypeString;
-                if(parseStringAttributeEzXml(stringElement, "start", &var.startString)) {
+                if(parseStringAttributeEzXmlAndRememberPointer(stringElement, "start", &var.startString, fmu)) {
                     var.hasStartValue = true;
                 }
                 parseBooleanAttributeEzXml(stringElement, "fixed", &var.fixed);
@@ -361,7 +360,7 @@ bool parseModelDescriptionFmi1(fmiHandle *fmu)
 
             if(fmu->fmi1.numberOfVariables >= fmu->fmi1.variablesSize) {
                 fmu->fmi1.variablesSize *= 2;
-                fmu->fmi1.variables = realloc(fmu->fmi1.variables, fmu->fmi1.variablesSize*sizeof(fmi1VariableHandle));
+                fmu->fmi1.variables = reallocAndRememberPointer(fmu, fmu->fmi1.variables, fmu->fmi1.variablesSize*sizeof(fmi1VariableHandle));
             }
 
             fmu->fmi1.variables[fmu->fmi1.numberOfVariables] = var;
@@ -459,23 +458,23 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
     }
 
     //Parse attributes in <fmiModelDescription>
-    parseStringAttributeEzXml(rootElement, "fmiVersion",                &fmu->fmi2.fmiVersion_);
-    parseStringAttributeEzXml(rootElement, "modelName",                 &fmu->fmi2.modelName);
-    parseStringAttributeEzXml(rootElement, "guid",                      &fmu->fmi2.guid);
-    parseStringAttributeEzXml(rootElement, "description",               &fmu->fmi2.description);
-    parseStringAttributeEzXml(rootElement, "author",                    &fmu->fmi2.author);
-    parseStringAttributeEzXml(rootElement, "version",                   &fmu->fmi2.version);
-    parseStringAttributeEzXml(rootElement, "copyright",                 &fmu->fmi2.copyright);
-    parseStringAttributeEzXml(rootElement, "license",                   &fmu->fmi2.license);
-    parseStringAttributeEzXml(rootElement, "generationTool",            &fmu->fmi2.generationTool);
-    parseStringAttributeEzXml(rootElement, "generationDateAndTime",     &fmu->fmi2.generationDateAndTime);
-    parseStringAttributeEzXml(rootElement, "variableNamingConvention",  &fmu->fmi2.variableNamingConvention);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "fmiVersion",                &fmu->fmi2.fmiVersion_,                fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "modelName",                 &fmu->fmi2.modelName,                  fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "guid",                      &fmu->fmi2.guid,                       fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "description",               &fmu->fmi2.description,                fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "author",                    &fmu->fmi2.author,                     fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "version",                   &fmu->fmi2.version,                    fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "copyright",                 &fmu->fmi2.copyright,                  fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "license",                   &fmu->fmi2.license,                    fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationTool",            &fmu->fmi2.generationTool,             fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationDateAndTime",     &fmu->fmi2.generationDateAndTime,      fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "variableNamingConvention",  &fmu->fmi2.variableNamingConvention,   fmu);
     parseInt32AttributeEzXml(rootElement, "numberOfEventIndicators",    &fmu->fmi2.numberOfEventIndicators);
 
     ezxml_t cosimElement = ezxml_child(rootElement, "CoSimulation");
     if(cosimElement) {
         fmu->fmi2.supportsCoSimulation = true;
-        parseStringAttributeEzXml(cosimElement, "modelIdentifier",                          &fmu->fmi2.cs.modelIdentifier);
+        parseStringAttributeEzXmlAndRememberPointer(cosimElement, "modelIdentifier",                         &fmu->fmi2.cs.modelIdentifier,                          fmu);
         parseBooleanAttributeEzXml(cosimElement, "needsExecutionTool",                      &fmu->fmi2.cs.needsExecutionTool);
         parseBooleanAttributeEzXml(cosimElement, "canHandleVariableCommunicationStepSize",  &fmu->fmi2.cs.canHandleVariableCommunicationStepSize);
         parseBooleanAttributeEzXml(cosimElement, "canInterpolateInputs",                    &fmu->fmi2.cs.canInterpolateInputs);
@@ -491,7 +490,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
     ezxml_t modelExchangeElement = ezxml_child(rootElement, "ModelExchange");
     if(modelExchangeElement) {
         fmu->fmi2.supportsModelExchange = true;
-        parseStringAttributeEzXml(modelExchangeElement, "modelIdentifier",                          &fmu->fmi2.me.modelIdentifier);
+        parseStringAttributeEzXmlAndRememberPointer(modelExchangeElement, "modelIdentifier",                         &fmu->fmi2.me.modelIdentifier,                      fmu);
         parseBooleanAttributeEzXml(modelExchangeElement, "needsExecutionTool",                      &fmu->fmi2.me.needsExecutionTool);
         parseBooleanAttributeEzXml(modelExchangeElement, "completedIntegratorStepNotNeeded",        &fmu->fmi2.me.completedIntegratorStepNotNeeded);
         parseBooleanAttributeEzXml(modelExchangeElement, "canBeInstantiatedOnlyOncePerProcess",     &fmu->fmi2.me.canBeInstantiatedOnlyOncePerProcess);
@@ -511,7 +510,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             }
         }
         if(fmu->fmi2.numberOfUnits > 0) {
-            fmu->fmi2.units = malloc(fmu->fmi2.numberOfUnits*sizeof(fmi2UnitHandle));
+            fmu->fmi2.units = mallocAndRememberPointer(fmu, fmu->fmi2.numberOfUnits*sizeof(fmi2UnitHandle));
         }
         int i=0;
         for(ezxml_t unitElement = unitDefinitionsElement->child; unitElement; unitElement = unitElement->next) {
@@ -521,11 +520,11 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             fmi2UnitHandle unit;
             unit.baseUnit = NULL;
             unit.displayUnits = NULL;
-            parseStringAttributeEzXml(unitElement, "name", &unit.name);
+            parseStringAttributeEzXmlAndRememberPointer(unitElement, "name", &unit.name, fmu);
             unit.numberOfDisplayUnits = 0;
             for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
                 if(!strcmp(unitSubElement->name, "BaseUnit")) {
-                    unit.baseUnit = malloc(sizeof(fmi2BaseUnitHandle));
+                    unit.baseUnit = mallocAndRememberPointer(fmu, sizeof(fmi2BaseUnitHandle));
                     unit.baseUnit->kg = 0;
                     unit.baseUnit->m = 0;
                     unit.baseUnit->s = 0;
@@ -552,14 +551,14 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                 }
             }
             if(unit.numberOfDisplayUnits > 0) {
-                unit.displayUnits = malloc(unit.numberOfDisplayUnits*sizeof(fmi2DisplayUnitHandle));
+                unit.displayUnits = mallocAndRememberPointer(fmu, unit.numberOfDisplayUnits*sizeof(fmi2DisplayUnitHandle));
             }
             int j=0;
             for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
                 if(!strcmp(unitSubElement->name, "DisplayUnit")) {
                     unit.displayUnits[j].factor = 1;
                     unit.displayUnits[j].offset = 0;
-                    parseStringAttributeEzXml(unitSubElement,  "name",      &unit.displayUnits[j].name);
+                    parseStringAttributeEzXmlAndRememberPointer(unitSubElement,  "name",      &unit.displayUnits[j].name, fmu);
                     parseFloat64AttributeEzXml(unitSubElement, "factor",    &unit.displayUnits[j].factor);
                     parseFloat64AttributeEzXml(unitSubElement, "offset",    &unit.displayUnits[j].offset);
                 }
@@ -590,9 +589,9 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             var.displayUnit = NULL;
             var.derivative = 0;
 
-            parseStringAttributeEzXml(varElement, "name", &var.name);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
             parseInt64AttributeEzXml(varElement, "valueReference", &var.valueReference);
-            parseStringAttributeEzXml(varElement, "description", &var.description);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "description", &var.description, fmu);
             parseBooleanAttributeEzXml(varElement, "canHandleMultipleSetPerTimeInstant", &var.canHandleMultipleSetPerTimeInstant);
 
             var.causality = fmi2CausalityLocal;
@@ -712,7 +711,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             if(stringElement) {
                 fmu->fmi2.hasStringVariables = true;
                 var.datatype = fmi2DataTypeString;
-                if(parseStringAttributeEzXml(stringElement, "start", &var.startString)) {
+                if(parseStringAttributeEzXmlAndRememberPointer(stringElement, "start", &var.startString, fmu)) {
                     var.hasStartValue = true;
                 }
             }
@@ -728,7 +727,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
 
             if(fmu->fmi2.numberOfVariables >= fmu->fmi2.variablesSize) {
                 fmu->fmi2.variablesSize *= 2;
-                fmu->fmi2.variables = realloc(fmu->fmi2.variables, fmu->fmi2.variablesSize*sizeof(fmi2VariableHandle));
+                fmu->fmi2.variables = reallocAndRememberPointer(fmu, fmu->fmi2.variables, fmu->fmi2.variablesSize*sizeof(fmi2VariableHandle));
             }
 
             fmu->fmi2.variables[fmu->fmi2.numberOfVariables] = var;
@@ -839,21 +838,21 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         return false;
     }
 
-    parseStringAttributeEzXml(rootElement, "modelName",                 &fmu->fmi3.modelName);
-    parseStringAttributeEzXml(rootElement, "instantiationToken",        &fmu->fmi3.instantiationToken);
-    parseStringAttributeEzXml(rootElement, "description",               &fmu->fmi3.description);
-    parseStringAttributeEzXml(rootElement, "author",                    &fmu->fmi3.author);
-    parseStringAttributeEzXml(rootElement, "version",                   &fmu->fmi3.version);
-    parseStringAttributeEzXml(rootElement, "copyright",                 &fmu->fmi3.copyright);
-    parseStringAttributeEzXml(rootElement, "license",                   &fmu->fmi3.license);
-    parseStringAttributeEzXml(rootElement, "generationTool",            &fmu->fmi3.generationTool);
-    parseStringAttributeEzXml(rootElement, "generationDateAndTime",     &fmu->fmi3.generationDateAndTime);
-    parseStringAttributeEzXml(rootElement, "variableNamingConvention",  &fmu->fmi3.variableNamingConvention);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "modelName",                 &fmu->fmi3.modelName,                  fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "instantiationToken",        &fmu->fmi3.instantiationToken,         fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "description",               &fmu->fmi3.description,                fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "author",                    &fmu->fmi3.author,                     fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "version",                   &fmu->fmi3.version,                    fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "copyright",                 &fmu->fmi3.copyright,                  fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "license",                   &fmu->fmi3.license,                    fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationTool",            &fmu->fmi3.generationTool,             fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "generationDateAndTime",     &fmu->fmi3.generationDateAndTime,      fmu);
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "variableNamingConvention",  &fmu->fmi3.variableNamingConvention,   fmu);
 
     ezxml_t cosimElement = ezxml_child(rootElement, "CoSimulation");
     if(cosimElement) {
         fmu->fmi3.supportsCoSimulation = true;
-        parseStringAttributeEzXml(cosimElement,  "modelIdentifier",                         &fmu->fmi3.cs.modelIdentifier);
+        parseStringAttributeEzXmlAndRememberPointer(cosimElement, "modelIdentifier",                         &fmu->fmi3.cs.modelIdentifier,                          fmu);
         parseBooleanAttributeEzXml(cosimElement, "needsExecutionTool",                      &fmu->fmi3.cs.needsExecutionTool);
         parseBooleanAttributeEzXml(cosimElement, "canBeInstantiatedOnlyOncePerProcess",     &fmu->fmi3.cs.canBeInstantiatedOnlyOncePerProcess);
         parseBooleanAttributeEzXml(cosimElement, "canGetAndSetFMUState",                    &fmu->fmi3.cs.canGetAndSetFMUState);
@@ -875,7 +874,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
     ezxml_t modelExchangeElement = ezxml_child(rootElement, "ModelExchange");
     if(modelExchangeElement) {
         fmu->fmi3.supportsModelExchange = true;
-        parseStringAttributeEzXml(modelExchangeElement,  "modelIdentifier",                     &fmu->fmi3.me.modelIdentifier);
+        parseStringAttributeEzXmlAndRememberPointer(modelExchangeElement, "modelIdentifier",                     &fmu->fmi3.me.modelIdentifier,                      fmu);
         parseBooleanAttributeEzXml(modelExchangeElement, "needsExecutionTool",                  &fmu->fmi3.me.needsExecutionTool);
         parseBooleanAttributeEzXml(modelExchangeElement, "canBeInstantiatedOnlyOncePerProcess", &fmu->fmi3.me.canBeInstantiatedOnlyOncePerProcess);
         parseBooleanAttributeEzXml(modelExchangeElement, "canGetAndSetFMUState",                &fmu->fmi3.me.canGetAndSetFMUState);
@@ -890,7 +889,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
     ezxml_t scheduledExecutionElement = ezxml_child(rootElement, "ScheduledExecution");
     if(scheduledExecutionElement) {
         fmu->fmi3.supportsScheduledExecution = true;
-        parseStringAttributeEzXml(scheduledExecutionElement,  "modelIdentifier",                        &fmu->fmi3.se.modelIdentifier);
+        parseStringAttributeEzXmlAndRememberPointer(scheduledExecutionElement, "modelIdentifier",                        &fmu->fmi3.se.modelIdentifier,                      fmu);
         parseBooleanAttributeEzXml(scheduledExecutionElement, "needsExecutionTool",                     &fmu->fmi3.se.needsExecutionTool);
         parseBooleanAttributeEzXml(scheduledExecutionElement, "canBeInstantiatedOnlyOncePerProcess",    &fmu->fmi3.se.canBeInstantiatedOnlyOncePerProcess);
         parseBooleanAttributeEzXml(scheduledExecutionElement, "canGetAndSetFMUState",                   &fmu->fmi3.se.canGetAndSetFMUState);
@@ -910,7 +909,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             }
         }
         if(fmu->fmi3.numberOfUnits > 0) {
-            fmu->fmi3.units = malloc(fmu->fmi3.numberOfUnits*sizeof(fmi3UnitHandle));
+            fmu->fmi3.units = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfUnits*sizeof(fmi3UnitHandle));
         }
         int i=0;
         for(ezxml_t unitElement = unitDefinitionsElement->child; unitElement; unitElement = unitElement->next) {
@@ -920,11 +919,11 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             fmi3UnitHandle unit;
             unit.baseUnit = NULL;
             unit.displayUnits = NULL;
-            parseStringAttributeEzXml(unitElement, "name", &unit.name);
+            parseStringAttributeEzXmlAndRememberPointer(unitElement, "name", &unit.name, fmu);
             unit.numberOfDisplayUnits = 0;
             for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
                 if(!strcmp(unitSubElement->name, "BaseUnit")) {
-                    unit.baseUnit = malloc(sizeof(fmi3BaseUnit));
+                    unit.baseUnit = mallocAndRememberPointer(fmu, sizeof(fmi3BaseUnit));
                     unit.baseUnit->kg = 0;
                     unit.baseUnit->m = 0;
                     unit.baseUnit->s = 0;
@@ -951,7 +950,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 }
             }
             if(unit.numberOfDisplayUnits > 0) {
-                unit.displayUnits = malloc(unit.numberOfDisplayUnits*sizeof(fmi3DisplayUnitHandle));
+                unit.displayUnits = mallocAndRememberPointer(fmu, unit.numberOfDisplayUnits*sizeof(fmi3DisplayUnitHandle));
             }
             int j=0;
             for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
@@ -959,7 +958,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                     unit.displayUnits[j].factor = 1;
                     unit.displayUnits[j].offset = 0;
                     unit.displayUnits[j].inverse = false;
-                    parseStringAttributeEzXml(unitSubElement,  "name",      &unit.displayUnits[j].name);
+                    parseStringAttributeEzXmlAndRememberPointer(unitSubElement,  "name",      &unit.displayUnits[j].name,    fmu);
                     parseFloat64AttributeEzXml(unitSubElement, "factor",    &unit.displayUnits[j].factor);
                     parseFloat64AttributeEzXml(unitSubElement, "offset",    &unit.displayUnits[j].offset);
                     parseBooleanAttributeEzXml(unitSubElement, "inverse",   &unit.displayUnits[j].inverse);
@@ -1039,49 +1038,49 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
         //Allocate memory
         if(fmu->fmi3.numberOfFloat64Types > 0) {
-            fmu->fmi3.float64Types = malloc(fmu->fmi3.numberOfFloat64Types*sizeof(fmi3Float64Type));
+            fmu->fmi3.float64Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfFloat64Types*sizeof(fmi3Float64Type));
         }
         if(fmu->fmi3.numberOfFloat32Types > 0) {
-            fmu->fmi3.float32Types = malloc(fmu->fmi3.numberOfFloat32Types*sizeof(fmi3Float32Type));
+            fmu->fmi3.float32Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfFloat32Types*sizeof(fmi3Float32Type));
         }
         if(fmu->fmi3.numberOfInt64Types > 0) {
-            fmu->fmi3.int64Types = malloc(fmu->fmi3.numberOfInt64Types*sizeof(fmi3Int64Type));
+            fmu->fmi3.int64Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInt64Types*sizeof(fmi3Int64Type));
         }
         if(fmu->fmi3.numberOfInt32Types > 0) {
-            fmu->fmi3.int32Types = malloc(fmu->fmi3.numberOfInt32Types*sizeof(fmi3Int32Type));
+            fmu->fmi3.int32Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInt32Types*sizeof(fmi3Int32Type));
         }
         if(fmu->fmi3.numberOfInt16Types > 0) {
-            fmu->fmi3.int16Types = malloc(fmu->fmi3.numberOfInt16Types*sizeof(fmi3Int16Type));
+            fmu->fmi3.int16Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInt16Types*sizeof(fmi3Int16Type));
         }
         if(fmu->fmi3.numberOfInt8Types > 0) {
-            fmu->fmi3.int8Types = malloc(fmu->fmi3.numberOfInt8Types*sizeof(fmi3Int8Type));
+            fmu->fmi3.int8Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInt8Types*sizeof(fmi3Int8Type));
         }
         if(fmu->fmi3.numberOfUInt64Types > 0) {
-            fmu->fmi3.uint64Types = malloc(fmu->fmi3.numberOfUInt64Types*sizeof(fmi3UInt64Type));
+            fmu->fmi3.uint64Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfUInt64Types*sizeof(fmi3UInt64Type));
         }
         if(fmu->fmi3.numberOfUInt32Types > 0) {
-            fmu->fmi3.uint32Types = malloc(fmu->fmi3.numberOfUInt32Types*sizeof(fmi3UInt32Type));
+            fmu->fmi3.uint32Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfUInt32Types*sizeof(fmi3UInt32Type));
         }
         if(fmu->fmi3.numberOfUInt16Types > 0) {
-            fmu->fmi3.uint16Types = malloc(fmu->fmi3.numberOfUInt16Types*sizeof(fmi3UInt16Type));
+            fmu->fmi3.uint16Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfUInt16Types*sizeof(fmi3UInt16Type));
         }
         if(fmu->fmi3.numberOfUInt8Types > 0) {
-            fmu->fmi3.uint8Types = malloc(fmu->fmi3.numberOfUInt8Types*sizeof(fmi3UInt8Type));
+            fmu->fmi3.uint8Types = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfUInt8Types*sizeof(fmi3UInt8Type));
         }
         if(fmu->fmi3.numberOfBooleanTypes > 0) {
-            fmu->fmi3.booleanTypes = malloc(fmu->fmi3.numberOfBooleanTypes*sizeof(fmi3BooleanType));
+            fmu->fmi3.booleanTypes = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfBooleanTypes*sizeof(fmi3BooleanType));
         }
         if(fmu->fmi3.numberOfStringTypes > 0) {
-            fmu->fmi3.stringTypes = malloc(fmu->fmi3.numberOfStringTypes*sizeof(fmi3StringType));
+            fmu->fmi3.stringTypes = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfStringTypes*sizeof(fmi3StringType));
         }
         if(fmu->fmi3.numberOfBinaryTypes > 0) {
-            fmu->fmi3.binaryTypes = malloc(fmu->fmi3.numberOfBinaryTypes*sizeof(fmi3BinaryType));
+            fmu->fmi3.binaryTypes = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfBinaryTypes*sizeof(fmi3BinaryType));
         }
         if(fmu->fmi3.numberOfEnumerationTypes > 0) {
-            fmu->fmi3.enumTypes = malloc(fmu->fmi3.numberOfEnumerationTypes*sizeof(fmi3EnumerationType));
+            fmu->fmi3.enumTypes = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfEnumerationTypes*sizeof(fmi3EnumerationType));
         }
         if(fmu->fmi3.numberOfClockTypes > 0) {
-            fmu->fmi3.clockTypes = malloc(fmu->fmi3.numberOfClockTypes*sizeof(fmi3ClockType));
+            fmu->fmi3.clockTypes = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfClockTypes*sizeof(fmi3ClockType));
         }
 
         //Read all elements
@@ -1112,11 +1111,11 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.float64Types[iFloat64].min = -DBL_MAX;
                 fmu->fmi3.float64Types[iFloat64].max = DBL_MAX;
                 fmu->fmi3.float64Types[iFloat64].nominal = 1;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.float64Types[iFloat64].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.float64Types[iFloat64].description);
-                parseStringAttributeEzXml(typeElement, "quantity", &fmu->fmi3.float64Types[iFloat64].quantity);
-                parseStringAttributeEzXml(typeElement, "unit", &fmu->fmi3.float64Types[iFloat64].unit);
-                parseStringAttributeEzXml(typeElement, "displayUnit", &fmu->fmi3.float64Types[iFloat64].displayUnit);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.float64Types[iFloat64].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.float64Types[iFloat64].description, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "quantity", &fmu->fmi3.float64Types[iFloat64].quantity, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "unit", &fmu->fmi3.float64Types[iFloat64].unit, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "displayUnit", &fmu->fmi3.float64Types[iFloat64].displayUnit, fmu);
                 parseBooleanAttributeEzXml(typeElement, "relativeQuantity", &fmu->fmi3.float64Types[iFloat64].relativeQuantity);
                 parseBooleanAttributeEzXml(typeElement, "unbounded", &fmu->fmi3.float64Types[iFloat64].unbounded);
                 parseFloat64AttributeEzXml(typeElement, "min", &fmu->fmi3.float64Types[iFloat64].min);
@@ -1135,11 +1134,11 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.float32Types[iFloat32].min = -FLT_MAX;
                 fmu->fmi3.float32Types[iFloat32].max = FLT_MAX;
                 fmu->fmi3.float32Types[iFloat32].nominal = 1;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.float32Types[iFloat32].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.float32Types[iFloat32].description);
-                parseStringAttributeEzXml(typeElement, "quantity", &fmu->fmi3.float32Types[iFloat32].quantity);
-                parseStringAttributeEzXml(typeElement, "unit", &fmu->fmi3.float32Types[iFloat32].unit);
-                parseStringAttributeEzXml(typeElement, "displayUnit", &fmu->fmi3.float32Types[iFloat32].displayUnit);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.float32Types[iFloat32].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.float32Types[iFloat32].description, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "quantity", &fmu->fmi3.float32Types[iFloat32].quantity, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "unit", &fmu->fmi3.float32Types[iFloat32].unit, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "displayUnit", &fmu->fmi3.float32Types[iFloat32].displayUnit, fmu);
                 parseBooleanAttributeEzXml(typeElement, "relativeQuantity", &fmu->fmi3.float32Types[iFloat32].relativeQuantity);
                 parseBooleanAttributeEzXml(typeElement, "unbounded", &fmu->fmi3.float32Types[iFloat32].unbounded);
                 parseFloat32AttributeEzXml(typeElement, "min", &fmu->fmi3.float32Types[iFloat32].min);
@@ -1151,7 +1150,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.int64Types[iInt64].name = "";
                 fmu->fmi3.int64Types[iInt64].min = -INT64_MAX;
                 fmu->fmi3.int64Types[iInt64].max = INT64_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.int64Types[iInt64].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.int64Types[iInt64].name, fmu);
                 parseInt64AttributeEzXml(typeElement, "min", &fmu->fmi3.int64Types[iInt64].min);
                 parseInt64AttributeEzXml(typeElement, "max", &fmu->fmi3.int64Types[iInt64].max);
                 ++iInt64;
@@ -1160,7 +1159,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.int32Types[iInt32].name = "";
                 fmu->fmi3.int32Types[iInt32].min = -INT32_MAX;
                 fmu->fmi3.int32Types[iInt32].max = INT32_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.int32Types[iInt32].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.int32Types[iInt32].name, fmu);
                 parseInt32AttributeEzXml(typeElement, "min", &fmu->fmi3.int32Types[iInt32].min);
                 parseInt32AttributeEzXml(typeElement, "max", &fmu->fmi3.int32Types[iInt32].max);
                 ++iInt32;
@@ -1169,7 +1168,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.int16Types[iInt16].name = "";
                 fmu->fmi3.int16Types[iInt16].min = -INT16_MAX;
                 fmu->fmi3.int16Types[iInt16].max = INT16_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.int16Types[iInt16].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.int16Types[iInt16].name, fmu);
                 parseInt16AttributeEzXml(typeElement, "min", &fmu->fmi3.int16Types[iInt16].min);
                 parseInt16AttributeEzXml(typeElement, "max", &fmu->fmi3.int16Types[iInt16].max);
                 ++iInt16;
@@ -1178,7 +1177,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.int8Types[iInt8].name = "";
                 fmu->fmi3.int8Types[iInt8].min = -INT8_MAX;
                 fmu->fmi3.int8Types[iInt8].max = INT8_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.int8Types[iInt8].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.int8Types[iInt8].name, fmu);
                 parseInt8AttributeEzXml(typeElement, "min", &fmu->fmi3.int8Types[iInt8].min);
                 parseInt8AttributeEzXml(typeElement, "max", &fmu->fmi3.int8Types[iInt8].max);
                 ++iInt8;
@@ -1187,7 +1186,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.uint64Types[iUInt64].name = "";
                 fmu->fmi3.uint64Types[iUInt64].min = 0;
                 fmu->fmi3.uint64Types[iUInt64].max = UINT64_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.uint64Types[iUInt64].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.uint64Types[iUInt64].name, fmu);
                 parseUInt64AttributeEzXml(typeElement, "min", &fmu->fmi3.uint64Types[iUInt64].min);
                 parseUInt64AttributeEzXml(typeElement, "max", &fmu->fmi3.uint64Types[iUInt64].max);
                 ++iUInt64;
@@ -1196,7 +1195,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.uint32Types[iUInt32].name = "";
                 fmu->fmi3.uint32Types[iUInt32].min = 0;
                 fmu->fmi3.uint32Types[iUInt32].max = UINT32_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.uint32Types[iUInt32].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.uint32Types[iUInt32].name, fmu);
                 parseUInt32AttributeEzXml(typeElement, "min", &fmu->fmi3.uint32Types[iUInt32].min);
                 parseUInt32AttributeEzXml(typeElement, "max", &fmu->fmi3.uint32Types[iUInt32].max);
                 ++iUInt32;
@@ -1205,7 +1204,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.uint16Types[iUInt16].name = "";
                 fmu->fmi3.uint16Types[iUInt16].min = 0;
                 fmu->fmi3.uint16Types[iUInt16].max = UINT16_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.uint16Types[iUInt16].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.uint16Types[iUInt16].name, fmu);
                 parseUInt16AttributeEzXml(typeElement, "min", &fmu->fmi3.uint16Types[iUInt16].min);
                 parseUInt16AttributeEzXml(typeElement, "max", &fmu->fmi3.uint16Types[iUInt16].max);
                 ++iUInt16;
@@ -1214,7 +1213,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.uint8Types[iUInt8].name = "";
                 fmu->fmi3.uint8Types[iUInt8].min = 0;
                 fmu->fmi3.uint8Types[iUInt8].max = UINT8_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.uint8Types[iUInt8].name);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.uint8Types[iUInt8].name, fmu);
                 parseUInt8AttributeEzXml(typeElement, "min", &fmu->fmi3.uint8Types[iUInt8].min);
                 parseUInt8AttributeEzXml(typeElement, "max", &fmu->fmi3.uint8Types[iUInt8].max);
                 ++iUInt8;
@@ -1222,15 +1221,15 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             else if(!strcmp(typeElement->name, "BooleanType")) {
                 fmu->fmi3.booleanTypes[iBoolean].name = "";
                 fmu->fmi3.booleanTypes[iBoolean].description = "";
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.booleanTypes[iBoolean].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.booleanTypes[iBoolean].description);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.booleanTypes[iBoolean].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.booleanTypes[iBoolean].description, fmu);
                 ++iBoolean;
             }
             else if(!strcmp(typeElement->name, "StringType")) {
                 fmu->fmi3.stringTypes[iString].name = "";
                 fmu->fmi3.stringTypes[iString].description = "";
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.stringTypes[iString].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.stringTypes[iString].description);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.stringTypes[iString].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.stringTypes[iString].description, fmu);
                 ++iString;
             }
             else if(!strcmp(typeElement->name, "BinaryType")) {
@@ -1238,9 +1237,9 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.binaryTypes[iBinary].description = "";
                 fmu->fmi3.binaryTypes[iBinary].mimeType = "application/octet-stream";
                 fmu->fmi3.binaryTypes[iBinary].maxSize = UINT32_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.binaryTypes[iBinary].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.binaryTypes[iBinary].description);
-                parseStringAttributeEzXml(typeElement, "mimeType", &fmu->fmi3.binaryTypes[iBinary].mimeType);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.binaryTypes[iBinary].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.binaryTypes[iBinary].description, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "mimeType", &fmu->fmi3.binaryTypes[iBinary].mimeType, fmu);
                 parseUInt32AttributeEzXml(typeElement, "maxSize", &fmu->fmi3.binaryTypes[iBinary].maxSize);
                 ++iBinary;
             }
@@ -1250,9 +1249,9 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.enumTypes[iEnum].quantity = "";
                 fmu->fmi3.enumTypes[iEnum].min = -INT64_MAX;
                 fmu->fmi3.enumTypes[iEnum].max = INT64_MAX;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.enumTypes[iEnum].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.enumTypes[iEnum].description);
-                parseStringAttributeEzXml(typeElement, "quantity", &fmu->fmi3.enumTypes[iEnum].quantity);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.enumTypes[iEnum].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.enumTypes[iEnum].description, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "quantity", &fmu->fmi3.enumTypes[iEnum].quantity, fmu);
                 parseInt64AttributeEzXml(typeElement, "min", &fmu->fmi3.enumTypes[iEnum].min);
                 parseInt64AttributeEzXml(typeElement, "max", &fmu->fmi3.enumTypes[iEnum].max);
 
@@ -1266,16 +1265,16 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
                 //Allocate memory for enumeration items
                 if(fmu->fmi3.enumTypes[iEnum].numberOfItems > 0) {
-                    fmu->fmi3.enumTypes[iEnum].items = malloc(fmu->fmi3.enumTypes[iEnum].numberOfItems*sizeof(fmi3EnumerationItem));
+                    fmu->fmi3.enumTypes[iEnum].items = mallocAndRememberPointer(fmu, fmu->fmi3.enumTypes[iEnum].numberOfItems*sizeof(fmi3EnumerationItem));
                 }
 
                 //Read data for enumeration items
                 int iItem = 0;
                 for(ezxml_t itemElement = typeElement->child; itemElement; itemElement = itemElement->next) {
                     if(!strcmp(itemElement->name, "Item")) {
-                        parseStringAttributeEzXml(itemElement, "name", &fmu->fmi3.enumTypes[iEnum].items[iItem].name);
+                        parseStringAttributeEzXmlAndRememberPointer(itemElement, "name", &fmu->fmi3.enumTypes[iEnum].items[iItem].name, fmu);
                         parseInt64AttributeEzXml(itemElement, "value", &fmu->fmi3.enumTypes[iEnum].items[iItem].value);
-                        parseStringAttributeEzXml(itemElement, "description", &fmu->fmi3.enumTypes[iEnum].items[iItem].description);
+                        parseStringAttributeEzXmlAndRememberPointer(itemElement, "description", &fmu->fmi3.enumTypes[iEnum].items[iItem].description, fmu);
                     }
                     ++iItem;
                 }
@@ -1293,12 +1292,12 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 fmu->fmi3.clockTypes[iClock].resolution = UINT64_MAX;
                 fmu->fmi3.clockTypes[iClock].intervalCounter = UINT64_MAX;
                 fmu->fmi3.clockTypes[iClock].shiftCounter = 0;
-                parseStringAttributeEzXml(typeElement, "name", &fmu->fmi3.clockTypes[iClock].name);
-                parseStringAttributeEzXml(typeElement, "description", &fmu->fmi3.clockTypes[iClock].description);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "name", &fmu->fmi3.clockTypes[iClock].name, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "description", &fmu->fmi3.clockTypes[iClock].description, fmu);
                 parseBooleanAttributeEzXml(typeElement, "canBeDeactivated", &fmu->fmi3.clockTypes[iClock].canBeDeactivated);
                 parseUInt32AttributeEzXml(typeElement, "priority", &fmu->fmi3.clockTypes[iClock].priority);
                 const char* intervalVariability = NULL;
-                parseStringAttributeEzXml(typeElement, "intervalVariability", &intervalVariability);
+                parseStringAttributeEzXmlAndRememberPointer(typeElement, "intervalVariability", &intervalVariability, fmu);
                 if(intervalVariability && !strcmp(intervalVariability, "calculated")) {
                     fmu->fmi3.clockTypes[iClock].intervalVariability = fmi3IntervalVariabilityCalculated;
                 }
@@ -1347,14 +1346,14 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
         //Allocate memory for log categories
         if(fmu->fmi3.numberOfLogCategories > 0) {
-            fmu->fmi3.logCategories = malloc(fmu->fmi3.numberOfLogCategories*sizeof(fmi3LogCategory));
+            fmu->fmi3.logCategories = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfLogCategories*sizeof(fmi3LogCategory));
         }
 
         //Read log categories
         int i=0;
         for(ezxml_t logCategoryElement = logCategoriesElement->child; logCategoryElement; logCategoryElement = logCategoryElement->next) {
-            parseStringAttributeEzXml(logCategoryElement, "name", &fmu->fmi3.logCategories[i].name);
-            parseStringAttributeEzXml(logCategoryElement, "description", &fmu->fmi3.logCategories[i].description);
+            parseStringAttributeEzXmlAndRememberPointer(logCategoryElement, "name", &fmu->fmi3.logCategories[i].name, fmu);
+            parseStringAttributeEzXmlAndRememberPointer(logCategoryElement, "description", &fmu->fmi3.logCategories[i].description, fmu);
             ++i;
         }
     }
@@ -1379,17 +1378,17 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             var.canHandleMultipleSetPerTimeInstant = false; //Default value if attribute not defined
             var.startBinary = NULL;
 
-            parseStringAttributeEzXml(varElement, "name", &var.name);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
             parseInt64AttributeEzXml(varElement, "valueReference", &var.valueReference);
-            parseStringAttributeEzXml(varElement, "description", &var.description);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "description", &var.description, fmu);
             parseBooleanAttributeEzXml(varElement, "canHandleMultipleSetPerTimeInstant", &var.canHandleMultipleSetPerTimeInstant);
             parseBooleanAttributeEzXml(varElement, "intermediateUpdate", &var.intermediateUpdate);
             parseUInt32AttributeEzXml(varElement, "previous", &var.previous);
-            parseStringAttributeEzXml(varElement, "declaredType", &var.declaredType);
+            parseStringAttributeEzXmlAndRememberPointer(varElement, "declaredType", &var.declaredType, fmu);
 
             var.numberOfClocks = 0;
             const char* clocks = NULL;
-            if (parseStringAttributeEzXml(varElement, "clocks", &clocks)) {
+            if (parseStringAttributeEzXmlAndRememberPointer(varElement, "clocks", &clocks, fmu)) {
                 // Count number of clocks
                 if(clocks[0]) {
                     var.numberOfClocks = 1;
@@ -1403,7 +1402,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
                 //Allocate memory for clocks
                 if(var.numberOfClocks > 0) {
-                    var.clocks = malloc(var.numberOfClocks*sizeof(int));
+                    var.clocks = mallocAndRememberPointer(fmu, var.numberOfClocks*sizeof(int));
                 }
 
                 //Read clocks
@@ -1506,7 +1505,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 var.datatype = fmi3DataTypeString;
                 fmu->fmi3.hasStringVariables = true;
                 var.startString = "";
-                if(parseStringAttributeEzXml(varElement, "start", &var.startString)) {
+                if(parseStringAttributeEzXmlAndRememberPointer(varElement, "start", &var.startString, fmu)) {
                     var.hasStartValue = true;
                 }
             }
@@ -1644,7 +1643,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                var.datatype == fmi3DataTypeUInt16 ||
                var.datatype == fmi3DataTypeUInt8 ||
                var.datatype == fmi3DataTypeEnumeration) {
-                parseStringAttributeEzXml(varElement,  "quantity", &var.quantity);
+                parseStringAttributeEzXmlAndRememberPointer(varElement,  "quantity", &var.quantity, fmu);
                 parseFloat64AttributeEzXml(varElement,  "min", &var.min);
                 parseFloat64AttributeEzXml(varElement,  "max", &var.max);
             }
@@ -1652,8 +1651,8 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             //Parse arguments only in float type
             if(var.datatype == fmi3DataTypeFloat64 ||
                var.datatype == fmi3DataTypeFloat32) {
-                parseStringAttributeEzXml(varElement,  "unit", &var.unit);
-                parseStringAttributeEzXml(varElement,  "displayUnit", &var.displayUnit);
+                parseStringAttributeEzXmlAndRememberPointer(varElement,  "unit", &var.unit, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(varElement,  "displayUnit", &var.displayUnit, fmu);
                 parseBooleanAttributeEzXml(varElement, "relativeQuantity", &var.relativeQuantity);
                 parseBooleanAttributeEzXml(varElement, "unbounded", &var.unbounded);
                 parseFloat64AttributeEzXml(varElement,  "nominal", &var.nominal);
@@ -1663,7 +1662,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
             //Parse arguments only in binary type
             if(var.datatype == fmi3DataTypeBinary) {
-                parseStringAttributeEzXml(varElement, "mimeType", &var.mimeType);
+                parseStringAttributeEzXmlAndRememberPointer(varElement, "mimeType", &var.mimeType, fmu);
                 parseInt32AttributeEzXml(varElement, "maxSize", &var.maxSize);
             }
 
@@ -1677,7 +1676,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 parseInt64AttributeEzXml(varElement, "intervalCounter", &var.intervalCounter);
                 parseInt64AttributeEzXml(varElement, "shiftCounter", &var.shiftCounter);
                 const char* intervalVariability = NULL;
-                parseStringAttributeEzXml(varElement, "intervalVariability", &intervalVariability);
+                parseStringAttributeEzXmlAndRememberPointer(varElement, "intervalVariability", &intervalVariability, fmu);
                 if(intervalVariability && !strcmp(intervalVariability, "calculated")) {
                     var.intervalVariability = fmi3IntervalVariabilityCalculated;
                 }
@@ -1709,7 +1708,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
             if(fmu->fmi3.numberOfVariables >= fmu->fmi3.variablesSize) {
                 fmu->fmi3.variablesSize *= 2;
-                fmu->fmi3.variables = realloc(fmu->fmi3.variables, fmu->fmi3.variablesSize*sizeof(fmi3VariableHandle));
+                fmu->fmi3.variables = reallocAndRememberPointer(fmu, fmu->fmi3.variables, fmu->fmi3.variablesSize*sizeof(fmi3VariableHandle));
             }
 
 
@@ -1754,12 +1753,12 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         fmu->fmi3.initialUnknowns = NULL;
         fmu->fmi3.eventIndicators = NULL;
         if(fmu->fmi3.numberOfOutputs > 0) {
-            fmu->fmi3.outputs = malloc(fmu->fmi3.numberOfOutputs*sizeof(fmi3ModelStructureElement));
+            fmu->fmi3.outputs = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfOutputs*sizeof(fmi3ModelStructureElement));
         }
-        fmu->fmi3.continuousStateDerivatives = malloc(fmu->fmi3.numberOfContinuousStateDerivatives*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.clockedStates = malloc(fmu->fmi3.numberOfClockedStates*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.initialUnknowns = malloc(fmu->fmi3.numberOfInitialUnknowns*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.eventIndicators = malloc(fmu->fmi3.numberOfEventIndicators*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.continuousStateDerivatives = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfContinuousStateDerivatives*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.clockedStates = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfClockedStates*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.initialUnknowns = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInitialUnknowns*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.eventIndicators = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfEventIndicators*sizeof(fmi3ModelStructureElement));
 
         //Read outputs
         int i=0;
@@ -4286,9 +4285,10 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
 
 
     fmiHandle *fmu = calloc(1, sizeof(fmiHandle)); // Using calloc to ensure all member pointers (and data) are initialized to NULL (0)
+    fmu->numAllocatedPointers = 0;
     fmu->version = fmiVersionUnknown;
-    fmu->instanceName = _strdup(instanceName);
-    fmu->unzippedLocation = _strdup(unzippLocation);
+    fmu->instanceName = duplicateAndRememberString(fmu, instanceName);
+    fmu->unzippedLocation = duplicateAndRememberString(fmu, unzippLocation);
 
     chdir(fmu->unzippedLocation);
     ezxml_t rootElement = ezxml_parse_file("modelDescription.xml");
@@ -4333,19 +4333,19 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     if(fmu->version == fmiVersion1) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
-        fmu->resourcesLocation = _strdup(resourcesLocation);
+        fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
     else if(fmu->version == fmiVersion2) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
         strncat(resourcesLocation, "/resources", FILENAME_MAX-8-strlen(unzippLocation)-1);
-        fmu->resourcesLocation = _strdup(resourcesLocation);
+        fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
     else {
         char resourcesLocation[FILENAME_MAX] = "";
         strncat(resourcesLocation, unzippLocation, FILENAME_MAX);
         strncat(resourcesLocation, "/resources/", FILENAME_MAX-strlen(unzippLocation)-1);
-        fmu->resourcesLocation = _strdup(resourcesLocation);
+        fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
 
     ezxml_free(rootElement);
@@ -4512,7 +4512,7 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     fmu->fmi3.activateModelPartition = placeholder_fmi3ActivateModelPartition;
 
     if(fmu->version == fmiVersion1) {
-        fmu->fmi1.variables = malloc(100*sizeof(fmi1VariableHandle));
+        fmu->fmi1.variables = mallocAndRememberPointer(fmu, 100*sizeof(fmi1VariableHandle));
         fmu->fmi1.variablesSize = 100;
         fmu->fmi1.numberOfVariables = 0;
         if(!parseModelDescriptionFmi1(fmu)) {
@@ -4526,7 +4526,7 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
         }
     }
     else if(fmu->version == fmiVersion2) {
-        fmu->fmi2.variables = malloc(100*sizeof(fmi2VariableHandle));
+        fmu->fmi2.variables = mallocAndRememberPointer(fmu, 100*sizeof(fmi2VariableHandle));
         fmu->fmi2.variablesSize = 100;
         fmu->fmi2.numberOfVariables = 0;
         if(!parseModelDescriptionFmi2(fmu)) {
@@ -4536,7 +4536,7 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
         }
     }
     else if(fmu->version == fmiVersion3) {
-        fmu->fmi3.variables = malloc(100*sizeof(fmi3VariableHandle));
+        fmu->fmi3.variables = mallocAndRememberPointer(fmu, 100*sizeof(fmi3VariableHandle));
         fmu->fmi3.variablesSize = 100;
         fmu->fmi3.numberOfVariables = 0;
         if(!parseModelDescriptionFmi3(fmu)) {
@@ -4555,6 +4555,7 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
 void fmi4c_freeFmu(fmiHandle *fmu)
 {
     TRACEFUNC
+
     if (fmu->dll) {
 #ifdef _WIN32
         FreeLibrary(fmu->dll);
@@ -4563,104 +4564,15 @@ void fmi4c_freeFmu(fmiHandle *fmu)
 #endif
     }
 
-    if(fmu->version == fmiVersion1) {
-        for(int i=0; i<fmu->fmi1.numberOfVariables; ++i) {
-            freeDuplicatedConstChar(fmu->fmi1.variables[i].name);
-            freeDuplicatedConstChar(fmu->fmi1.variables[i].description);
-            freeDuplicatedConstChar(fmu->fmi1.variables[i].unit);
-        }
-        free(fmu->fmi1.variables);
-        for(int i=0; i<fmu->fmi1.numberOfBaseUnits; ++i) {
-            freeDuplicatedConstChar(fmu->fmi1.baseUnits[i].unit);
-            for(int j=0; j<fmu->fmi1.baseUnits[i].numberOfDisplayUnits; ++j) {
-                freeDuplicatedConstChar(fmu->fmi1.baseUnits[i].displayUnits[j].displayUnit);
-            }
-            free(fmu->fmi1.baseUnits[i].displayUnits);
-        }
-        free(fmu->fmi1.baseUnits);
-        freeDuplicatedConstChar(fmu->fmi1.modelName);
-        freeDuplicatedConstChar(fmu->fmi1.modelIdentifier);
-        freeDuplicatedConstChar(fmu->fmi1.guid);
-        freeDuplicatedConstChar(fmu->fmi1.description);
-        freeDuplicatedConstChar(fmu->fmi1.author);
-        freeDuplicatedConstChar(fmu->fmi1.version);
-        freeDuplicatedConstChar(fmu->fmi1.generationTool);
-        freeDuplicatedConstChar(fmu->fmi1.generationDateAndTime);
-        freeDuplicatedConstChar(fmu->fmi1.variableNamingConvention);
-    }
-    else if(fmu->version == fmiVersion2) {
-        for(int i=0; i<fmu->fmi2.numberOfVariables; ++i) {
-            freeDuplicatedConstChar(fmu->fmi2.variables[i].name);
-            freeDuplicatedConstChar(fmu->fmi2.variables[i].description);
-        }
-        free(fmu->fmi2.variables);
-        freeDuplicatedConstChar(fmu->fmi2.fmiVersion_);
-        freeDuplicatedConstChar(fmu->fmi2.modelName);
-        freeDuplicatedConstChar(fmu->fmi2.guid);
-        freeDuplicatedConstChar(fmu->fmi2.description);
-        freeDuplicatedConstChar(fmu->fmi2.author);
-        freeDuplicatedConstChar(fmu->fmi2.version);
-        freeDuplicatedConstChar(fmu->fmi2.copyright);
-        freeDuplicatedConstChar(fmu->fmi2.license);
-        freeDuplicatedConstChar(fmu->fmi2.generationTool);
-        freeDuplicatedConstChar(fmu->fmi2.generationDateAndTime);
-        freeDuplicatedConstChar(fmu->fmi2.variableNamingConvention);
-        for(int i=0; i<fmu->fmi2.numberOfUnits; ++i)
-            if (fmu->fmi2.units[i].baseUnit)
-                if (fmu->fmi2.units[i].baseUnit)
-                    free(fmu->fmi2.units[i].baseUnit);
-        if (fmu->fmi2.numberOfUnits > 0)
-            free(fmu->fmi2.units);
-        if(fmu->fmi2.supportsCoSimulation) {
-            freeDuplicatedConstChar(fmu->fmi2.cs.modelIdentifier);
-        }
-        if(fmu->fmi2.supportsModelExchange) {
-            freeDuplicatedConstChar(fmu->fmi2.me.modelIdentifier);
-        }
-    }
-    else if(fmu->version == fmiVersion3) {
-        free(fmu->fmi3.outputs);
-        free(fmu->fmi3.continuousStateDerivatives);
-        free(fmu->fmi3.clockedStates);
-        free(fmu->fmi3.initialUnknowns);
-        free(fmu->fmi3.eventIndicators);
-
-        for(int i=0; i<fmu->fmi3.numberOfVariables; ++i) {
-            freeDuplicatedConstChar(fmu->fmi3.variables[i].name);
-            freeDuplicatedConstChar(fmu->fmi3.variables[i].description);
-            freeDuplicatedConstChar(fmu->fmi3.variables[i].quantity);
-            freeDuplicatedConstChar(fmu->fmi3.variables[i].unit);
-            freeDuplicatedConstChar(fmu->fmi3.variables[i].displayUnit);
-        }
-        free(fmu->fmi3.variables);
-        freeDuplicatedConstChar(fmu->fmi3.modelName);
-        freeDuplicatedConstChar(fmu->fmi3.instantiationToken);
-        freeDuplicatedConstChar(fmu->fmi3.description);
-        freeDuplicatedConstChar(fmu->fmi3.author);
-        freeDuplicatedConstChar(fmu->fmi3.version);
-        freeDuplicatedConstChar(fmu->fmi3.copyright);
-        freeDuplicatedConstChar(fmu->fmi3.license);
-        freeDuplicatedConstChar(fmu->fmi3.generationTool);
-        freeDuplicatedConstChar(fmu->fmi3.generationDateAndTime);
-        //freeIfNotNull(fmu->fmi3.variableNamingConvention);
-        if(fmu->fmi3.supportsCoSimulation) {
-            freeDuplicatedConstChar(fmu->fmi3.cs.modelIdentifier);
-        }
-        if(fmu->fmi3.supportsModelExchange) {
-            freeDuplicatedConstChar(fmu->fmi3.me.modelIdentifier);
-        }
-        if(fmu->fmi3.supportsScheduledExecution) {
-            freeDuplicatedConstChar(fmu->fmi3.se.modelIdentifier);
-        }
-    }
-
     if (fmu->unzippedLocation) {
         removeDirectoryRecursively(fmu->unzippedLocation, "fmi4c_");
     }
 
-    freeDuplicatedConstChar(fmu->resourcesLocation);
-    freeDuplicatedConstChar(fmu->instanceName);
-    freeDuplicatedConstChar(fmu->unzippedLocation);
+    //Free all allocated memory
+    for(int i=0; i<fmu->numAllocatedPointers; ++i) {
+        free(fmu->allocatedPointers[i]);
+    }
+    free(fmu->allocatedPointers);
     free(fmu);
 }
 
