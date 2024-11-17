@@ -20,13 +20,14 @@ add_library(imgui STATIC)
 target_sources(imgui PRIVATE ${IMGUI_SOURCES})
 
 target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/backends)
+target_link_libraries(imgui PRIVATE oms::3rd::GLFW)
 
 # Link libraries based on the operating system
 if (UNIX AND NOT APPLE)
-    target_link_libraries(imgui PRIVATE glfw GL)
+    target_link_libraries(imgui PRIVATE GL)
 elseif (APPLE)
     find_package(glfw3 REQUIRED)
-    target_link_libraries(imgui PRIVATE glfw OpenGL)
+    target_link_libraries(imgui PRIVATE OpenGL)
 elseif (WIN32)
-    target_link_libraries(imgui PRIVATE glfw3 opengl32)
+    target_link_libraries(imgui PRIVATE opengl32)
 endif()
