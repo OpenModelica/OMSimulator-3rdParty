@@ -19,7 +19,7 @@ add_library(imgui STATIC)
 
 target_sources(imgui PRIVATE ${IMGUI_SOURCES})
 
-target_include_directories(imgui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/backends)
+target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/backends)
 
 # Link libraries based on the operating system
 if (UNIX AND NOT APPLE)
