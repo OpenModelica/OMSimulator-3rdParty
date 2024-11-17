@@ -75,3 +75,8 @@ add_library(oms::3rd::xerces ALIAS xerces-c)
 ## CTPL.
 add_subdirectory(CTPL EXCLUDE_FROM_ALL)
 add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
+
+#########################################################################
+## Dear ImGui.
+add_subdirectory(imgui EXCLUDE_FROM_ALL)
+add_library(oms::3rd::imgui ALIAS imgui)
