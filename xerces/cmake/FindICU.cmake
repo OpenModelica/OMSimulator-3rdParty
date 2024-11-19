@@ -110,6 +110,8 @@ set(icu_programs
   icupkg
   gencmn)
 
+set(ICU_DEBUG OFF)
+
 # The ICU checks are contained in a function due to the large number
 # of temporary variables needed.
 function(_ICU_FIND)
@@ -280,8 +282,9 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(ICU
 unset(_ICU_REQUIRED_LIBS_FOUND)
 
 if(ICU_FOUND)
-  set(ICU_INCLUDE_DIRS "${ICU_INCLUDE_DIR}")
-  set(ICU_LIBRARIES "${ICU_LIBRARY}")
+  set(ICU_FOUND "${ICU_FOUND}" CACHE INTERNAL "ICU Found")
+  set(ICU_INCLUDE_DIRS "${ICU_INCLUDE_DIR}" CACHE INTERNAL "ICU include directory")
+  set(ICU_LIBRARIES "${ICU_LIBRARY}" CACHE INTERNAL "ICU libraries")
   foreach(_ICU_component ${ICU_FIND_COMPONENTS})
     string(TOUPPER "${_ICU_component}" _ICU_component_upcase)
     set(_ICU_component_cache "ICU_${_ICU_component_upcase}_LIBRARY")
