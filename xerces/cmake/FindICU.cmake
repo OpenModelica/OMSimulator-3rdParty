@@ -110,8 +110,6 @@ set(icu_programs
   icupkg
   gencmn)
 
-set(ICU_DEBUG OFF)
-
 # The ICU checks are contained in a function due to the large number
 # of temporary variables needed.
 function(_ICU_FIND)
