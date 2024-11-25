@@ -1,6 +1,6 @@
 #########################################################################
 ## Sundials
-message(STATUS "##### 3rdOarty Sundials")
+message(STATUS "##### 3rdParty Sundials")
 if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   option(SUNDIALS_BUILD_SHARED_LIBS "Build shared libraries" OFF)
   option(SUNDIALS_EXAMPLES_ENABLE_C "Build SUNDIALS C examples" OFF)
@@ -33,19 +33,19 @@ add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 
 #########################################################################
 ## zlib.
-message(STATUS "##### 3rdOarty zlib")
+message(STATUS "##### 3rdParty zlib")
 add_subdirectory(zlib EXCLUDE_FROM_ALL)
 add_library(oms::3rd::zlib ALIAS zlibstatic)
 
 #########################################################################
 ## minizip.
-message(STATUS "##### 3rdOarty minizip")
+message(STATUS "##### 3rdParty minizip")
 add_subdirectory(minizip EXCLUDE_FROM_ALL)
 add_library(oms::3rd::minizip ALIAS oms_minizip)
 
 #########################################################################
 ## fmi4c.
-message(STATUS "##### 3rdOarty fmi4c")
+message(STATUS "##### 3rdParty fmi4c")
 set(FMI4C_BUILD_SHARED OFF)
 set(FMI4C_USE_SYSTEM_ZIP OFF)
 set(FMI4C_USE_EXTERNAL_MINIZIP ON)
@@ -55,20 +55,20 @@ add_library(oms::3rd::fmi4c ALIAS fmi4c)
 
 #########################################################################
 ## Lua.
-message(STATUS "##### 3rdOarty Lua")
+message(STATUS "##### 3rdParty Lua")
 option(LUA_ENABLE_SHARED OFF)
 add_subdirectory(Lua EXCLUDE_FROM_ALL)
 add_library(oms::3rd::lua ALIAS lua_static)
 
 #########################################################################
 ## PugiXml.
-message(STATUS "##### 3rdOarty PugiXml")
+message(STATUS "##### 3rdParty PugiXml")
 add_subdirectory(PugiXml EXCLUDE_FROM_ALL)
 add_library(oms::3rd::pugixml::header ALIAS pugixml_header_only)
 
 #########################################################################
 ## xerces
-message(STATUS "##### 3rdOarty xerces")
+message(STATUS "##### 3rdParty xerces")
 option(XERCES_BUILD_SHARED_LIBS OFF)
 add_subdirectory(xerces EXCLUDE_FROM_ALL)
 ### xerces does not include the target directories by default, so we have to externally add the include directories
@@ -79,23 +79,27 @@ add_library(oms::3rd::xerces ALIAS xerces-c)
 
 #########################################################################
 ## CTPL.
-message(STATUS "##### 3rdOarty CTPL")
+message(STATUS "##### 3rdParty CTPL")
 add_subdirectory(CTPL EXCLUDE_FROM_ALL)
 add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
 
 #########################################################################
 ## Dear ImGui.
-message(STATUS "##### 3rdOarty Dear ImGui")
-add_subdirectory(imgui EXCLUDE_FROM_ALL)
-add_library(oms::3rd::imgui ALIAS imgui)
+if (OMS_GUI)
+  message(STATUS "##### 3rdParty Dear ImGui")
+  add_subdirectory(imgui EXCLUDE_FROM_ALL)
+  add_library(oms::3rd::imgui ALIAS imgui)
+endif ()
 
 #########################################################################
 ## GLFW.
-message(STATUS "##### 3rdOarty GLFW")
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+if (OMS_GUI)
+  message(STATUS "##### 3rdParty GLFW")
+  set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(glfw EXCLUDE_FROM_ALL)
-add_library(oms::3rd::GLFW ALIAS glfw)
+  add_subdirectory(glfw EXCLUDE_FROM_ALL)
+  add_library(oms::3rd::GLFW ALIAS glfw)
+endif ()
