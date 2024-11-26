@@ -85,7 +85,7 @@ add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
 
 #########################################################################
 ## Dear ImGui.
-if (OMS_ENABLE_OMSimulator)
+if (OMS_ENABLE_OMSimulator_Gui)
   message(STATUS "##### 3rdParty Dear ImGui")
   add_subdirectory(imgui EXCLUDE_FROM_ALL)
   add_library(oms::3rd::imgui ALIAS imgui)
@@ -93,7 +93,7 @@ endif ()
 
 #########################################################################
 ## GLFW.
-if (OMS_ENABLE_OMSimulator)
+if (OMS_ENABLE_OMSimulator_Gui)
   message(STATUS "##### 3rdParty GLFW")
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -106,7 +106,7 @@ endif ()
 
 #########################################################################
 ## tinyfiledialogs.
-if (OMS_ENABLE_OMSimulator)
+if (OMS_ENABLE_OMSimulator_Gui)
   message(STATUS "##### 3rdParty tinyfiledialogs")
   add_subdirectory(tinyfd EXCLUDE_FROM_ALL)
   add_library(oms::3rd::tinyfd ALIAS tinyfd)
