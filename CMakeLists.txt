@@ -103,3 +103,11 @@ if (OMS_ENABLE_OMSimulator)
   add_subdirectory(glfw EXCLUDE_FROM_ALL)
   add_library(oms::3rd::GLFW ALIAS glfw)
 endif ()
+
+#########################################################################
+## tinyfiledialogs.
+if (OMS_ENABLE_OMSimulator)
+  message(STATUS "##### 3rdParty tinyfiledialogs")
+  add_subdirectory(tinyfd EXCLUDE_FROM_ALL)
+  add_library(oms::3rd::tinyfd ALIAS tinyfd)
+endif ()
