@@ -111,3 +111,9 @@ if (OMS_ENABLE_OMSimulatorGui)
   add_subdirectory(tinyfd EXCLUDE_FROM_ALL)
   add_library(oms::3rd::tinyfd ALIAS tinyfd)
 endif ()
+
+#########################################################################
+## nlohmann/json
+message(STATUS "##### 3rdParty nlohmann/json")
+add_subdirectory(json EXCLUDE_FROM_ALL)
+add_library(oms::3rd::json::header ALIAS json_header_only)

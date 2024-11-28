@@ -10,6 +10,18 @@ OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 
 - https://github.com/robbr48/fmi4c
 
+## GLFW
+
+- https://www.glfw.org/ [version 3.4]
+
+## ImGui
+
+- https://github.com/ocornut/imgui
+
+## json
+
+- https://github.com/nlohmann/json
+
 ## Lua
 
 - https://www.lua.org/download.html [version 5.3.4]
@@ -25,6 +37,10 @@ OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 ## Sundials (CVODE, KINSOL)
 
 - https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
+
+## tinyfiledialogs
+
+- https://sourceforge.net/projects/tinyfiledialogs/ [version 3.18.2]
 
 ## Xerces-c (Apache Xerces-C validating XML parser)
 
