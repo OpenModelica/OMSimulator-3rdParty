@@ -749,6 +749,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
 //! @returns True if parsing was successful
 bool parseModelDescriptionFmi3(fmiHandle *fmu)
 {
+    fmu->fmi3.fmiVersion_ = NULL;
     fmu->fmi3.modelName = NULL;
     fmu->fmi3.instantiationToken = NULL;
     fmu->fmi3.description = NULL;
@@ -839,6 +840,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         return false;
     }
 
+    parseStringAttributeEzXmlAndRememberPointer(rootElement, "fmiVersion",                &fmu->fmi3.fmiVersion_,                fmu);
     parseStringAttributeEzXmlAndRememberPointer(rootElement, "modelName",                 &fmu->fmi3.modelName,                  fmu);
     parseStringAttributeEzXmlAndRememberPointer(rootElement, "instantiationToken",        &fmu->fmi3.instantiationToken,         fmu);
     parseStringAttributeEzXmlAndRememberPointer(rootElement, "description",               &fmu->fmi3.description,                fmu);
@@ -1378,6 +1380,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             var.displayUnit = NULL;
             var.canHandleMultipleSetPerTimeInstant = false; //Default value if attribute not defined
             var.startBinary = NULL;
+            var.derivative = 0;
 
             parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
             parseInt64AttributeEzXml(varElement, "valueReference", &var.valueReference);
@@ -2334,6 +2337,13 @@ bool fmi3_iInstantiateModelExchange(fmiHandle *fmu,
     return (fmu->fmi3.fmi3Instance != NULL);
 }
 
+// this function returns the fmiVersion (e.g) fmiVersion = 3.0
+const char *fmi3_getFmiVersion(fmiHandle *fmu)
+{
+    TRACEFUNC
+    return fmu->fmi3.fmiVersion_;
+}
+
 const char* fmi3_getVersion(fmiHandle *fmu) {
 
     return fmu->fmi3.getVersion(fmu->fmi3.fmi3Instance);
@@ -2433,7 +2443,6 @@ fmi3Status fmi3_doStep(fmiHandle *fmu,
 
 const char *fmi3_modelName(fmiHandle *fmu)
 {
-    printf("fmu pointer: %p\n", fmu);
     return fmu->fmi3.modelName;
 }
 
@@ -2753,6 +2762,12 @@ bool fmi3_getVariableHasStartValue(fmi3VariableHandle *var)
 {
     TRACEFUNC
     return var->hasStartValue;
+}
+
+int fmi3_getVariableDerivativeIndex(fmi3VariableHandle *var)
+{
+    TRACEFUNC
+    return var->derivative;
 }
 
 fmi3Float64 fmi3_getVariableStartFloat64(fmi3VariableHandle *var)
