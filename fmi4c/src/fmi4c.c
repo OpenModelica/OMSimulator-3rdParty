@@ -1789,7 +1789,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         int i=0;
         outputElement = ezxml_child(modelStructureElement, "Output");
         for(;outputElement;outputElement = outputElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.outputs[i], &outputElement)) {
+            if(!parseModelStructureElement(&fmu->fmi3.outputs[i], &outputElement, fmu)) {
                 return false;
             }
             ++i;
@@ -1799,7 +1799,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         continuousStateDerElement = ezxml_child(modelStructureElement, "ContinuousStateDerivative");
         for(;continuousStateDerElement;continuousStateDerElement = continuousStateDerElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.continuousStateDerivatives[i], &continuousStateDerElement)) {
+            if(!parseModelStructureElement(&fmu->fmi3.continuousStateDerivatives[i], &continuousStateDerElement, fmu)) {
                 return false;
             }
             ++i;
@@ -1809,7 +1809,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         clockedStateElement = ezxml_child(modelStructureElement, "ClockedState");
         for(;clockedStateElement;clockedStateElement = clockedStateElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.clockedStates[i], &clockedStateElement)) {
+            if(!parseModelStructureElement(&fmu->fmi3.clockedStates[i], &clockedStateElement, fmu)) {
                 return false;
             }
             ++i;
@@ -1819,7 +1819,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         initialUnknownElement = ezxml_child(modelStructureElement, "IninitalUnknown");
         for(;initialUnknownElement;initialUnknownElement = initialUnknownElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.initialUnknowns[i], &initialUnknownElement)) {
+            if(!parseModelStructureElement(&fmu->fmi3.initialUnknowns[i], &initialUnknownElement, fmu)) {
                 return false;
             }
             ++i;
@@ -1829,7 +1829,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         eventIndicatorElement = ezxml_child(modelStructureElement, "EventIndicator");
         for(;eventIndicatorElement;eventIndicatorElement = eventIndicatorElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.eventIndicators[i], &eventIndicatorElement)) {
+            if(!parseModelStructureElement(&fmu->fmi3.eventIndicators[i], &eventIndicatorElement, fmu)) {
                 return false;
             }
             ++i;
