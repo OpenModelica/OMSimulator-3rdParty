@@ -160,7 +160,7 @@ int testFMI3CS(fmiHandle *fmu, bool overrideStopTime, double stopTimeOverride, b
 
 int testFMI3ME(fmiHandle *fmu, bool overrideStopTime, double stopTimeOverride, bool overrideTimeStep, double timeStepOverride) {
     //Instantiate FMU
-    if(!fmi3_iInstantiateModelExchange(fmu, fmi2False, fmi2True, NULL, loggerFmi3)) {
+    if(!fmi3_instantiateModelExchange(fmu, fmi2False, fmi2True, NULL, loggerFmi3)) {
         printf("  fmi2Instantiate() failed\n");
         exit(1);
     }
@@ -240,6 +240,7 @@ int testFMI3ME(fmiHandle *fmu, bool overrideStopTime, double stopTimeOverride, b
     }
 
     states = malloc(nStates*sizeof(fmi3Float64));
+    nominalStates = malloc(nStates*sizeof(fmi3Float64));
     derivatives = malloc(nStates*sizeof(fmi3Float64));
     eventIndicators = malloc(nEventIndicators*sizeof(fmi3Float64));
     eventIndicatorsPrev = malloc(nEventIndicators*sizeof(fmi3Float64));
@@ -315,6 +316,7 @@ int testFMI3ME(fmiHandle *fmu, bool overrideStopTime, double stopTimeOverride, b
                 free(eventIndicatorsPrev);
                 free(rootsFound);
                 free(states);
+                free(nominalStates);
                 free(eventIndicators);
                 return 1;
             }
@@ -371,6 +373,7 @@ int testFMI3ME(fmiHandle *fmu, bool overrideStopTime, double stopTimeOverride, b
     free(eventIndicatorsPrev);
     free(rootsFound);
     free(states);
+    free(nominalStates);
     free(eventIndicators);
     printf("  Simulation finished.\n");
 
@@ -389,7 +392,7 @@ int testFMI3(fmiHandle *fmu, bool forceModelExchange, bool forceCosimulation, bo
     //Loop through variables in FMU
     for(size_t i=0; i<fmi3_getNumberOfVariables(fmu); ++i)
     {
-        fmi3VariableHandle* var = fmi3_getVariableByIndex(fmu, i);
+        fmi3VariableHandle* var = fmi3_getVariableByIndex(fmu, i+1);
         fmi3Causality causality = fmi3_getVariableCausality(var);
         unsigned int vr = fmi3_getVariableValueReference(var);
 

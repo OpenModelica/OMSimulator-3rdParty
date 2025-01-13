@@ -13,8 +13,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <float.h>
-#include <limits.h>
 #include <ctype.h>
+#ifdef _WIN32
+#include <process.h>
+#endif
 #ifndef _WIN32
 #include "fmi4c_common.h"
 #include <dlfcn.h>
@@ -52,7 +54,9 @@
 FARPROC loadDllFunction(HINSTANCE dll, const char *name, bool *ok) {
     FARPROC fnc = GetProcAddress(dll, name);
     if(fnc == NULL) {
-        printf("Failed to load function \"%s\"\n", name);
+        char msg[100] = {0};
+        sprintf(msg, "Failed to load function \"%s\"", name);
+        fmi4c_printMessage(msg);
         (*ok) = false;
     }
     return fnc;
@@ -68,11 +72,18 @@ void *loadDllFunction(void *dll, const char *name, bool *ok) {
 }
 #endif
 
-const char* fmi4cErrorMessage = "";
+void (*msgFunc)(const char*) = NULL;
 
-const char* fmi4c_getErrorMessages()
+void fmi4c_setMessageFunction(void (*func)(const char*))
 {
-    return fmi4cErrorMessage;
+    msgFunc = func;
+}
+
+void fmi4c_printMessage(const char* msg)
+{
+    if(msgFunc != NULL) {
+        msgFunc(msg);
+    }
 }
 
 void freeDuplicatedConstChar(const char* ptr) {
@@ -523,7 +534,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             unit.displayUnits = NULL;
             parseStringAttributeEzXmlAndRememberPointer(unitElement, "name", &unit.name, fmu);
             unit.numberOfDisplayUnits = 0;
-            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
+            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "BaseUnit")) {
                     unit.baseUnit = mallocAndRememberPointer(fmu, sizeof(fmi2BaseUnitHandle));
                     unit.baseUnit->kg = 0;
@@ -555,15 +566,15 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                 unit.displayUnits = mallocAndRememberPointer(fmu, unit.numberOfDisplayUnits*sizeof(fmi2DisplayUnitHandle));
             }
             int j=0;
-            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
+            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "DisplayUnit")) {
                     unit.displayUnits[j].factor = 1;
                     unit.displayUnits[j].offset = 0;
                     parseStringAttributeEzXmlAndRememberPointer(unitSubElement,  "name",      &unit.displayUnits[j].name, fmu);
                     parseFloat64AttributeEzXml(unitSubElement, "factor",    &unit.displayUnits[j].factor);
                     parseFloat64AttributeEzXml(unitSubElement, "offset",    &unit.displayUnits[j].offset);
+                    ++j;
                 }
-                ++j;
             }
             fmu->fmi2.units[i] = unit;
             ++i;
@@ -588,6 +599,11 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             var.quantity = NULL;
             var.unit = NULL;
             var.displayUnit = NULL;
+            var.relativeQuantity = false;
+            var.min = -DBL_MAX;
+            var.max = DBL_MAX;
+            var.nominal = 1;
+            var.unbounded = false;
             var.derivative = 0;
 
             parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
@@ -675,6 +691,11 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             }
 
             var.hasStartValue = false;
+            var.relativeQuantity = false;
+            var.min = -DBL_MAX;
+            var.max = DBL_MAX;
+            var.nominal = 1;
+            var.unbounded = false;
 
             ezxml_t realElement = ezxml_child(varElement, "Real");
             if(realElement) {
@@ -686,6 +707,14 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                 if(parseUInt32AttributeEzXml(realElement, "derivative", &var.derivative)) {
                     fmu->fmi2.numberOfContinuousStates++;
                 }
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "quantity", &var.quantity, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "unit", &var.unit, fmu);
+                parseStringAttributeEzXmlAndRememberPointer(realElement, "displayUnit", &var.displayUnit, fmu);
+                parseBooleanAttributeEzXml(realElement, "relativeQuantity", &var.relativeQuantity);
+                parseFloat64AttributeEzXml(realElement, "min", &var.min);
+                parseFloat64AttributeEzXml(realElement, "max", &var.max);
+                parseFloat64AttributeEzXml(realElement, "nominal", &var.nominal);
+                parseBooleanAttributeEzXml(realElement, "unbounded", &var.unbounded);
             }
 
             ezxml_t integerElement = ezxml_child(varElement, "Integer");
@@ -695,6 +724,9 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                 if(parseInt32AttributeEzXml(integerElement, "start", &var.startInteger)) {
                     var.hasStartValue = true;
                 }
+                parseStringAttributeEzXmlAndRememberPointer(integerElement, "quantity", &var.quantity, fmu);
+                parseFloat64AttributeEzXml(integerElement, "min", &var.min);
+                parseFloat64AttributeEzXml(integerElement, "max", &var.max);
             }
 
             ezxml_t booleanElement = ezxml_child(varElement, "Boolean");
@@ -724,6 +756,7 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
                 if(parseInt32AttributeEzXml(enumerationElement, "start", &var.startEnumeration)) {
                     var.hasStartValue = true;
                 }
+                parseStringAttributeEzXmlAndRememberPointer(enumerationElement, "quantity", &var.quantity, fmu);
             }
 
             if(fmu->fmi2.numberOfVariables >= fmu->fmi2.variablesSize) {
@@ -734,6 +767,84 @@ bool parseModelDescriptionFmi2(fmiHandle *fmu)
             fmu->fmi2.variables[fmu->fmi2.numberOfVariables] = var;
             fmu->fmi2.numberOfVariables++;
         }
+    }
+
+    fmu->fmi2.modelStructure.numberOfOutputs = 0;
+    ezxml_t modelStructureElement = ezxml_child(rootElement, "ModelStructure");
+    if(modelStructureElement) {
+        ezxml_t outputsElement = ezxml_child(modelStructureElement, "Outputs");
+        if(outputsElement) {
+            //Count outputs
+            ezxml_t unknownElement = ezxml_child(outputsElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                ++fmu->fmi2.modelStructure.numberOfOutputs;
+            }
+
+            //Allocate memory for outputs
+            fmu->fmi2.modelStructure.outputs = NULL;
+            if(fmu->fmi2.modelStructure.numberOfOutputs > 0) {
+                fmu->fmi2.modelStructure.outputs = mallocAndRememberPointer(fmu, fmu->fmi2.modelStructure.numberOfOutputs*sizeof(fmi2ModelStructureHandle));
+            }
+
+            //Read outputs
+            int i=0;
+            unknownElement = ezxml_child(outputsElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                if(!parseModelStructureElementFmi2(fmu, &fmu->fmi2.modelStructure.outputs[i], &unknownElement)) {
+                    return false;
+                }
+                ++i;
+            }
+        }
+        ezxml_t derivativesElement = ezxml_child(modelStructureElement, "Derivatives");
+        if(derivativesElement) {
+            //Count derivatives
+            ezxml_t unknownElement = ezxml_child(derivativesElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                ++fmu->fmi2.modelStructure.numberOfDerivatives;
+            }
+
+            //Allocate memory for derivativse
+            fmu->fmi2.modelStructure.derivatives = NULL;
+            if(fmu->fmi2.modelStructure.numberOfDerivatives > 0) {
+                fmu->fmi2.modelStructure.derivatives = mallocAndRememberPointer(fmu, fmu->fmi2.modelStructure.numberOfDerivatives*sizeof(fmi2ModelStructureHandle));
+            }
+
+            //Read derivatives
+            int i=0;
+            unknownElement = ezxml_child(derivativesElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                if(!parseModelStructureElementFmi2(fmu, &fmu->fmi2.modelStructure.derivatives[i], &unknownElement)) {
+                    return false;
+                }
+                ++i;
+            }
+        }
+        ezxml_t initialUnknownsElement = ezxml_child(modelStructureElement, "InitialUnknowns");
+        if(initialUnknownsElement) {
+            //Count initial unknowns
+            ezxml_t unknownElement = ezxml_child(initialUnknownsElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                ++fmu->fmi2.modelStructure.numberOfInitialUnknowns;
+            }
+
+            //Allocate memory for initial unknowns
+            fmu->fmi2.modelStructure.initialUnknowns = NULL;
+            if(fmu->fmi2.modelStructure.numberOfInitialUnknowns > 0) {
+                fmu->fmi2.modelStructure.initialUnknowns = mallocAndRememberPointer(fmu, fmu->fmi2.modelStructure.numberOfInitialUnknowns*sizeof(fmi2ModelStructureHandle));
+            }
+
+            //Read initial unknowns
+            int i=0;
+            unknownElement = ezxml_child(initialUnknownsElement, "Unknown");
+            for(;unknownElement;unknownElement = unknownElement->next) {
+                if(!parseModelStructureElementFmi2(fmu, &fmu->fmi2.modelStructure.initialUnknowns[i], &unknownElement)) {
+                    return false;
+                }
+                ++i;
+            }
+        }
+
     }
 
     ezxml_free(rootElement);
@@ -922,7 +1033,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             unit.displayUnits = NULL;
             parseStringAttributeEzXmlAndRememberPointer(unitElement, "name", &unit.name, fmu);
             unit.numberOfDisplayUnits = 0;
-            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
+            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "BaseUnit")) {
                     unit.baseUnit = mallocAndRememberPointer(fmu, sizeof(fmi3BaseUnit));
                     unit.baseUnit->kg = 0;
@@ -954,7 +1065,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                 unit.displayUnits = mallocAndRememberPointer(fmu, unit.numberOfDisplayUnits*sizeof(fmi3DisplayUnitHandle));
             }
             int j=0;
-            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->next) {
+            for(ezxml_t unitSubElement = unitElement->child; unitSubElement; unitSubElement = unitSubElement->ordered) {
                 if(!strcmp(unitSubElement->name, "DisplayUnit")) {
                     unit.displayUnits[j].factor = 1;
                     unit.displayUnits[j].offset = 0;
@@ -963,8 +1074,8 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                     parseFloat64AttributeEzXml(unitSubElement, "factor",    &unit.displayUnits[j].factor);
                     parseFloat64AttributeEzXml(unitSubElement, "offset",    &unit.displayUnits[j].offset);
                     parseBooleanAttributeEzXml(unitSubElement, "inverse",   &unit.displayUnits[j].inverse);
+                    ++j;
                 }
-                ++j;
             }
             fmu->fmi3.units[i] = unit;
             ++i;
@@ -989,7 +1100,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         fmu->fmi3.numberOfBinaryTypes = 0;
         fmu->fmi3.numberOfEnumerationTypes = 0;
         fmu->fmi3.numberOfClockTypes = 0;
-        for(ezxml_t typeElement = typeDefinitionsElement->child; typeElement; typeElement = typeElement->next) {
+        for(ezxml_t typeElement = typeDefinitionsElement->child; typeElement; typeElement = typeElement->ordered) {
             if(!strcmp(typeElement->name, "Float64Type")) {
                 ++fmu->fmi3.numberOfFloat64Types;
             }
@@ -1100,7 +1211,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         int iBinary = 0;
         int iEnum = 0;
         int iClock = 0;
-        for(ezxml_t typeElement = typeDefinitionsElement->child; typeElement; typeElement = typeElement->next) {
+        for(ezxml_t typeElement = typeDefinitionsElement->child; typeElement; typeElement = typeElement->ordered) {
             if(!strcmp(typeElement->name, "Float64Type")) {
                 fmu->fmi3.float64Types[iFloat64].name = "";
                 fmu->fmi3.float64Types[iFloat64].description = "";
@@ -1378,6 +1489,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
             var.displayUnit = NULL;
             var.canHandleMultipleSetPerTimeInstant = false; //Default value if attribute not defined
             var.startBinary = NULL;
+            var.intermediateUpdate = false;
 
             parseStringAttributeEzXmlAndRememberPointer(varElement, "name", &var.name, fmu);
             parseInt64AttributeEzXml(varElement, "valueReference", &var.valueReference);
@@ -1614,6 +1726,22 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
                var.datatype == fmi3DataTypeBinary ||
                var.datatype == fmi3DataTypeEnumeration) {
                 const char* initial = NULL;
+                var.initial = fmi3InitialUndefined;
+                if(var.variability == fmi3VariabilityConstant && (var.causality == fmi3CausalityOutput || var.causality == fmi3CausalityLocal)) {
+                    var.initial = fmi3InitialExact;
+                }
+                else if(var.causality == fmi3CausalityOutput || var.causality == fmi3CausalityLocal) {
+                    var.initial = fmi3InitialCalculated;
+                }
+                else if (var.causality == fmi3CausalityStructuralParameter || var.causality == fmi3CausalityParameter) {
+                    var.initial = fmi3InitialExact;
+                }
+                else if(var.causality == fmi3CausalityCalculatedParameter) {
+                    var.initial = fmi3InitialCalculated;
+                }
+                else if(var.causality == fmi3CausalityInput) {
+                    var.initial = fmi3InitialExact;
+                }
                 parseStringAttributeEzXml(varElement, "initial", &initial);
                 if(initial && !strcmp(initial, "approx")) {
                     var.initial = fmi3InitialApprox;
@@ -1723,49 +1851,49 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
     }
 
     ezxml_t modelStructureElement = ezxml_child(rootElement, "ModelStructure");
-    fmu->fmi3.numberOfOutputs = 0;
+    fmu->fmi3.modelStructure.numberOfOutputs = 0;
     if(modelStructureElement) {
         //Count each element type
         ezxml_t outputElement = ezxml_child(modelStructureElement, "Output");
         for(;outputElement;outputElement = outputElement->next) {
-            ++fmu->fmi3.numberOfOutputs;
+            ++fmu->fmi3.modelStructure.numberOfOutputs;
         }
         ezxml_t continuousStateDerElement = ezxml_child(modelStructureElement, "ContinuousStateDerivative");
         for(;continuousStateDerElement;continuousStateDerElement = continuousStateDerElement->next) {
-            ++fmu->fmi3.numberOfContinuousStateDerivatives;
+            ++fmu->fmi3.modelStructure.numberOfContinuousStateDerivatives;
         }
         ezxml_t clockedStateElement = ezxml_child(modelStructureElement, "ClockedState");
         for(;clockedStateElement;clockedStateElement = clockedStateElement->next) {
-            ++fmu->fmi3.numberOfClockedStates;
+            ++fmu->fmi3.modelStructure.numberOfClockedStates;
         }
         ezxml_t initialUnknownElement = ezxml_child(modelStructureElement, "InitialUnknown");
         for(;initialUnknownElement;initialUnknownElement = initialUnknownElement->next) {
-            ++fmu->fmi3.numberOfInitialUnknowns;
+            ++fmu->fmi3.modelStructure.numberOfInitialUnknowns;
         }
         ezxml_t eventIndicatorElement = ezxml_child(modelStructureElement, "EventIndicator");
         for(;eventIndicatorElement;eventIndicatorElement = eventIndicatorElement->next) {
-            ++fmu->fmi3.numberOfEventIndicators;
+            ++fmu->fmi3.modelStructure.numberOfEventIndicators;
         }
 
         //Allocate memory for each element type
-        fmu->fmi3.outputs = NULL;
-        fmu->fmi3.continuousStateDerivatives = NULL;
-        fmu->fmi3.clockedStates = NULL;
-        fmu->fmi3.initialUnknowns = NULL;
-        fmu->fmi3.eventIndicators = NULL;
-        if(fmu->fmi3.numberOfOutputs > 0) {
-            fmu->fmi3.outputs = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfOutputs*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.modelStructure.outputs = NULL;
+        fmu->fmi3.modelStructure.continuousStateDerivatives = NULL;
+        fmu->fmi3.modelStructure.clockedStates = NULL;
+        fmu->fmi3.modelStructure.initialUnknowns = NULL;
+        fmu->fmi3.modelStructure.eventIndicators = NULL;
+        if(fmu->fmi3.modelStructure.numberOfOutputs > 0) {
+            fmu->fmi3.modelStructure.outputs = mallocAndRememberPointer(fmu, fmu->fmi3.modelStructure.numberOfOutputs*sizeof(fmi3ModelStructureHandle));
         }
-        fmu->fmi3.continuousStateDerivatives = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfContinuousStateDerivatives*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.clockedStates = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfClockedStates*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.initialUnknowns = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfInitialUnknowns*sizeof(fmi3ModelStructureElement));
-        fmu->fmi3.eventIndicators = mallocAndRememberPointer(fmu, fmu->fmi3.numberOfEventIndicators*sizeof(fmi3ModelStructureElement));
+        fmu->fmi3.modelStructure.continuousStateDerivatives = mallocAndRememberPointer(fmu, fmu->fmi3.modelStructure.numberOfContinuousStateDerivatives*sizeof(fmi3ModelStructureHandle));
+        fmu->fmi3.modelStructure.clockedStates = mallocAndRememberPointer(fmu, fmu->fmi3.modelStructure.numberOfClockedStates*sizeof(fmi3ModelStructureHandle));
+        fmu->fmi3.modelStructure.initialUnknowns = mallocAndRememberPointer(fmu, fmu->fmi3.modelStructure.numberOfInitialUnknowns*sizeof(fmi3ModelStructureHandle));
+        fmu->fmi3.modelStructure.eventIndicators = mallocAndRememberPointer(fmu, fmu->fmi3.modelStructure.numberOfEventIndicators*sizeof(fmi3ModelStructureHandle));
 
         //Read outputs
         int i=0;
         outputElement = ezxml_child(modelStructureElement, "Output");
         for(;outputElement;outputElement = outputElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.outputs[i], &outputElement)) {
+            if(!parseModelStructureElementFmi3(fmu, &fmu->fmi3.modelStructure.outputs[i], &outputElement)) {
                 return false;
             }
             ++i;
@@ -1775,7 +1903,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         continuousStateDerElement = ezxml_child(modelStructureElement, "ContinuousStateDerivative");
         for(;continuousStateDerElement;continuousStateDerElement = continuousStateDerElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.continuousStateDerivatives[i], &continuousStateDerElement)) {
+            if(!parseModelStructureElementFmi3(fmu, &fmu->fmi3.modelStructure.continuousStateDerivatives[i], &continuousStateDerElement)) {
                 return false;
             }
             ++i;
@@ -1785,7 +1913,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         clockedStateElement = ezxml_child(modelStructureElement, "ClockedState");
         for(;clockedStateElement;clockedStateElement = clockedStateElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.clockedStates[i], &clockedStateElement)) {
+            if(!parseModelStructureElementFmi3(fmu, &fmu->fmi3.modelStructure.clockedStates[i], &clockedStateElement)) {
                 return false;
             }
             ++i;
@@ -1793,9 +1921,9 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 
         //Read initial unknowns
         i=0;
-        initialUnknownElement = ezxml_child(modelStructureElement, "IninitalUnknown");
+        initialUnknownElement = ezxml_child(modelStructureElement, "InitialUnknown");
         for(;initialUnknownElement;initialUnknownElement = initialUnknownElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.initialUnknowns[i], &initialUnknownElement)) {
+            if(!parseModelStructureElementFmi3(fmu, &fmu->fmi3.modelStructure.initialUnknowns[i], &initialUnknownElement)) {
                 return false;
             }
             ++i;
@@ -1805,7 +1933,7 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
         i=0;
         eventIndicatorElement = ezxml_child(modelStructureElement, "EventIndicator");
         for(;eventIndicatorElement;eventIndicatorElement = eventIndicatorElement->next) {
-            if(!parseModelStructureElement(&fmu->fmi3.eventIndicators[i], &eventIndicatorElement)) {
+            if(!parseModelStructureElementFmi3(fmu, &fmu->fmi3.modelStructure.eventIndicators[i], &eventIndicatorElement)) {
                 return false;
             }
             ++i;
@@ -1826,6 +1954,14 @@ bool parseModelDescriptionFmi3(fmiHandle *fmu)
 bool loadFunctionsFmi1(fmiHandle *fmu)
 {
     TRACEFUNC
+
+    if (fmu->dll != NULL) {
+#ifdef _WIN32
+        FreeLibrary(fmu->dll);
+#else
+        dlclose(fmu->dll);
+#endif
+    }
 
     char cwd[FILENAME_MAX];
 #ifdef _WIN32
@@ -1951,6 +2087,14 @@ bool loadFunctionsFmi1(fmiHandle *fmu)
 bool loadFunctionsFmi2(fmiHandle *fmu, fmi2Type fmuType)
 {
     TRACEFUNC
+
+    if (fmu->dll != NULL) {
+#ifdef _WIN32
+        FreeLibrary(fmu->dll);
+#else
+        dlclose(fmu->dll);
+#endif
+    }
 
     char cwd[FILENAME_MAX];
 #ifdef _WIN32
@@ -2084,6 +2228,14 @@ bool loadFunctionsFmi2(fmiHandle *fmu, fmi2Type fmuType)
 bool loadFunctionsFmi3(fmiHandle *fmu, fmi3Type fmuType)
 {
     TRACEFUNC
+
+    if (fmu->dll != NULL) {
+#ifdef _WIN32
+        FreeLibrary(fmu->dll);
+#else
+        dlclose(fmu->dll);
+#endif
+    }
 
     char cwd[FILENAME_MAX];
 #ifdef _WIN32
@@ -2311,7 +2463,7 @@ bool fmi3_instantiateCoSimulation(fmiHandle *fmu,
     return (fmu->fmi3.fmi3Instance != NULL);
 }
 
-bool fmi3_iInstantiateModelExchange(fmiHandle *fmu,
+bool fmi3_instantiateModelExchange(fmiHandle *fmu,
                                   fmi3Boolean               visible,
                                   fmi3Boolean                loggingOn,
                                   fmi3InstanceEnvironment    instanceEnvironment,
@@ -2336,7 +2488,7 @@ bool fmi3_iInstantiateModelExchange(fmiHandle *fmu,
 
 const char* fmi3_getVersion(fmiHandle *fmu) {
 
-    return fmu->fmi3.getVersion(fmu->fmi3.fmi3Instance);
+    return fmu->fmi3.getVersion();
 }
 
 fmi3Status fmi3_setDebugLogging(fmiHandle *fmu,
@@ -2433,7 +2585,6 @@ fmi3Status fmi3_doStep(fmiHandle *fmu,
 
 const char *fmi3_modelName(fmiHandle *fmu)
 {
-    printf("fmu pointer: %p\n", fmu);
     return fmu->fmi3.modelName;
 }
 
@@ -2546,16 +2697,16 @@ bool fmi2_instantiate(fmiHandle *fmu, fmi2Type type, fmi2CallbackLogger logger, 
 {
     TRACEFUNC
     if(type == fmi2CoSimulation && !fmu->fmi2.supportsCoSimulation) {
-        printf("FMI for co-simulation is not supported by this FMU.");
+        fmi4c_printMessage("FMI for co-simulation is not supported by this FMU.");
         return false;
     }
     else if(type == fmi2ModelExchange && !fmu->fmi2.supportsModelExchange) {
-        printf("FMI for model exchange is not supported by this FMU.");
+        fmi4c_printMessage("FMI for model exchange is not supported by this FMU.");
         return false;
     }
 
     if(!loadFunctionsFmi2(fmu, type)) {
-        printf("Failed to load functions for FMI 2.");
+        fmi4c_printMessage("Failed to load functions for FMI 2.");
         return false;
     }
 
@@ -2671,7 +2822,7 @@ return 0;
 
 int fmi2_getNumberOfDisplayUnits(fmi2UnitHandle *unit)
 {
-return unit->numberOfDisplayUnits;
+    return unit->numberOfDisplayUnits;
 }
 
 void fmi2_getDisplayUnitByIndex(fmi2UnitHandle *unit, int id, const char **name, double *factor, double *offset)
@@ -3329,11 +3480,11 @@ fmi3VariableHandle *fmi3_getVariableByName(fmiHandle *fmu, fmi3String name)
 fmi3VariableHandle *fmi3_getVariableByIndex(fmiHandle *fmu, int i)
 {
 
-    if(i >= fmu->fmi3.numberOfVariables) {
+    if(i-1 >= fmu->fmi3.numberOfVariables || i<1) {
         printf("Variable index out of bounds: %i\n",i);
         return NULL;
     }
-    return &fmu->fmi3.variables[i];
+    return &fmu->fmi3.variables[i-1];
 }
 
 fmi3VariableHandle *fmi3_getVariableByValueReference(fmiHandle *fmu, fmi3ValueReference vr)
@@ -3359,11 +3510,11 @@ fmi2VariableHandle *fmi2_getVariableByIndex(fmiHandle *fmu, int i)
 {
     TRACEFUNC
 
-    if(i >= fmu->fmi2.numberOfVariables) {
+    if(i-1 >= fmu->fmi2.numberOfVariables || i<1) {
         printf("Variable index out of bounds: %i\n",i);
         return NULL;
     }
-    return &fmu->fmi2.variables[i];
+    return &fmu->fmi2.variables[i-1];
 }
 
 fmi2VariableHandle *fmi2_getVariableByValueReference(fmiHandle *fmu, fmi2ValueReference vr)
@@ -3426,15 +3577,6 @@ const char* fmi2_getModelDescription(fmiHandle *fmu)
     return fmu->fmi2.description;
 }
 
-const char* fmi2_getModelIdentifier(fmiHandle *fmu)
-{
-    TRACEFUNC
-    if (fmu->fmi2.supportsCoSimulation)
-        return fmu->fmi2.cs.modelIdentifier;
-    else
-        return fmu->fmi2.me.modelIdentifier;
-}
-
 const char* fmi2_getCopyright(fmiHandle *fmu)
 {
     TRACEFUNC
@@ -3481,6 +3623,36 @@ const char *fmi2_getVariableDisplayUnit(fmi2VariableHandle *var)
 {
     TRACEFUNC
     return var->displayUnit;
+}
+
+bool fmi2_getVariableRelativeQuantity(fmi2VariableHandle *var)
+{
+    TRACEFUNC
+    return var->relativeQuantity;
+}
+
+fmi2Real fmi2_getVariableMin(fmi2VariableHandle *var)
+{
+    TRACEFUNC
+    return var->min;
+}
+
+fmi2Real fmi2_getVariableMax(fmi2VariableHandle *var)
+{
+    TRACEFUNC
+    return var->max;
+}
+
+fmi2Real fmi2_getVariableNominal(fmi2VariableHandle *var)
+{
+    TRACEFUNC
+    return var->nominal;
+}
+
+bool fmi2_getVariableUnbounded(fmi2VariableHandle *var)
+{
+    TRACEFUNC
+    return var->unbounded;
 }
 
 bool fmi2_getVariableHasStartValue(fmi2VariableHandle *var)
@@ -3797,10 +3969,47 @@ fmi2Status fmi2_getRealOutputDerivatives (fmiHandle* fmu,
 
 fmi2Status fmi2_doStep(fmiHandle *fmu, fmi2Real currentCommunicationPoint, fmi2Real communicationStepSize, fmi2Boolean noSetFMUStatePriorToCurrentPoint)
 {
+    TRACEFUNC
     return fmu->fmi2.doStep(fmu->fmi2.component,
                               currentCommunicationPoint,
                               communicationStepSize,
                               noSetFMUStatePriorToCurrentPoint);
+}
+
+fmi2Status fmi2_cancelStep(fmiHandle* fmu)
+{
+    TRACEFUNC
+    return fmu->fmi2.cancelStep(fmu);
+}
+
+fmi2Status fmi2_getStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Status* value)
+{
+    TRACEFUNC
+    return fmu->fmi2.getStatus(fmu, s, value);
+}
+
+fmi2Status fmi2_getRealStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Real* value)
+{
+    TRACEFUNC
+    return fmu->fmi2.getRealStatus(fmu, s, value);
+}
+
+fmi2Status fmi2_getIntegerStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Integer* value)
+{
+    TRACEFUNC
+    return fmu->fmi2.getIntegerStatus(fmu, s, value);
+}
+
+fmi2Status fmi2_getBooleanStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Boolean* value)
+{
+    TRACEFUNC
+    return fmu->fmi2.getBooleanStatus(fmu, s, value);
+}
+
+fmi2Status fmi2_getStringStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2String* value)
+{
+    TRACEFUNC
+    return fmu->fmi2.getStringStatus(fmu, s, value);
 }
 
 const char *fmi2_getGuid(fmiHandle *fmu)
@@ -3839,7 +4048,7 @@ bool fmi2me_getNeedsExecutionTool(fmiHandle *fmu)
     return fmu->fmi2.me.needsExecutionTool;
 }
 
-bool fmics2GetCanHandleVariableCommunicationStepSize(fmiHandle *fmu)
+bool fmi2cs_getCanHandleVariableCommunicationStepSize(fmiHandle *fmu)
 {
     TRACEFUNC
     return fmu->fmi2.cs.canHandleVariableCommunicationStepSize;
@@ -3945,6 +4154,65 @@ bool fmi2_getSupportsModelExchange(fmiHandle *fmu)
 {
     TRACEFUNC
     return fmu->fmi2.supportsModelExchange;
+}
+
+int fmi2_getNumberOfModelStructureOutputs(fmiHandle *fmu)
+{
+    return fmu->fmi2.modelStructure.numberOfOutputs;
+}
+
+int fmi2_getNumberOfModelStructureDerivatives(fmiHandle *fmu)
+{
+    return fmu->fmi2.modelStructure.numberOfDerivatives;
+}
+
+int fmi2_getNumberOfModelStructureInitialUnknowns(fmiHandle *fmu)
+{
+    return fmu->fmi2.modelStructure.numberOfInitialUnknowns;
+}
+
+fmi2ModelStructureHandle *fmi2_getModelStructureOutput(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi2.modelStructure.outputs[i];
+}
+
+fmi2ModelStructureHandle *fmi2_getModelStructureDerivative(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi2.modelStructure.derivatives[i];
+}
+
+fmi2ModelStructureHandle *fmi2_getModelStructureInitialUnknown(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi2.modelStructure.initialUnknowns[i];
+}
+
+int fmi2_getModelStructureIndex(fmi2ModelStructureHandle *handle)
+{
+    return handle->index;
+}
+
+int fmi2_getModelStructureNumberOfDependencies(fmi2ModelStructureHandle *handle)
+{
+    return handle->numberOfDependencies;
+}
+
+bool fmi2_getModelStructureDependencyKindsDefined(fmi2ModelStructureHandle *handle)
+{
+    return handle->dependencyKindsDefined;
+}
+
+void fmi2_getModelStructureDependencies(fmi2ModelStructureHandle *handle, int *dependencies, size_t numberOfDependencies)
+{
+    for(size_t i=0; i<numberOfDependencies; ++i) {
+        dependencies[i] = handle->dependencies[i];
+    }
+}
+
+void fmi2_getModelStructureDependencyKinds(fmi2ModelStructureHandle *handle, int *dependencyKinds, size_t numberOfDependencies)
+{
+    for(size_t i=0; i<numberOfDependencies; ++i) {
+        dependencyKinds[i] = handle->dependencyKinds[i];
+    }
 }
 
 const char *fmi3cs_getModelIdentifier(fmiHandle *fmu)
@@ -4152,12 +4420,10 @@ bool fmi3me_getNeedsCompletedIntegratorStep(fmiHandle *fmu)
 }
 
 
-//! @brief Loads the FMU as version 1.
-//! First parses modelDescription.xml, then loads all required FMI functions.
-//! @param fmu FMU handle
-//! @returns Handle to FMU with FMI version 1
-fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
+const char* generateTempPath(const char *instanceName)
 {
+    fmi4c_printMessage("Loading FMU!");
+
    char cwd[FILENAME_MAX];
 #ifdef _WIN32
     _getcwd(cwd, sizeof(char)*FILENAME_MAX);
@@ -4165,99 +4431,78 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     getcwd(cwd, sizeof(char)*FILENAME_MAX);
 #endif
 
-    // Decide location for where to unzip
-    char unzippLocation[FILENAME_MAX] = {0};
+     // Decide location for where to unzip
+     char unzipLocationTemp[FILENAME_MAX] = {0};
 
-    bool instanceNameIsAlphaNumeric = true;
-    for(int i=0; i<strlen(instanceName); ++i) {
-        if(!isalnum(instanceName[i])) {
-            instanceNameIsAlphaNumeric = false;
-        }
-    }
-#ifdef _WIN32
-    DWORD len = GetTempPathA(FILENAME_MAX, unzippLocation);
-    if (len == 0) {
-       printf("Cannot find temp path, using current directory\n");
-    }
-    // Create a unique tempfile and use its name for the unique directory name
-    char tempFileName[MAX_PATH];
-    UINT rc = GetTempFileNameA(unzippLocation, "", 0, tempFileName);
-    if (rc == 0) {
-        printf("Cannot generate temp name for unzip location\n");
-        return NULL;
-    }
+     bool instanceNameIsAlphaNumeric = true;
+     for(int i=0; i<strlen(instanceName); ++i) {
+         if(!isalnum(instanceName[i])) {
+             instanceNameIsAlphaNumeric = false;
+         }
+     }
+ #ifdef _WIN32
+     DWORD len = GetTempPathA(FILENAME_MAX, unzipLocationTemp);
+     if (len == 0) {
+        printf("Cannot find temp path, using current directory\n");
+     }
 
-    strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
-    if(instanceNameIsAlphaNumeric) {
-        strncat(unzippLocation, instanceName, FILENAME_MAX-strlen(unzippLocation)-1);
-        strncat(unzippLocation, "_", FILENAME_MAX-strlen(unzippLocation)-1);
-    }
-    char * ds = strrchr(tempFileName, '\\');
-    if (ds) {
-        strncat(unzippLocation, ds+1, FILENAME_MAX-strlen(unzippLocation)-1);
-    }
-    else {
-        strncat(unzippLocation, tempFileName, FILENAME_MAX-strlen(unzippLocation)-1);
-    }
-    _mkdir(unzippLocation);
+     // Create a unique name for the temp folder
+     char tempFileName[11] = "\0\0\0\0\0\0\0\0\0\0\0";
+     srand(getpid());
+     for(int i=0; i<10; ++i) {
+         tempFileName[i] = rand() % 26 + 65;
+     }
 
-#ifndef FMI4C_WITH_MINIZIP
-    const int commandLength = strlen("tar -xf \"") + strlen(fmufile) + strlen("\" -C \"") + strlen(unzippLocation) + 2;
-
-    // Allocate memory for the command
-    char *command = malloc(commandLength * sizeof(char));
-    if (command == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return NULL;
-    }
-    // Build the command string
-    snprintf(command, commandLength, "tar -xf \"%s\" -C \"%s\"", fmufile, unzippLocation);
-#endif
+     strncat(unzipLocationTemp, "fmi4c_", FILENAME_MAX-strlen(unzipLocationTemp)-1);
+     if(instanceNameIsAlphaNumeric) {
+         strncat(unzipLocationTemp, instanceName, FILENAME_MAX-strlen(unzipLocationTemp)-1);
+         strncat(unzipLocationTemp, "_", FILENAME_MAX-strlen(unzipLocationTemp)-1);
+     }
+     char * ds = strrchr(tempFileName, '\\');
+     if (ds) {
+         strncat(unzipLocationTemp, ds+1, FILENAME_MAX-strlen(unzipLocationTemp)-1);
+     }
+     else {
+         strncat(unzipLocationTemp, tempFileName, FILENAME_MAX-strlen(unzipLocationTemp)-1);
+     }
+     _mkdir(unzipLocationTemp);
 #else
     const char* env_tmpdir = getenv("TMPDIR");
     const char* env_tmp = getenv("TMP");
     const char* env_temp = getenv("TEMP");
     if (env_tmpdir) {
-        strncat(unzippLocation, env_tmpdir, FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzipLocationTemp, env_tmpdir, FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
     else if (env_tmp) {
-        strncat(unzippLocation, env_tmp, FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzipLocationTemp, env_tmp, FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
     else if (env_temp) {
-        strncat(unzippLocation, env_temp, FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzipLocationTemp, env_temp, FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
     else if (access("/tmp/", W_OK) == 0) {
-        strncat(unzippLocation, "/tmp/", FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzipLocationTemp, "/tmp/", FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
     // If no suitable temp directory is found, the current working directory will be used
 
     // Append / if needed
-    if (strlen(unzippLocation) > 0 && unzippLocation[strlen(unzippLocation)-1] != '/') {
-        strncat(unzippLocation, "/", FILENAME_MAX-strlen(unzippLocation)-1);
+    if (strlen(unzipLocationTemp) > 0 && unzipLocationTemp[strlen(unzipLocationTemp)-1] != '/') {
+        strncat(unzipLocationTemp, "/", FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
 
-    strncat(unzippLocation, "fmi4c_", FILENAME_MAX-strlen(unzippLocation)-1);
+    strncat(unzipLocationTemp, "fmi4c_", FILENAME_MAX-strlen(unzipLocationTemp)-1);
     if(instanceNameIsAlphaNumeric) {
-        strncat(unzippLocation, instanceName, FILENAME_MAX-strlen(unzippLocation)-1);
-        strncat(unzippLocation, "_", FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(unzipLocationTemp, instanceName, FILENAME_MAX-strlen(unzipLocationTemp)-1);
+        strncat(unzipLocationTemp, "_", FILENAME_MAX-strlen(unzipLocationTemp)-1);
     }
-    strncat(unzippLocation, "XXXXXX", FILENAME_MAX-strlen(unzippLocation)-1); // XXXXXX is for unique name by mkdtemp
-    mkdtemp(unzippLocation);
-
-#ifndef FMI4C_WITH_MINIZIP
-    const int commandLength = strlen("unzip -o \"") + strlen(fmufile) + strlen("\" -d \"") + strlen(unzippLocation) + 2;
-
-    // Allocate memory for the command
-    char *command = malloc(commandLength * sizeof(char));
-    if (command == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return NULL;
-    }
-    // Build the command string
-    snprintf(command, commandLength, "unzip -o \"%s\" -d \"%s\"", fmufile, unzippLocation);
-#endif
+    strncat(unzipLocationTemp, "XXXXXX", FILENAME_MAX-strlen(unzipLocationTemp)-1); // XXXXXX is for unique name by mkdtemp
+    mkdtemp(unzipLocationTemp);
 #endif
 
+     return _strdup(unzipLocationTemp); //Not freed automatically!
+}
+
+bool unzipFmu(const char* fmufile, const char* instanceName, const char* unzipLocation)
+{
 #ifdef FMI4C_WITH_MINIZIP
     int argc = 6;
     const char *argv[6];
@@ -4266,32 +4511,71 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
     argv[2] = "-o";
     argv[3] = fmufile;
     argv[4] = "-d";
-    argv[5] = unzippLocation;
+    argv[5] = unzipLocation;
 
     int status = miniunz(argc, (char**)argv);
     if (status != 0) {
-        printf("Failed to unzip FMU: status = %i, to location %s\n",status, unzippLocation);
-        return NULL;
+     printf("Failed to unzip FMU: status = %i, to location %s\n",status, unzipLocation);
+     return NULL;
     }
     // miniunzip will change dir to unzipLocation, lets change back
     chdir(cwd);
 #else
+#ifdef _WIN32
+    const int commandLength = strlen("tar -xf \"") + strlen(fmufile) + strlen("\" -C \"") + strlen(unzipLocation) + 2;
+
+    // Allocate memory for the command
+    char *command = malloc(commandLength * sizeof(char));
+    if (command == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return false;
+    }
+    // Build the command string
+    snprintf(command, commandLength, "tar -xf \"%s\" -C \"%s\"", fmufile, unzipLocation);
+#else
+    const int commandLength = strlen("unzip -o \"") + strlen(fmufile) + strlen("\" -d \"") + strlen(unzipLocation) + 2;
+
+    // Allocate memory for the command
+    char *command = malloc(commandLength * sizeof(char));
+    if (command == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+    // Build the command string
+    snprintf(command, commandLength, "unzip -o \"%s\" -d \"%s\"", fmufile, unzipLocation);
+#endif
     const int status = system(command);
     free(command);
     if (status != 0) {
-        printf("Failed to unzip FMU: status = %i, to location %s\n",status, unzippLocation);
-        return NULL;
+        printf("Failed to unzip FMU: status = %i, to location %s\n",status, unzipLocation);
+        return false;
     }
 #endif
 
+    return true;
+}
 
+//! @brief Loads an already unzippedFMU file
+//! Parses modelDescription.xml, and then loads all required FMI functions.
+//! @param fmu FMU handle
+//! @returns Handle to FMU
+fmiHandle *fmi4c_loadUnzippedFmu(const char *instanceName, const char *unzipLocation)
+{
     fmiHandle *fmu = calloc(1, sizeof(fmiHandle)); // Using calloc to ensure all member pointers (and data) are initialized to NULL (0)
+    fmu->dll = NULL;
     fmu->numAllocatedPointers = 0;
-    fmu->allocatedPointers = calloc(0, sizeof(void*));
+    fmu->allocatedPointers = NULL;
     fmu->version = fmiVersionUnknown;
     fmu->instanceName = duplicateAndRememberString(fmu, instanceName);
-    fmu->unzippedLocation = duplicateAndRememberString(fmu, unzippLocation);
+    fmu->unzippedLocation = unzipLocation;  //Already duplicated
+    rememberPointer(fmu, (void*)unzipLocation);
 
+    char cwd[FILENAME_MAX];
+ #ifdef _WIN32
+     _getcwd(cwd, sizeof(char)*FILENAME_MAX);
+ #else
+     getcwd(cwd, sizeof(char)*FILENAME_MAX);
+ #endif
     chdir(fmu->unzippedLocation);
     ezxml_t rootElement = ezxml_parse_file("modelDescription.xml");
     if (rootElement == NULL) {
@@ -4334,19 +4618,19 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
 
     if(fmu->version == fmiVersion1) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
-        strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
+        strncat(resourcesLocation, unzipLocation, FILENAME_MAX-8);
         fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
     else if(fmu->version == fmiVersion2) {
         char resourcesLocation[FILENAME_MAX] = "file:///";
-        strncat(resourcesLocation, unzippLocation, FILENAME_MAX-8);
-        strncat(resourcesLocation, "/resources", FILENAME_MAX-8-strlen(unzippLocation)-1);
+        strncat(resourcesLocation, unzipLocation, FILENAME_MAX-8);
+        strncat(resourcesLocation, "/resources", FILENAME_MAX-8-strlen(unzipLocation)-1);
         fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
     else {
         char resourcesLocation[FILENAME_MAX] = "";
-        strncat(resourcesLocation, unzippLocation, FILENAME_MAX);
-        strncat(resourcesLocation, "/resources/", FILENAME_MAX-strlen(unzippLocation)-1);
+        strncat(resourcesLocation, unzipLocation, FILENAME_MAX);
+        strncat(resourcesLocation, "/resources/", FILENAME_MAX-strlen(unzipLocation)-1);
         fmu->resourcesLocation = duplicateAndRememberString(fmu, resourcesLocation);
     }
 
@@ -4548,6 +4832,25 @@ fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
         }
     }
 
+    fmu->unzippedLocationIsTemporary = false;
+
+    return fmu;
+}
+
+//! @brief Loads the specified FMU file
+//! First unzips the FMU, then parses modelDescription.xml, and then loads all required FMI functions.
+//! @param fmu FMU handle
+//! @returns Handle to FMU
+fmiHandle *fmi4c_loadFmu(const char *fmufile, const char* instanceName)
+{
+    const char* unzipLocation = generateTempPath(instanceName);
+
+    if(!unzipFmu(fmufile, instanceName, unzipLocation)) {
+        return NULL;
+    }
+
+    fmiHandle *fmu = fmi4c_loadUnzippedFmu(instanceName, unzipLocation);
+    fmu->unzippedLocationIsTemporary = true;
     return fmu;
 }
 
@@ -4566,7 +4869,7 @@ void fmi4c_freeFmu(fmiHandle *fmu)
 #endif
     }
 
-    if (fmu->unzippedLocation) {
+    if (fmu->unzippedLocation && fmu->unzippedLocationIsTemporary) {
         removeDirectoryRecursively(fmu->unzippedLocation, "fmi4c_");
     }
 
@@ -4682,11 +4985,11 @@ fmi1VariableHandle *fmi1_getVariableByIndex(fmiHandle *fmu, int i)
 {
     TRACEFUNC
 
-    if(i >= fmu->fmi1.numberOfVariables) {
+    if(i-1 >= fmu->fmi1.numberOfVariables || i<1) {
         printf("Variable index out of bounds: %i\n",i);
         return NULL;
     }
-    return &fmu->fmi1.variables[i];
+    return &fmu->fmi1.variables[i-1];
 }
 
 fmi1VariableHandle *fmi1_getVariableByValueReference(fmiHandle *fmu, fmi1ValueReference vr)
@@ -5565,229 +5868,80 @@ void fmi3_getLogCategory(fmiHandle *fmu, int id, const char **name, const char *
 
 int fmi3_getNumberOfModelStructureOutputs(fmiHandle *fmu)
 {
-    return fmu->fmi3.numberOfOutputs;
-}
-
-void fmi3_getModelStructureOutput(fmiHandle *fmu,
-                       int id,
-                       fmi3ValueReference *vr,
-                       int *numberOfDependencies,
-                       bool *dependencyKindsDefined)
-{
-    if(id < fmu->fmi3.numberOfOutputs) {
-        *vr = fmu->fmi3.outputs[id].valueReference;
-        *numberOfDependencies = fmu->fmi3.outputs[id].numberOfDependencies;
-        *dependencyKindsDefined = fmu->fmi3.outputs[id].dependencyKindsDefined;
-    }
-}
-
-fmi3ValueReference fmi3_getModelStructureOutputDependency(fmiHandle *fmu, int outputId, int dependencyId, bool *ok)
-{
-    *ok = false;
-    if(outputId < fmu->fmi3.numberOfOutputs &&
-       dependencyId < fmu->fmi3.outputs[outputId].numberOfDependencies) {
-        *ok = true;
-        return fmu->fmi3.outputs[outputId].dependencies[dependencyId];
-    }
-    return 0;
-}
-
-fmi3ValueReference fmi3_getModelStructureOutputDependencyKind(fmiHandle *fmu, int outputId, int dependencyId, bool *ok)
-{
-    *ok = false;
-    if(outputId < fmu->fmi3.numberOfOutputs &&
-       dependencyId < fmu->fmi3.outputs[outputId].numberOfDependencies &&
-       fmu->fmi3.outputs[outputId].dependencyKindsDefined) {
-        *ok = true;
-        return fmu->fmi3.outputs[outputId].dependencyKinds[dependencyId];
-    }
-    return 0;
+    return fmu->fmi3.modelStructure.numberOfOutputs;
 }
 
 int fmi3_getNumberOfModelStructureContinuousStateDerivatives(fmiHandle *fmu)
 {
-    return fmu->fmi3.numberOfContinuousStateDerivatives;
-}
-
-void fmi3_getModelStructureContinuousStateDerivative(fmiHandle *fmu,
-                                                    int id,
-                                                    fmi3ValueReference *vr,
-                                                    int *numberOfDependencies,
-                                                    bool *dependencyKindsDefined)
-{
-    if(id < fmu->fmi3.numberOfContinuousStateDerivatives) {
-        *vr = fmu->fmi3.continuousStateDerivatives[id].valueReference;
-        *numberOfDependencies = fmu->fmi3.continuousStateDerivatives[id].numberOfDependencies;
-        *dependencyKindsDefined = fmu->fmi3.continuousStateDerivatives[id].dependencyKindsDefined;
-    }
-}
-
-fmi3ValueReference fmi3_getModelStructureContinuousStateDerivativeDependency(fmiHandle *fmu,
-                                                                            int derId,
-                                                                            int dependencyId,
-                                                                            bool *ok)
-{
-    *ok = false;
-    if(derId < fmu->fmi3.numberOfContinuousStateDerivatives &&
-       dependencyId < fmu->fmi3.continuousStateDerivatives[derId].numberOfDependencies) {
-        *ok = true;
-        return fmu->fmi3.continuousStateDerivatives[derId].dependencies[dependencyId];
-    }
-    return 0;
-}
-
-fmi3ValueReference fmi3_getModelStructureContinuousStateDerivativeDependencyKind(fmiHandle *fmu,
-                                                                                int derId,
-                                                                                int dependencyId,
-                                                                                bool *ok)
-{
-    *ok = false;
-    if(derId < fmu->fmi3.numberOfContinuousStateDerivatives &&
-       dependencyId < fmu->fmi3.continuousStateDerivatives[derId].numberOfDependencies &&
-       fmu->fmi3.continuousStateDerivatives[derId].dependencyKindsDefined) {
-        *ok = true;
-        return fmu->fmi3.continuousStateDerivatives[derId].dependencyKinds[dependencyId];
-    }
-    return 0;
+    return fmu->fmi3.modelStructure.numberOfContinuousStateDerivatives;
 }
 
 int fmi3_getNumberOfModelStructureClockedStates(fmiHandle *fmu)
 {
-    return fmu->fmi3.numberOfClockedStates;
-}
-
-void fmi3_getModelStructureClockedState(fmiHandle *fmu,
-                                      int id,
-                                      fmi3ValueReference *vr,
-                                      int *numberOfDependencies,
-                                      bool *dependencyKindsDefined)
-{
-    if(id < fmu->fmi3.numberOfClockedStates) {
-        *vr = fmu->fmi3.clockedStates[id].valueReference;
-        *numberOfDependencies = fmu->fmi3.clockedStates[id].numberOfDependencies;
-        *dependencyKindsDefined = fmu->fmi3.clockedStates[id].dependencyKindsDefined;
-    }
-}
-
-fmi3ValueReference fmi3_getModelStructureClockedStateDependency(fmiHandle *fmu,
-                                                               int clockId,
-                                                               int dependencyId,
-                                                               bool *ok)
-{
-    *ok = false;
-    if(clockId < fmu->fmi3.numberOfClockedStates &&
-       dependencyId < fmu->fmi3.clockedStates[clockId].numberOfDependencies) {
-        *ok = true;
-        return fmu->fmi3.clockedStates[clockId].dependencies[dependencyId];
-    }
-    return 0;
-}
-
-fmi3ValueReference fmi3_getModelStructureClockedStateDependencyKind(fmiHandle *fmu,
-                                                                   int clockId,
-                                                                   int dependencyId,
-                                                                   bool *ok)
-{
-    *ok = false;
-    if(clockId < fmu->fmi3.numberOfClockedStates &&
-       dependencyId < fmu->fmi3.clockedStates[clockId].numberOfDependencies &&
-       fmu->fmi3.clockedStates[clockId].dependencyKindsDefined) {
-        *ok = true;
-        return fmu->fmi3.clockedStates[clockId].dependencyKinds[dependencyId];
-    }
-    return 0;
-}
-
-int fmi3_getNumberOfModelStructureInitialUnknowns(fmiHandle *fmu)
-{
-    return fmu->fmi3.numberOfInitialUnknowns;
-}
-
-void fmi3_getModelStructureInitialUnknown(fmiHandle *fmu,
-                                      int id,
-                                      fmi3ValueReference *vr,
-                                      int *numberOfDependencies,
-                                      bool *dependencyKindsDefined)
-{
-    if(id < fmu->fmi3.numberOfInitialUnknowns) {
-        *vr = fmu->fmi3.initialUnknowns[id].valueReference;
-        *numberOfDependencies = fmu->fmi3.initialUnknowns[id].numberOfDependencies;
-        *dependencyKindsDefined = fmu->fmi3.initialUnknowns[id].dependencyKindsDefined;
-    }
-}
-
-fmi3ValueReference fmi3_getModelStructureInitialUnknownDependency(fmiHandle *fmu,
-                                                                 int unknownId,
-                                                                 int dependencyId,
-                                                                 bool *ok)
-{
-    *ok = false;
-    if(unknownId < fmu->fmi3.numberOfInitialUnknowns &&
-       dependencyId < fmu->fmi3.initialUnknowns[unknownId].numberOfDependencies) {
-        *ok = true;
-        return fmu->fmi3.initialUnknowns[unknownId].dependencies[dependencyId];
-    }
-    return 0;
-}
-
-fmi3ValueReference fmi3_modelStructureGetInitialUnknownDependencyKind(fmiHandle *fmu,
-                                                                     int unknownId,
-                                                                     int dependencyId,
-                                                                     bool *ok)
-{
-    *ok = false;
-    if(unknownId < fmu->fmi3.numberOfInitialUnknowns &&
-       dependencyId < fmu->fmi3.initialUnknowns[unknownId].numberOfDependencies &&
-       fmu->fmi3.initialUnknowns[unknownId].dependencyKindsDefined) {
-        *ok = true;
-        return fmu->fmi3.initialUnknowns[unknownId].dependencyKinds[dependencyId];
-    }
-    return 0;
+    return fmu->fmi3.modelStructure.numberOfClockedStates;
 }
 
 int fmi3_getNumberOfModelStructureEventIndicators(fmiHandle *fmu)
 {
-    return fmu->fmi3.numberOfEventIndicators;
+    return fmu->fmi3.modelStructure.numberOfEventIndicators;
 }
 
-void fmi3_getModelStructureEventIndicator(fmiHandle *fmu,
-                           int id,
-                           fmi3ValueReference *vr,
-                           int *numberOfDependencies,
-                           bool *dependencyKindsDefined)
+int fmi3_getNumberOfModelStructureInitialUnknowns(fmiHandle *fmu)
 {
-    if(id < fmu->fmi3.numberOfEventIndicators) {
-        *vr = fmu->fmi3.eventIndicators[id].valueReference;
-        *numberOfDependencies = fmu->fmi3.eventIndicators[id].numberOfDependencies;
-        *dependencyKindsDefined = fmu->fmi3.eventIndicators[id].dependencyKindsDefined;
+    return fmu->fmi3.modelStructure.numberOfInitialUnknowns;
+}
+
+fmi3ModelStructureHandle *fmi3_getModelStructureOutput(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi3.modelStructure.outputs[i];
+}
+
+fmi3ModelStructureHandle *fmi3_getModelStructureContinuousStateDerivative(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi3.modelStructure.continuousStateDerivatives[i];
+}
+
+fmi3ModelStructureHandle *fmi3_getModelStructureClockedState(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi3.modelStructure.clockedStates[i];
+}
+
+fmi3ModelStructureHandle *fmi3_getModelStructureInitialUnknown(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi3.modelStructure.initialUnknowns[i];
+}
+
+fmi3ModelStructureHandle *fmi3_getModelStructureEventIndicator(fmiHandle *fmu, size_t i)
+{
+    return &fmu->fmi3.modelStructure.eventIndicators[i];
+}
+
+
+fmi3ValueReference fmi3_getModelStructureValueReference(fmi3ModelStructureHandle *handle)
+{
+    return handle->valueReference;
+}
+
+int fmi3_getModelStructureNumberOfDependencies(fmi3ModelStructureHandle *handle)
+{
+    return handle->numberOfDependencies;
+}
+
+bool fmi3_getModelStructureDependencyKindsDefined(fmi3ModelStructureHandle *handle)
+{
+    return handle->dependencyKindsDefined;
+}
+
+void fmi3_getModelStructureDependencies(fmi3ModelStructureHandle *handle, int *dependencies, size_t numberOfDependencies)
+{
+    for(size_t i=0; i<numberOfDependencies; ++i) {
+        dependencies[i] = handle->dependencies[i];
     }
 }
 
-fmi3ValueReference fmi3_getModelStructureEventIndicatorDependency(fmiHandle *fmu,
-                                                                 int indicatorId,
-                                                                 int dependencyId,
-                                                                 bool *ok)
+void fmi3_getModelStructureDependencyKinds(fmi3ModelStructureHandle *handle, int *dependencyKinds, size_t numberOfDependencies)
 {
-    *ok = false;
-    if(indicatorId < fmu->fmi3.numberOfEventIndicators &&
-       dependencyId < fmu->fmi3.eventIndicators[indicatorId].numberOfDependencies) {
-        *ok = true;
-        return fmu->fmi3.eventIndicators[indicatorId].dependencies[dependencyId];
+    for(size_t i=0; i<numberOfDependencies; ++i) {
+        dependencyKinds[i] = handle->dependencyKinds[i];
     }
-    return 0;
-}
-
-fmi3ValueReference fmi3_getModelStructureEventIndicatorDependencyKind(fmiHandle *fmu,
-                                                                     int indicatorId,
-                                                                     int dependencyId,
-                                                                     bool *ok)
-{
-    *ok = false;
-    if(indicatorId < fmu->fmi3.numberOfEventIndicators &&
-       dependencyId < fmu->fmi3.eventIndicators[indicatorId].numberOfDependencies &&
-       fmu->fmi3.eventIndicators[indicatorId].dependencyKindsDefined) {
-        *ok = true;
-        return fmu->fmi3.eventIndicators[indicatorId].dependencyKinds[dependencyId];
-    }
-    return 0;
 }

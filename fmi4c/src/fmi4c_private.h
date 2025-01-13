@@ -22,7 +22,7 @@
 #define TRACEFUNC
 #endif
 
-extern const char* fmi4cErrorMessage;
+void fmi4c_printMessage(const char* msg);
 
 typedef struct {
     fmi1DataType datatype;
@@ -66,6 +66,11 @@ typedef struct {
     const char *quantity;
     const char *unit;
     const char *displayUnit;
+    bool relativeQuantity;
+    fmi2Real min;
+    fmi2Real max;
+    fmi2Real nominal;
+    bool unbounded;
     bool hasStartValue;
     fmi2Real startReal;
     fmi2Integer startInteger;
@@ -304,6 +309,23 @@ typedef struct {
 } fmi2DataMe_t;
 
 typedef struct {
+    int index;
+    int numberOfDependencies;
+    bool dependencyKindsDefined;
+    int *dependencies;
+    fmi2DependencyKind *dependencyKinds;
+} fmi2ModelStructureHandle;
+
+typedef struct {
+    int numberOfOutputs;
+    int numberOfDerivatives;
+    int numberOfInitialUnknowns;
+    fmi2ModelStructureHandle *outputs;
+    fmi2ModelStructureHandle *derivatives;
+    fmi2ModelStructureHandle *initialUnknowns;
+} fmi2ModelStructureData_t;
+
+typedef struct {
     const char* fmiVersion_;
     const char* modelName;
     const char* guid;
@@ -347,6 +369,8 @@ typedef struct {
     int numberOfVariables;
     fmi2VariableHandle *variables;
     int variablesSize;
+
+    fmi2ModelStructureData_t modelStructure;
 
     fmi2Component component;
 
@@ -546,7 +570,7 @@ typedef struct {
     bool dependencyKindsDefined;
     fmi3ValueReference *dependencies;
     fmi3DependencyKind *dependencyKinds;
-} fmi3ModelStructureElement;
+} fmi3ModelStructureHandle;
 
 typedef struct {
     const char* modelIdentifier;
@@ -591,6 +615,19 @@ typedef struct {
     bool providesAdjointDerivatives;
     bool providesPerElementDependencies;
 } fmi3DataSe_t;
+
+typedef struct {
+    int numberOfOutputs;
+    int numberOfContinuousStateDerivatives;
+    int numberOfClockedStates;
+    int numberOfInitialUnknowns;
+    int numberOfEventIndicators;
+    fmi3ModelStructureHandle *outputs;
+    fmi3ModelStructureHandle *continuousStateDerivatives;
+    fmi3ModelStructureHandle *clockedStates;
+    fmi3ModelStructureHandle *initialUnknowns;
+    fmi3ModelStructureHandle *eventIndicators;
+} fmi3ModelStructureData_t;
 
 typedef struct {
     bool supportsModelExchange;
@@ -757,21 +794,13 @@ typedef struct {
     int numberOfLogCategories;
     fmi3LogCategory *logCategories;
 
-    int numberOfOutputs;
-    int numberOfContinuousStateDerivatives;
-    int numberOfClockedStates;
-    int numberOfInitialUnknowns;
-    int numberOfEventIndicators;
-    fmi3ModelStructureElement *outputs;
-    fmi3ModelStructureElement *continuousStateDerivatives;
-    fmi3ModelStructureElement *clockedStates;
-    fmi3ModelStructureElement *initialUnknowns;
-    fmi3ModelStructureElement *eventIndicators;
+    fmi3ModelStructureData_t modelStructure;
 } fmi3Data_t;
 
 
 typedef struct {
     fmiVersion_t version;
+    bool unzippedLocationIsTemporary;
     const char* unzippedLocation;
     const char* resourcesLocation;
     const char* instanceName;
