@@ -40,10 +40,11 @@ extern "C" {
 
 // FMU access functions
 
+FMI4C_DLLAPI void fmi4c_setMessageFunction(void (*func)(const char*));
 FMI4C_DLLAPI fmiVersion_t fmi4c_getFmiVersion(fmiHandle *fmu);
+FMI4C_DLLAPI fmiHandle *fmi4c_loadUnzippedFmu(const char *instanceName, const char *unzipLocation);
 FMI4C_DLLAPI fmiHandle* fmi4c_loadFmu(const char *fmufile, const char* instanceName);
 FMI4C_DLLAPI void fmi4c_freeFmu(fmiHandle* fmu);
-FMI4C_DLLAPI const char* fmi4c_getErrorMessages();
 
 // FMI 1 wrapper functions
 FMI4C_DLLAPI fmi1Type fmi1_getType(fmiHandle *fmu);
@@ -90,7 +91,7 @@ FMI4C_DLLAPI fmi1DataType fmi1_getVariableDataType(fmi1VariableHandle* var);
 
 FMI4C_DLLAPI const char* fmi1_getTypesPlatform(fmiHandle* fmu);
 FMI4C_DLLAPI const char* fmi1_getVersion(fmiHandle* fmu);
-FMI4C_DLLAPI fmi1Status fmi1_setDebugLogging(fmiHandle* fmu, fmi1Boolean);
+FMI4C_DLLAPI fmi1Status fmi1_setDebugLogging(fmiHandle* fmu, fmi1Boolean loggingOn);
 
 FMI4C_DLLAPI int fmi1_getNumberOfBaseUnits(fmiHandle *fmu);
 FMI4C_DLLAPI fmi1BaseUnitHandle *fmi1_getBaseUnitByIndex(fmiHandle *fmu, int i);
@@ -127,14 +128,14 @@ FMI4C_DLLAPI fmi1Status fmi1_getStringStatus(fmiHandle* fmu, const fmi1StatusKin
 FMI4C_DLLAPI const char *fmi1_getModelTypesPlatform(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi1_instantiateModel(fmiHandle *fmu, fmi1CallbackLogger_t logger, fmi1CallbackAllocateMemory_t allocateMemory, fmi1CallbackFreeMemory_t freeMemory, fmi1Boolean loggingOn);
 FMI4C_DLLAPI void fmi1_freeModelInstance(fmiHandle* fmu);
-FMI4C_DLLAPI fmi1Status fmi1_setTime(fmiHandle* fmu, fmi1Real);
-FMI4C_DLLAPI fmi1Status fmi1_setContinuousStates(fmiHandle* fmu, const fmi1Real[], size_t);
+FMI4C_DLLAPI fmi1Status fmi1_setTime(fmiHandle* fmu, fmi1Real time);
+FMI4C_DLLAPI fmi1Status fmi1_setContinuousStates(fmiHandle *fmu, const fmi1Real values[], size_t nStates);
 FMI4C_DLLAPI fmi1Status fmi1_completedIntegratorStep(fmiHandle* fmu, fmi1Boolean* callEventUpdate);
 FMI4C_DLLAPI fmi1Status fmi1_initialize(fmiHandle *fmu, fmi1Boolean toleranceControlled, fmi1Real relativeTolerance, fmi1EventInfo *eventInfo);
 FMI4C_DLLAPI fmi1Status fmi1_getDerivatives(fmiHandle *fmu, fmi1Real derivatives[], size_t nDerivatives);
 FMI4C_DLLAPI fmi1Status fmi1_getEventIndicators(fmiHandle *fmu, fmi1Real indicators[], size_t nIndicators);
 FMI4C_DLLAPI fmi1Status fmi1_eventUpdate(fmiHandle *fmu, fmi1Boolean intermediateResults, fmi1EventInfo *eventInfo);
-FMI4C_DLLAPI fmi1Status fmi1_getContinuousStates(fmiHandle* fmu, fmi1Real[], size_t);
+FMI4C_DLLAPI fmi1Status fmi1_getContinuousStates(fmiHandle *fmu, fmi1Real states[], size_t nStates);
 FMI4C_DLLAPI fmi1Status fmi1_getNominalContinuousStates(fmiHandle* fmu, fmi1Real nominals[], size_t nNominals);
 FMI4C_DLLAPI fmi1Status fmi1_getStateValueReferences(fmiHandle* fmu, fmi1ValueReference valueReferences[], size_t nValueReferences);
 FMI4C_DLLAPI fmi1Status fmi1_terminate(fmiHandle* fmu);
@@ -152,7 +153,7 @@ FMI4C_DLLAPI double fmi2_getDefaultStepSize(fmiHandle *fmu);
 
 FMI4C_DLLAPI int fmi2_getNumberOfVariables(fmiHandle *fmu);
 FMI4C_DLLAPI fmi2VariableHandle* fmi2_getVariableByIndex(fmiHandle *fmu, int i);
-FMI4C_DLLAPI fmi2VariableHandle* fmi2_getVariableByValueReference(fmiHandle *fmu, fmi3ValueReference vr);
+FMI4C_DLLAPI fmi2VariableHandle* fmi2_getVariableByValueReference(fmiHandle *fmu, fmi2ValueReference vr);
 FMI4C_DLLAPI fmi2VariableHandle* fmi2_getVariableByName(fmiHandle *fmu, fmi2String name);
 FMI4C_DLLAPI const char* fmi2_getVariableName(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableDescription(fmi2VariableHandle* var);
@@ -160,7 +161,6 @@ FMI4C_DLLAPI const char* fmi2_getFmiVersion(fmiHandle* fmu);
 FMI4C_DLLAPI const char* fmi2_getAuthor(fmiHandle *fmu);
 FMI4C_DLLAPI const char* fmi2_getModelName(fmiHandle *fmu);
 FMI4C_DLLAPI const char* fmi2_getModelDescription(fmiHandle *fmu);
-FMI4C_DLLAPI const char* fmi2_getModelIdentifier(fmiHandle *fmu);
 FMI4C_DLLAPI const char* fmi2_getCopyright(fmiHandle *fmu);
 FMI4C_DLLAPI const char* fmi2_getLicense(fmiHandle *fmu);
 FMI4C_DLLAPI const char* fmi2_getGenerationTool(fmiHandle *fmu);
@@ -170,6 +170,11 @@ FMI4C_DLLAPI int fmi2_getVariableDerivativeIndex(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableQuantity(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableUnit(fmi2VariableHandle* var);
 FMI4C_DLLAPI const char* fmi2_getVariableDisplayUnit(fmi2VariableHandle* var);
+FMI4C_DLLAPI bool fmi2_getVariableRelativeQuantity(fmi2VariableHandle *var);
+FMI4C_DLLAPI fmi2Real fmi2_getVariableMin(fmi2VariableHandle *var);
+FMI4C_DLLAPI fmi2Real fmi2_getVariableMax(fmi2VariableHandle *var);
+FMI4C_DLLAPI fmi2Real fmi2_getVariableNominal(fmi2VariableHandle *var);
+FMI4C_DLLAPI bool fmi2_getVariableUnbounded(fmi2VariableHandle *var);
 FMI4C_DLLAPI bool fmi2_getVariableHasStartValue(fmi2VariableHandle* var);
 FMI4C_DLLAPI fmi2Real fmi2_getVariableStartReal(fmi2VariableHandle* var);
 FMI4C_DLLAPI fmi2Integer fmi2_getVariableStartInteger(fmi2VariableHandle* var);
@@ -184,11 +189,11 @@ FMI4C_DLLAPI fmi2DataType fmi2_getVariableDataType(fmi2VariableHandle* var);
 
 FMI4C_DLLAPI const char* fmi2_getTypesPlatform(fmiHandle* fmu);
 FMI4C_DLLAPI const char* fmi2_getVersion(fmiHandle* fmu);
-FMI4C_DLLAPI fmi2Status fmi2_setDebugLogging(fmiHandle* fmu, fmi2Boolean, size_t, const fmi2String[]);
+FMI4C_DLLAPI fmi2Status fmi2_setDebugLogging(fmiHandle *fmu, fmi2Boolean loggingOn, size_t nCategories, const fmi2String categories[]);
 FMI4C_DLLAPI const char* fmi2_getGuid(fmiHandle *fmu);
 
 FMI4C_DLLAPI const char* fmi2cs_getModelIdentifier(fmiHandle* fmu);
-FMI4C_DLLAPI bool fmics2GetCanHandleVariableCommunicationStepSize(fmiHandle* fmu);
+FMI4C_DLLAPI bool fmi2cs_getCanHandleVariableCommunicationStepSize(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi2cs_getCanInterpolateInputs(fmiHandle* fmu);
 FMI4C_DLLAPI int fmi2cs_getMaxOutputDerivativeOrder(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi2cs_getCanRunAsynchronuously(fmiHandle* fmu);
@@ -209,14 +214,27 @@ FMI4C_DLLAPI bool fmi2me_getCanSerializeFMUState(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi2me_getProvidesDirectionalDerivative(fmiHandle* fmu);
 
 FMI4C_DLLAPI int fmi2_getNumberOfContinuousStates(fmiHandle *fmu);
+FMI4C_DLLAPI void fmi2_getContinuousStateValueReferences(fmiHandle *fmu, fmi2ValueReference valueReferences[], size_t nValueReferences);
 FMI4C_DLLAPI int fmi2_getNumberOfEventIndicators(fmiHandle *fmu);
 FMI4C_DLLAPI bool fmi2_getSupportsCoSimulation(fmiHandle *fmu);
 FMI4C_DLLAPI bool fmi2_getSupportsModelExchange(fmiHandle *fmu);
 
+FMI4C_DLLAPI int fmi2_getNumberOfModelStructureOutputs(fmiHandle *fmu);
+FMI4C_DLLAPI int fmi2_getNumberOfModelStructureDerivatives(fmiHandle *fmu);
+FMI4C_DLLAPI int fmi2_getNumberOfModelStructureInitialUnknowns(fmiHandle *fmu);
+FMI4C_DLLAPI fmi2ModelStructureHandle *fmi2_getModelStructureOutput(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi2ModelStructureHandle *fmi2_getModelStructureDerivative(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi2ModelStructureHandle *fmi2_getModelStructureInitialUnknown(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI int fmi2_getModelStructureIndex(fmi2ModelStructureHandle *handle);
+FMI4C_DLLAPI int fmi2_getModelStructureNumberOfDependencies(fmi2ModelStructureHandle *handle);
+FMI4C_DLLAPI bool fmi2_getModelStructureDependencyKindsDefined(fmi2ModelStructureHandle *handle);
+FMI4C_DLLAPI void fmi2_getModelStructureDependencies(fmi2ModelStructureHandle *handle, int *dependencies, size_t numberOfDependencies);
+FMI4C_DLLAPI void fmi2_getModelStructureDependencyKinds(fmi2ModelStructureHandle *handle, int *dependencyKinds, size_t numberOfDependencies);
+
 FMI4C_DLLAPI bool fmi2_instantiate(fmiHandle *fmu, fmi2Type type, fmi2CallbackLogger logger, fmi2CallbackAllocateMemory allocateMemory, fmi2CallbackFreeMemory freeMemory, fmi2StepFinished stepFinished, fmi2ComponentEnvironment componentEnvironment, fmi2Boolean visible, fmi2Boolean loggingOn);
 FMI4C_DLLAPI void fmi2_freeInstance(fmiHandle* fmu);
 
-FMI4C_DLLAPI fmi2Status fmi2_setupExperiment(fmiHandle* fmu, fmi2Boolean, fmi2Real, fmi2Real, fmi2Boolean, fmi2Real);
+FMI4C_DLLAPI fmi2Status fmi2_setupExperiment(fmiHandle *fmu, fmi2Boolean toleranceDefined, fmi2Real tolerance, fmi2Real startTime, fmi2Boolean stopTimeDefined, fmi2Real stopTime);
 FMI4C_DLLAPI fmi2Status fmi2_enterInitializationMode(fmiHandle* fmu);
 FMI4C_DLLAPI fmi2Status fmi2_exitInitializationMode(fmiHandle* fmu);
 FMI4C_DLLAPI fmi2Status fmi2_terminate(fmiHandle* fmu);
@@ -304,14 +322,14 @@ FMI4C_DLLAPI fmi2Status fmi2_getRealOutputDerivatives (fmiHandle* fmu,
                                                       const fmi2Integer order[],
                                                       fmi2Real value[]);
 
-FMI4C_DLLAPI fmi2Status fmi2_doStep(fmiHandle *fmu, fmi2Real, fmi2Real, fmi2Boolean);
+FMI4C_DLLAPI fmi2Status fmi2_doStep(fmiHandle *fmu, fmi2Real currentCommunicationPoint, fmi2Real communicationStepSize, fmi2Boolean noSetFMUStatePriorToCurrentPoint);
 FMI4C_DLLAPI fmi2Status fmi2_cancelStep(fmiHandle* fmu);
 
-FMI4C_DLLAPI fmi2Status fmi2_getStatus(fmiHandle* fmu, const fmi2StatusKind, fmi2Status* );
-FMI4C_DLLAPI fmi2Status fmi2_getRealStatus(fmiHandle* fmu, const fmi2StatusKind, fmi2Real*   );
-FMI4C_DLLAPI fmi2Status fmi2_getIntegerStatus(fmiHandle* fmu, const fmi2StatusKind, fmi2Integer*);
-FMI4C_DLLAPI fmi2Status fmi2_getBooleanStatus(fmiHandle* fmu, const fmi2StatusKind, fmi2Boolean*);
-FMI4C_DLLAPI fmi2Status fmi2_getStringStatus(fmiHandle* fmu, const fmi2StatusKind, fmi2String* );
+FMI4C_DLLAPI fmi2Status fmi2_getStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Status* value);
+FMI4C_DLLAPI fmi2Status fmi2_getRealStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Real* value);
+FMI4C_DLLAPI fmi2Status fmi2_getIntegerStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Integer* value);
+FMI4C_DLLAPI fmi2Status fmi2_getBooleanStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2Boolean* value);
+FMI4C_DLLAPI fmi2Status fmi2_getStringStatus(fmiHandle* fmu, const fmi2StatusKind s, fmi2String* value);
 
 
 FMI4C_DLLAPI int fmi3_getNumberOfVariables(fmiHandle *fmu);
@@ -329,6 +347,7 @@ FMI4C_DLLAPI const char *fmi3_getVariableQuantity(fmi3VariableHandle* var);
 FMI4C_DLLAPI const char *fmi3_getVariableUnit(fmi3VariableHandle* var);
 FMI4C_DLLAPI const char *fmi3_getVariableDisplayUnit(fmi3VariableHandle* var);
 FMI4C_DLLAPI bool fmi3_getVariableHasStartValue(fmi3VariableHandle* var);
+FMI4C_DLLAPI int fmi3_getVariableDerivativeIndex(fmi3VariableHandle* var);
 FMI4C_DLLAPI fmi3Float64 fmi3_getVariableStartFloat64(fmi3VariableHandle* var);
 FMI4C_DLLAPI fmi3Float32 fmi3_getVariableStartFloat32(fmi3VariableHandle *var);
 FMI4C_DLLAPI fmi3Int64 fmi3_getVariableStartInt64(fmi3VariableHandle *var);
@@ -485,75 +504,20 @@ FMI4C_DLLAPI int fmi3_getNumberOfLogCategories(fmiHandle *fmu);
 FMI4C_DLLAPI void fmi3_getLogCategory(fmiHandle *fmu, int id, const char **name, const char **description);
 
 FMI4C_DLLAPI int fmi3_getNumberOfModelStructureOutputs(fmiHandle *fmu);
-FMI4C_DLLAPI void fmi3_getModelStructureOutput(fmiHandle *fmu,
-                                               int id,
-                                               fmi3ValueReference *vr,
-                                               int *numberOfDependencies,
-                                               bool *dependencyKindsDefined);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureOutputDependency(fmiHandle *fmu,
-                                                                       int outputId,
-                                                                       int dependencyId,
-                                                                       bool *ok);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureOutputDependencyKind(fmiHandle *fmu,
-                                                                           int outputId,
-                                                                           int dependencyId,
-                                                                           bool *ok);
 FMI4C_DLLAPI int fmi3_getNumberOfModelStructureContinuousStateDerivatives(fmiHandle *fmu);
-FMI4C_DLLAPI void fmi3_getModelStructureContinuousStateDerivative(fmiHandle *fmu,
-                                                                  int id,
-                                                                  fmi3ValueReference *vr,
-                                                                  int *numberOfDependencies,
-                                                                  bool *dependencyKindsDefined);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureContinuousStateDerivativeDependency(fmiHandle *fmu,
-                                                                                          int derId,
-                                                                                          int dependencyId,
-                                                                                          bool *ok);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureContinuousStateDerivativeDependencyKind(fmiHandle *fmu,
-                                                                                              int derId,
-                                                                                              int dependencyId,
-                                                                                              bool *ok);
 FMI4C_DLLAPI int fmi3_getNumberOfModelStructureClockedStates(fmiHandle *fmu);
-FMI4C_DLLAPI void fmi3_getModelStructureClockedState(fmiHandle *fmu,
-                                                     int id,
-                                                     fmi3ValueReference *vr,
-                                                     int *numberOfDependencies,
-                                                     bool *dependencyKindsDefined);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureClockedStateDependency(fmiHandle *fmu,
-                                                                             int clockId,
-                                                                             int dependencyId,
-                                                                             bool *ok);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureClockedStateDependencyKind(fmiHandle *fmu,
-                                                                                 int clockId,
-                                                                                 int dependencyId,
-                                                                                 bool *ok);
 FMI4C_DLLAPI int fmi3_getNumberOfModelStructureInitialUnknowns(fmiHandle *fmu);
-FMI4C_DLLAPI void fmi3_getModelStructureInitialUnknown(fmiHandle *fmu,
-                                                       int id,
-                                                       fmi3ValueReference *vr,
-                                                       int *numberOfDependencies,
-                                                       bool *dependencyKindsDefined);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureInitialUnknownDependency(fmiHandle *fmu,
-                                                                               int unknownId,
-                                                                               int dependencyId,
-                                                                               bool *ok);
-FMI4C_DLLAPI fmi3ValueReference fmi3_modelStructureGetInitialUnknownDependencyKind(fmiHandle *fmu,
-                                                                                   int unknownId,
-                                                                                   int dependencyId,
-                                                                                   bool *ok);
 FMI4C_DLLAPI int fmi3_getNumberOfModelStructureEventIndicators(fmiHandle *fmu);
-FMI4C_DLLAPI void fmi3_getModelStructureEventIndicator(fmiHandle *fmu,
-                                                       int id,
-                                                       fmi3ValueReference *vr,
-                                                       int *numberOfDependencies,
-                                                       bool *dependencyKindsDefined);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureEventIndicatorDependency(fmiHandle *fmu,
-                                                                               int indicatorId,
-                                                                               int dependencyId,
-                                                                               bool *ok);
-FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureEventIndicatorDependencyKind(fmiHandle *fmu,
-                                                                                   int indicatorId,
-                                                                                   int dependencyId,
-                                                                                   bool *ok);
+FMI4C_DLLAPI fmi3ModelStructureHandle *fmi3_getModelStructureOutput(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi3ModelStructureHandle *fmi3_getModelStructureContinuousStateDerivative(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi3ModelStructureHandle *fmi3_getModelStructureClockedState(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi3ModelStructureHandle *fmi3_getModelStructureInitialUnknown(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi3ModelStructureHandle *fmi3_getModelStructureEventIndicator(fmiHandle *fmu, size_t i);
+FMI4C_DLLAPI fmi3ValueReference fmi3_getModelStructureValueReference(fmi3ModelStructureHandle *handle);
+FMI4C_DLLAPI int fmi3_getModelStructureNumberOfDependencies(fmi3ModelStructureHandle *handle);
+FMI4C_DLLAPI bool fmi3_getModelStructureDependencyKindsDefined(fmi3ModelStructureHandle *handle);
+FMI4C_DLLAPI void fmi3_getModelStructureDependencies(fmi3ModelStructureHandle *handle, int *dependencies, size_t numberOfDependencies);
+FMI4C_DLLAPI void fmi3_getModelStructureDependencyKinds(fmi3ModelStructureHandle *handle, int *dependencyKinds, size_t numberOfDependencies);
 
 FMI4C_DLLAPI const char* fmi3cs_getModelIdentifier(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3cs_getNeedsExecutionTool(fmiHandle* fmu);
@@ -567,6 +531,10 @@ FMI4C_DLLAPI bool fmi3cs_getProvidesIntermediateUpdate(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3cs_getProvidesEvaluateDiscreteStates(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3cs_getHasEventMode(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3cs_getRecommendedIntermediateInputSmoothness(fmiHandle* fmu);
+FMI4C_DLLAPI int fmi3cs_getMaxOutputDerivativeOrder(fmiHandle* fmu);
+FMI4C_DLLAPI bool fmi3cs_getCanHandleVariableCommunicationStepSize(fmiHandle* fmu);
+FMI4C_DLLAPI bool fmi3cs_getCanReturnEarlyAfterIntermediateUpdate(fmiHandle* fmu);
+FMI4C_DLLAPI double fmi3cs_getFixedInternalStepSize(fmiHandle* fmu);
 
 FMI4C_DLLAPI const char* fmi3me_getModelIdentifier(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3me_getNeedsExecutionTool(fmiHandle* fmu);
@@ -588,11 +556,6 @@ FMI4C_DLLAPI bool fmi3se_getProvidesDirectionalDerivative(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3se_getProvidesAdjointDerivatives(fmiHandle* fmu);
 FMI4C_DLLAPI bool fmi3se_getProvidesPerElementDependencies(fmiHandle* fmu);
 
-FMI4C_DLLAPI int fmi3_getMaxOutputDerivativeOrder(fmiHandle* fmu);
-FMI4C_DLLAPI bool fmi3_getCanHandleVariableCommunicationStepSize(fmiHandle* fmu);
-FMI4C_DLLAPI bool fmi3_getCanReturnEarlyAfterIntermediateUpdate(fmiHandle* fmu);
-FMI4C_DLLAPI double fmi3_getFixedInternalStepSize(fmiHandle* fmu);
-
 FMI4C_DLLAPI bool fmi3_instantiateCoSimulation(fmiHandle *fmu,
                                               fmi3Boolean                    visible,
                                               fmi3Boolean                    loggingOn,
@@ -604,7 +567,7 @@ FMI4C_DLLAPI bool fmi3_instantiateCoSimulation(fmiHandle *fmu,
                                               fmi3LogMessageCallback         logMessage,
                                               fmi3IntermediateUpdateCallback intermediateUpdate);
 
-FMI4C_DLLAPI bool fmi3_iInstantiateModelExchange(fmiHandle *fmu,
+FMI4C_DLLAPI bool fmi3_instantiateModelExchange(fmiHandle *fmu,
                                                fmi3Boolean                visible,
                                                fmi3Boolean                loggingOn,
                                                fmi3InstanceEnvironment    instanceEnvironment,
