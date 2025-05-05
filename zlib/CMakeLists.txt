@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.4.4)
+cmake_minimum_required(VERSION 3.14)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
@@ -155,4 +155,3 @@ set_target_properties(zlibstatic PROPERTIES OUTPUT_NAME zlibstatic)
 
 install(TARGETS zlibstatic)
 install(FILES ${ZLIB_PUBLIC_HDRS} TYPE INCLUDE)
-
