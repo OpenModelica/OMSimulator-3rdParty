@@ -107,3 +107,20 @@ endif ()
 message(STATUS "##### 3rdParty nlohmann/json")
 add_subdirectory(json EXCLUDE_FROM_ALL)
 add_library(oms::3rd::json::header ALIAS json_header_only)
+
+#########################################################################
+## libzip.
+message(STATUS "##### 3rdParty libzip")
+set(LIBZIP_USE_EXTERNAL_ZLIB ON)
+set(LIBZIP_EXTERNAL_ZLIB "oms:3rd:zlib" CACHE STRING "Defines an external target for zlib.")
+add_subdirectory(libzip EXCLUDE_FROM_ALL)
+add_library(oms::3rd::libzip ALIAS zip)
+
+#########################################################################
+## DCPLib.
+message(STATUS "##### 3rdParty DCPLib")
+set(DCPLIB_USE_EXTERNAL_XERCES ON CACHE BOOL "")
+set(DCPLIB_USE_EXTERNAL_ZIP ON CACHE BOOL "")
+set(DCPLIB_EXTERNAL_XERCES "oms::3rd::xerces" CACHE STRING "Defines an external target for xerces.")
+set(DCPLIB_EXTERNAL_ZIP "oms::3rd::libzip" CACHE STRING "Defines an external target for libzip.")
+add_subdirectory(dcplib EXCLUDE_FROM_ALL)

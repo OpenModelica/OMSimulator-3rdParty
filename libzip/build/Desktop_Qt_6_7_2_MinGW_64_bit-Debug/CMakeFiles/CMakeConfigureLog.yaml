@@ -1,0 +1,1804 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineSystem.cmake:205 (message)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      The system is: Windows - 10.0.26100 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: C:/Qt/Tools/mingw1120_64/bin/gcc.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.exe"
+      
+      The C compiler identification is GNU, found in:
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/3.30.1/CompilerIdC/a.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-61xzqm"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-61xzqm"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-61xzqm'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e3d3a
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -v -o CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj -c "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCCompilerABI.c"
+        Using built-in specs.
+        COLLECT_GCC=C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe
+        Target: x86_64-w64-mingw32
+        Configured with: ../../../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe --with-boot-ldflags=' -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib
+        gcc version 11.2.0 (x86_64-posix-seh-rev3, Built by MinGW-W64 project) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/'
+         C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/cc1.exe -quiet -v -iprefix C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/ -D_REENTRANT C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_e3d3a.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=core2 -march=nocona -version -o C:\\Users\\robbr48\\AppData\\Local\\Temp\\ccc31DKI.s
+        GNU C17 (x86_64-posix-seh-rev3, Built by MinGW-W64 project) version 11.2.0 (x86_64-w64-mingw32)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/include"
+        ignoring nonexistent directory "D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64D:/a/_temp/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include"
+        ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"
+        ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"
+        ignoring nonexistent directory "D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/mingw/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include
+         C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed
+         C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include
+        End of search list.
+        GNU C17 (x86_64-posix-seh-rev3, Built by MinGW-W64 project) version 11.2.0 (x86_64-w64-mingw32)
+        	compiled by GNU C version 11.2.0, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.1, isl version isl-0.24-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        Compiler executable checksum: 91c4f3c4bd8e22d803fb4b1665a580b8
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/'
+         C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj C:\\Users\\robbr48\\AppData\\Local\\Temp\\ccc31DKI.s
+        GNU assembler version 2.37 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.37
+        COMPILER_PATH=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/;C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/
+        LIBRARY_PATH=C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../\x0d
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.'\x0d
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe  -v -Wl,-v CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj -o cmTC_e3d3a.exe -Wl,--out-implib,libcmTC_e3d3a.dll.a -Wl,--major-image-version,0,--minor-image-version,0   && cd ."
+        Using built-in specs.
+        COLLECT_GCC=C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe
+        COLLECT_LTO_WRAPPER=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe
+        Target: x86_64-w64-mingw32
+        Configured with: ../../../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe --with-boot-ldflags=' -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc'
+        Thread model: posix
+        Supported LTO compression algorithms: zlib
+        gcc version 11.2.0 (x86_64-posix-seh-rev3, Built by MinGW-W64 project) 
+        COMPILER_PATH=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/;C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/
+        LIBRARY_PATH=C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/;C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e3d3a.exe' '-mtune=core2' '-march=nocona' '-dumpdir' 'cmTC_e3d3a.'
+         C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/collect2.exe -plugin C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/liblto_plugin.dll -plugin-opt=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\robbr48\\AppData\\Local\\Temp\\cc6PCsXJ.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 -m i386pep -Bdynamic -o cmTC_e3d3a.exe C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0 -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../.. -v CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_e3d3a.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o
+        collect2 version 11.2.0
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe -plugin C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/liblto_plugin.dll -plugin-opt=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\robbr48\\AppData\\Local\\Temp\\cc6PCsXJ.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 -m i386pep -Bdynamic -o cmTC_e3d3a.exe C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0 -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../.. -v CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_e3d3a.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o\x0d
+        GNU ld (GNU Binutils) 2.37\x0d
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e3d3a.exe' '-mtune=core2' '-march=nocona' '-dumpdir' 'cmTC_e3d3a.'\x0d
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:182 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include]
+          add: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed]
+          add: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include]
+        end of search list found
+        collapse include dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include]
+        collapse include dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed]
+        collapse include dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include] ==> [C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include]
+        implicit include dirs: [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include;C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed;C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?))("|,| |$)]
+        ignore line: [Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-61xzqm']
+        ignore line: []
+        ignore line: [Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e3d3a]
+        ignore line: [[1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -v -o CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj -c "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCCompilerABI.c"]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe]
+        ignore line: [Target: x86_64-w64-mingw32]
+        ignore line: [Configured with: ../../../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe --with-boot-ldflags=' -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib]
+        ignore line: [gcc version 11.2.0 (x86_64-posix-seh-rev3  Built by MinGW-W64 project) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/']
+        ignore line: [ C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/cc1.exe -quiet -v -iprefix C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/ -D_REENTRANT C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_e3d3a.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=core2 -march=nocona -version -o C:\\Users\\robbr48\\AppData\\Local\\Temp\\ccc31DKI.s]
+        ignore line: [GNU C17 (x86_64-posix-seh-rev3  Built by MinGW-W64 project) version 11.2.0 (x86_64-w64-mingw32)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/include"]
+        ignore line: [ignoring nonexistent directory "D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64D:/a/_temp/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../include"]
+        ignore line: [ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed"]
+        ignore line: [ignoring duplicate directory "C:/Qt/Tools/mingw1120_64/lib/gcc/../../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include"]
+        ignore line: [ignoring nonexistent directory "D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/mingw/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include]
+        ignore line: [ C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed]
+        ignore line: [ C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/include]
+        ignore line: [End of search list.]
+        ignore line: [GNU C17 (x86_64-posix-seh-rev3  Built by MinGW-W64 project) version 11.2.0 (x86_64-w64-mingw32)]
+        ignore line: [	compiled by GNU C version 11.2.0  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.1  isl version isl-0.24-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [Compiler executable checksum: 91c4f3c4bd8e22d803fb4b1665a580b8]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/']
+        ignore line: [ C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/as.exe -v -o CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj C:\\Users\\robbr48\\AppData\\Local\\Temp\\ccc31DKI.s]
+        ignore line: [GNU assembler version 2.37 (x86_64-w64-mingw32) using BFD version (GNU Binutils) 2.37]
+        ignore line: [COMPILER_PATH=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/]
+        ignore line: [LIBRARY_PATH=C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../\x0d]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj' '-c' '-mtune=core2' '-march=nocona' '-dumpdir' 'CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.'\x0d]
+        ignore line: [[2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe  -v -Wl -v CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj -o cmTC_e3d3a.exe -Wl --out-implib libcmTC_e3d3a.dll.a -Wl --major-image-version 0 --minor-image-version 0   && cd ."]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe]
+        ignore line: [COLLECT_LTO_WRAPPER=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe]
+        ignore line: [Target: x86_64-w64-mingw32]
+        ignore line: [Configured with: ../../../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https://sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe --with-boot-ldflags=' -Wl,--disable-dynamicbase -static-libstdc++ -static-libgcc']
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib]
+        ignore line: [gcc version 11.2.0 (x86_64-posix-seh-rev3  Built by MinGW-W64 project) ]
+        ignore line: [COMPILER_PATH=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/]
+        ignore line: [LIBRARY_PATH=C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/]
+        ignore line: [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e3d3a.exe' '-mtune=core2' '-march=nocona' '-dumpdir' 'cmTC_e3d3a.']
+        link line: [ C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/collect2.exe -plugin C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/liblto_plugin.dll -plugin-opt=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe -plugin-opt=-fresolution=C:\\Users\\robbr48\\AppData\\Local\\Temp\\cc6PCsXJ.res -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-lpthread -plugin-opt=-pass-through=-ladvapi32 -plugin-opt=-pass-through=-lshell32 -plugin-opt=-pass-through=-luser32 -plugin-opt=-pass-through=-lkernel32 -plugin-opt=-pass-through=-liconv -plugin-opt=-pass-through=-lmingw32 -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_eh -plugin-opt=-pass-through=-lmoldname -plugin-opt=-pass-through=-lmingwex -plugin-opt=-pass-through=-lmsvcrt -plugin-opt=-pass-through=-lkernel32 --sysroot=D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 -m i386pep -Bdynamic -o cmTC_e3d3a.exe C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0 -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib -LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../.. -v CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj --out-implib libcmTC_e3d3a.dll.a --major-image-version 0 --minor-image-version 0 -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -liconv -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcrt -lkernel32 C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o]
+          arg [C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/collect2.exe] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/liblto_plugin.dll] ==> ignore
+          arg [-plugin-opt=C:/Qt/Tools/mingw1120_64/bin/../libexec/gcc/x86_64-w64-mingw32/11.2.0/lto-wrapper.exe] ==> ignore
+          arg [-plugin-opt=-fresolution=C:\\Users\\robbr48\\AppData\\Local\\Temp\\cc6PCsXJ.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_eh] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmoldname] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmingwex] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmsvcrt] ==> ignore
+          arg [-plugin-opt=-pass-through=-lkernel32] ==> ignore
+          arg [-plugin-opt=-pass-through=-lpthread] ==> ignore
+          arg [-plugin-opt=-pass-through=-ladvapi32] ==> ignore
+          arg [-plugin-opt=-pass-through=-lshell32] ==> ignore
+          arg [-plugin-opt=-pass-through=-luser32] ==> ignore
+          arg [-plugin-opt=-pass-through=-lkernel32] ==> ignore
+          arg [-plugin-opt=-pass-through=-liconv] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmingw32] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_eh] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmoldname] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmingwex] ==> ignore
+          arg [-plugin-opt=-pass-through=-lmsvcrt] ==> ignore
+          arg [-plugin-opt=-pass-through=-lkernel32] ==> ignore
+          arg [--sysroot=D:/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64] ==> ignore
+          arg [-m] ==> ignore
+          arg [i386pep] ==> ignore
+          arg [-Bdynamic] ==> search dynamic
+          arg [-o] ==> ignore
+          arg [cmTC_e3d3a.exe] ==> ignore
+          arg [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o] ==> obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o]
+          arg [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o] ==> obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib]
+          arg [-LC:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../..] ==> dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../..]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_e3d3a.dir/CMakeCCompilerABI.c.obj] ==> ignore
+          arg [--out-implib] ==> ignore
+          arg [libcmTC_e3d3a.dll.a] ==> ignore
+          arg [--major-image-version] ==> ignore
+          arg [0] ==> ignore
+          arg [--minor-image-version] ==> ignore
+          arg [0] ==> ignore
+          arg [-lmingw32] ==> lib [mingw32]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lgcc_eh] ==> lib [gcc_eh]
+          arg [-lmoldname] ==> lib [moldname]
+          arg [-lmingwex] ==> lib [mingwex]
+          arg [-lmsvcrt] ==> lib [msvcrt]
+          arg [-lkernel32] ==> lib [kernel32]
+          arg [-lpthread] ==> lib [pthread]
+          arg [-ladvapi32] ==> lib [advapi32]
+          arg [-lshell32] ==> lib [shell32]
+          arg [-luser32] ==> lib [user32]
+          arg [-lkernel32] ==> lib [kernel32]
+          arg [-liconv] ==> lib [iconv]
+          arg [-lmingw32] ==> lib [mingw32]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lgcc_eh] ==> lib [gcc_eh]
+          arg [-lmoldname] ==> lib [moldname]
+          arg [-lmingwex] ==> lib [mingwex]
+          arg [-lmsvcrt] ==> lib [msvcrt]
+          arg [-lkernel32] ==> lib [kernel32]
+          arg [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o] ==> obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o]
+        linker tool for 'C': ../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https:/sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe
+        remove lib [gcc_eh]
+        remove lib [msvcrt]
+        remove lib [gcc_eh]
+        remove lib [msvcrt]
+        collapse obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib/crt2.o] ==> [C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/crt2.o]
+        collapse obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o]
+        collapse obj [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc] ==> [C:/Qt/Tools/mingw1120_64/lib/gcc]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib/../lib] ==> [C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../lib] ==> [C:/Qt/Tools/mingw1120_64/lib]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/lib] ==> [C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib]
+        collapse library dir [C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../..] ==> [C:/Qt/Tools/mingw1120_64/lib]
+        implicit libs: [mingw32;gcc;moldname;mingwex;kernel32;pthread;advapi32;shell32;user32;kernel32;iconv;mingw32;gcc;moldname;mingwex;kernel32]
+        implicit objs: [C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib/crt2.o;C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/crtbegin.o;C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/crtend.o]
+        implicit dirs: [C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0;C:/Qt/Tools/mingw1120_64/lib/gcc;C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/lib;C:/Qt/Tools/mingw1120_64/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Running the C compiler's linker: "../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https:/sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe" "-v"
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Running the C compiler's linker: "../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https:/sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe" "-V"
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:8 (project)"
+    message: |
+      Running the C compiler's linker: "../src/gcc-11.2.0/configure --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --prefix=/mingw64 --with-sysroot=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64 --enable-host-shared --disable-multilib --enable-languages=c,c++,fortran,lto --enable-libstdcxx-time=yes --enable-threads=posix --enable-libgomp --enable-libatomic --enable-lto --enable-graphite --enable-checking=release --enable-fully-dynamic-string --enable-version-specific-runtime-libs --enable-libstdcxx-filesystem-ts=yes --disable-libstdcxx-pch --disable-libstdcxx-debug --enable-bootstrap --disable-rpath --disable-win32-registry --disable-nls --disable-werror --disable-symvers --with-gnu-as --with-gnu-ld --with-arch=nocona --with-tune=core2 --with-libiconv --with-system-zlib --with-gmp=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpfr=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-mpc=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-isl=/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static --with-pkgversion='x86_64-posix-seh-rev3, Built by MinGW-W64 project' --with-bugurl=https:/sourceforge.net/projects/mingw-w64 CFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CXXFLAGS='-O2 -pipe -fno-ident -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' CPPFLAGS=' -I/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/include -I/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/include' LDFLAGS='-pipe -fno-ident -L/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/opt/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-zlib-static/lib -L/d/a/mingw-builds/mingw-builds/buildroot/prerequisites/x86_64-w64-mingw32-static/lib ' LD_FOR_TARGET=/d/a/mingw-builds/mingw-builds/buildroot/x86_64-1120-posix-seh-rt_v9-rev3/mingw64/bin/ld.exe" "--version"
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:37 (check_include_files)"
+    checks:
+      - "Looking for include file CommonCrypto/CommonCrypto.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "COMMONCRYPTO_FOUND"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_5a7fb
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_5a7fb.dir/COMMONCRYPTO_FOUND.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8/COMMONCRYPTO_FOUND.c
+        \x1b[31mFAILED: \x1b[0mCMakeFiles/cmTC_5a7fb.dir/COMMONCRYPTO_FOUND.c.obj 
+        C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_5a7fb.dir/COMMONCRYPTO_FOUND.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8/COMMONCRYPTO_FOUND.c
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p57gw8/COMMONCRYPTO_FOUND.c:2:10: fatal error: CommonCrypto/CommonCrypto.h: No such file or directory
+            2 | #include <CommonCrypto/CommonCrypto.h>
+              |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        compilation terminated.\x0d
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:98 (check_function_exists)"
+    checks:
+      - "Looking for _close"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-ryw47k"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-ryw47k"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__CLOSE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-ryw47k'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_0c1d6
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_close -o CMakeFiles/cmTC_0c1d6.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-ryw47k/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_close  CMakeFiles/cmTC_0c1d6.dir/CheckFunctionExists.c.obj -o cmTC_0c1d6.exe -Wl,--out-implib,libcmTC_0c1d6.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:99 (check_function_exists)"
+    checks:
+      - "Looking for _dup"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-43bhrl"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-43bhrl"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__DUP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-43bhrl'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_bd0ad
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_dup -o CMakeFiles/cmTC_bd0ad.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-43bhrl/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_dup  CMakeFiles/cmTC_bd0ad.dir/CheckFunctionExists.c.obj -o cmTC_bd0ad.exe -Wl,--out-implib,libcmTC_bd0ad.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:100 (check_function_exists)"
+    checks:
+      - "Looking for _fdopen"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-z3ikr9"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-z3ikr9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__FDOPEN"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-z3ikr9'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_bd94e
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_fdopen -o CMakeFiles/cmTC_bd94e.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-z3ikr9/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_fdopen  CMakeFiles/cmTC_bd94e.dir/CheckFunctionExists.c.obj -o cmTC_bd94e.exe -Wl,--out-implib,libcmTC_bd94e.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:101 (check_function_exists)"
+    checks:
+      - "Looking for _fileno"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hjy72c"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hjy72c"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__FILENO"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hjy72c'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_31383
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_fileno -o CMakeFiles/cmTC_31383.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hjy72c/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_fileno  CMakeFiles/cmTC_31383.dir/CheckFunctionExists.c.obj -o cmTC_31383.exe -Wl,--out-implib,libcmTC_31383.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:102 (check_function_exists)"
+    checks:
+      - "Looking for _setmode"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-tia798"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-tia798"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__SETMODE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-tia798'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_8505f
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_setmode -o CMakeFiles/cmTC_8505f.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-tia798/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_setmode  CMakeFiles/cmTC_8505f.dir/CheckFunctionExists.c.obj -o cmTC_8505f.exe -Wl,--out-implib,libcmTC_8505f.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:103 (check_function_exists)"
+    checks:
+      - "Looking for _snprintf"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-mabdrr"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-mabdrr"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__SNPRINTF"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-mabdrr'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_bebf3
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_snprintf -o CMakeFiles/cmTC_bebf3.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-mabdrr/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_snprintf  CMakeFiles/cmTC_bebf3.dir/CheckFunctionExists.c.obj -o cmTC_bebf3.exe -Wl,--out-implib,libcmTC_bebf3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:104 (check_function_exists)"
+    checks:
+      - "Looking for _strdup"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-8o91xz"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-8o91xz"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__STRDUP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-8o91xz'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_11017
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_strdup -o CMakeFiles/cmTC_11017.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-8o91xz/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_strdup  CMakeFiles/cmTC_11017.dir/CheckFunctionExists.c.obj -o cmTC_11017.exe -Wl,--out-implib,libcmTC_11017.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:105 (check_function_exists)"
+    checks:
+      - "Looking for _stricmp"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0chhay"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0chhay"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__STRICMP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0chhay'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_40055
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_stricmp -o CMakeFiles/cmTC_40055.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0chhay/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_stricmp  CMakeFiles/cmTC_40055.dir/CheckFunctionExists.c.obj -o cmTC_40055.exe -Wl,--out-implib,libcmTC_40055.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:106 (check_function_exists)"
+    checks:
+      - "Looking for _strtoi64"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0wnbs0"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0wnbs0"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__STRTOI64"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0wnbs0'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_9c760
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_strtoi64 -o CMakeFiles/cmTC_9c760.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0wnbs0/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_strtoi64  CMakeFiles/cmTC_9c760.dir/CheckFunctionExists.c.obj -o cmTC_9c760.exe -Wl,--out-implib,libcmTC_9c760.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:107 (check_function_exists)"
+    checks:
+      - "Looking for _strtoui64"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-1ii4by"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-1ii4by"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__STRTOUI64"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-1ii4by'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_811fd
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_strtoui64 -o CMakeFiles/cmTC_811fd.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-1ii4by/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_strtoui64  CMakeFiles/cmTC_811fd.dir/CheckFunctionExists.c.obj -o cmTC_811fd.exe -Wl,--out-implib,libcmTC_811fd.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:108 (check_function_exists)"
+    checks:
+      - "Looking for _unlink"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-dbed2r"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-dbed2r"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE__UNLINK"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-dbed2r'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_10bf9
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=_unlink -o CMakeFiles/cmTC_10bf9.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-dbed2r/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=_unlink  CMakeFiles/cmTC_10bf9.dir/CheckFunctionExists.c.obj -o cmTC_10bf9.exe -Wl,--out-implib,libcmTC_10bf9.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:109 (check_function_exists)"
+    checks:
+      - "Looking for arc4random"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-n2fmhq"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-n2fmhq"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_ARC4RANDOM"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-n2fmhq'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_6c76b
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=arc4random -o CMakeFiles/cmTC_6c76b.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-n2fmhq/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=arc4random  CMakeFiles/cmTC_6c76b.dir/CheckFunctionExists.c.obj -o cmTC_6c76b.exe -Wl,--out-implib,libcmTC_6c76b.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_6c76b.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=arc4random  CMakeFiles/cmTC_6c76b.dir/CheckFunctionExists.c.obj -o cmTC_6c76b.exe -Wl,--out-implib,libcmTC_6c76b.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_6c76b.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `arc4random'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:110 (check_function_exists)"
+    checks:
+      - "Looking for clonefile"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-pj72ml"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-pj72ml"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_CLONEFILE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-pj72ml'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_f3086
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=clonefile -o CMakeFiles/cmTC_f3086.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-pj72ml/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=clonefile  CMakeFiles/cmTC_f3086.dir/CheckFunctionExists.c.obj -o cmTC_f3086.exe -Wl,--out-implib,libcmTC_f3086.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_f3086.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=clonefile  CMakeFiles/cmTC_f3086.dir/CheckFunctionExists.c.obj -o cmTC_f3086.exe -Wl,--out-implib,libcmTC_f3086.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_f3086.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `clonefile'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:111 (check_function_exists)"
+    checks:
+      - "Looking for explicit_bzero"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p0527c"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p0527c"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_EXPLICIT_BZERO"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p0527c'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e6be1
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=explicit_bzero -o CMakeFiles/cmTC_e6be1.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-p0527c/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=explicit_bzero  CMakeFiles/cmTC_e6be1.dir/CheckFunctionExists.c.obj -o cmTC_e6be1.exe -Wl,--out-implib,libcmTC_e6be1.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_e6be1.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=explicit_bzero  CMakeFiles/cmTC_e6be1.dir/CheckFunctionExists.c.obj -o cmTC_e6be1.exe -Wl,--out-implib,libcmTC_e6be1.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_e6be1.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `explicit_bzero'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:112 (check_function_exists)"
+    checks:
+      - "Looking for explicit_memset"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-vxr8n8"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-vxr8n8"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_EXPLICIT_MEMSET"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-vxr8n8'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e1c67
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=explicit_memset -o CMakeFiles/cmTC_e1c67.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-vxr8n8/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=explicit_memset  CMakeFiles/cmTC_e1c67.dir/CheckFunctionExists.c.obj -o cmTC_e1c67.exe -Wl,--out-implib,libcmTC_e1c67.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_e1c67.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=explicit_memset  CMakeFiles/cmTC_e1c67.dir/CheckFunctionExists.c.obj -o cmTC_e1c67.exe -Wl,--out-implib,libcmTC_e1c67.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_e1c67.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `explicit_memset'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:113 (check_function_exists)"
+    checks:
+      - "Looking for fileno"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-44czn4"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-44czn4"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_FILENO"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-44czn4'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_9e163
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=fileno -o CMakeFiles/cmTC_9e163.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-44czn4/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=fileno  CMakeFiles/cmTC_9e163.dir/CheckFunctionExists.c.obj -o cmTC_9e163.exe -Wl,--out-implib,libcmTC_9e163.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:114 (check_function_exists)"
+    checks:
+      - "Looking for fseeko"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5iwuiq"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5iwuiq"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_FSEEKO"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5iwuiq'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_9e6d6
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=fseeko -o CMakeFiles/cmTC_9e6d6.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5iwuiq/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=fseeko  CMakeFiles/cmTC_9e6d6.dir/CheckFunctionExists.c.obj -o cmTC_9e6d6.exe -Wl,--out-implib,libcmTC_9e6d6.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:115 (check_function_exists)"
+    checks:
+      - "Looking for ftello"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-3t3efr"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-3t3efr"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_FTELLO"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-3t3efr'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_23bd0
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=ftello -o CMakeFiles/cmTC_23bd0.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-3t3efr/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=ftello  CMakeFiles/cmTC_23bd0.dir/CheckFunctionExists.c.obj -o cmTC_23bd0.exe -Wl,--out-implib,libcmTC_23bd0.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:116 (check_function_exists)"
+    checks:
+      - "Looking for getprogname"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-bxqfnt"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-bxqfnt"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_GETPROGNAME"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-bxqfnt'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_c835d
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=getprogname -o CMakeFiles/cmTC_c835d.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-bxqfnt/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=getprogname  CMakeFiles/cmTC_c835d.dir/CheckFunctionExists.c.obj -o cmTC_c835d.exe -Wl,--out-implib,libcmTC_c835d.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_c835d.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=getprogname  CMakeFiles/cmTC_c835d.dir/CheckFunctionExists.c.obj -o cmTC_c835d.exe -Wl,--out-implib,libcmTC_c835d.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_c835d.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `getprogname'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:117 (check_function_exists)"
+    checks:
+      - "Looking for localtime_r"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-idy2uc"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-idy2uc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_LOCALTIME_R"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-idy2uc'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_57e33
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=localtime_r -o CMakeFiles/cmTC_57e33.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-idy2uc/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=localtime_r  CMakeFiles/cmTC_57e33.dir/CheckFunctionExists.c.obj -o cmTC_57e33.exe -Wl,--out-implib,libcmTC_57e33.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        \x1b[31mFAILED: \x1b[0mcmTC_57e33.exe 
+        C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=localtime_r  CMakeFiles/cmTC_57e33.dir/CheckFunctionExists.c.obj -o cmTC_57e33.exe -Wl,--out-implib,libcmTC_57e33.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        C:/Qt/Tools/mingw1120_64/bin/../lib/gcc/x86_64-w64-mingw32/11.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/cmTC_57e33.dir/CheckFunctionExists.c.obj:CheckFunctionExists.c:(.text+0x15): undefined reference to `localtime_r'\x0d
+        collect2.exe: error: ld returned 1 exit status
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:118 (check_function_exists)"
+    checks:
+      - "Looking for setmode"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-h2v9bz"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-h2v9bz"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SETMODE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-h2v9bz'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_a7224
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=setmode -o CMakeFiles/cmTC_a7224.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-h2v9bz/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=setmode  CMakeFiles/cmTC_a7224.dir/CheckFunctionExists.c.obj -o cmTC_a7224.exe -Wl,--out-implib,libcmTC_a7224.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:119 (check_function_exists)"
+    checks:
+      - "Looking for snprintf"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SNPRINTF"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_d5c32
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=snprintf -o CMakeFiles/cmTC_d5c32.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function 'snprintf'; expected 'int(char *, long long unsigned int,  const char *, ...)' [-Wbuiltin-declaration-mismatch]
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob/CheckFunctionExists.c:7:3: note: in expansion of macro 'CHECK_FUNCTION_EXISTS'
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-i39pob/CheckFunctionExists.c:1:1: note: 'snprintf' is declared in header '<stdio.h>'
+          +++ |+#include <stdio.h>
+            1 | #ifdef CHECK_FUNCTION_EXISTS
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=snprintf  CMakeFiles/cmTC_d5c32.dir/CheckFunctionExists.c.obj -o cmTC_d5c32.exe -Wl,--out-implib,libcmTC_d5c32.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:120 (check_function_exists)"
+    checks:
+      - "Looking for strcasecmp"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rx3oj7"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rx3oj7"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRCASECMP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rx3oj7'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_8379c
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=strcasecmp -o CMakeFiles/cmTC_8379c.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rx3oj7/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function 'strcasecmp'; expected 'int(const char *, const char *)' [-Wbuiltin-declaration-mismatch]
+        <command-line>: note: in definition of macro 'CHECK_FUNCTION_EXISTS'
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=strcasecmp  CMakeFiles/cmTC_8379c.dir/CheckFunctionExists.c.obj -o cmTC_8379c.exe -Wl,--out-implib,libcmTC_8379c.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:121 (check_function_exists)"
+    checks:
+      - "Looking for strdup"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hbn666"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hbn666"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRDUP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hbn666'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_81808
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=strdup -o CMakeFiles/cmTC_81808.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hbn666/CheckFunctionExists.c
+        <command-line>: warning: conflicting types for built-in function 'strdup'; expected 'char *(const char *)' [-Wbuiltin-declaration-mismatch]
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-hbn666/CheckFunctionExists.c:7:3: note: in expansion of macro 'CHECK_FUNCTION_EXISTS'
+            7 |   CHECK_FUNCTION_EXISTS(void);
+              |   ^~~~~~~~~~~~~~~~~~~~~
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=strdup  CMakeFiles/cmTC_81808.dir/CheckFunctionExists.c.obj -o cmTC_81808.exe -Wl,--out-implib,libcmTC_81808.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:122 (check_function_exists)"
+    checks:
+      - "Looking for stricmp"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nlf135"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nlf135"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRICMP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nlf135'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_98233
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=stricmp -o CMakeFiles/cmTC_98233.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nlf135/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=stricmp  CMakeFiles/cmTC_98233.dir/CheckFunctionExists.c.obj -o cmTC_98233.exe -Wl,--out-implib,libcmTC_98233.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:123 (check_function_exists)"
+    checks:
+      - "Looking for strtoll"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c6q3ah"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c6q3ah"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRTOLL"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c6q3ah'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_138c4
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=strtoll -o CMakeFiles/cmTC_138c4.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c6q3ah/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=strtoll  CMakeFiles/cmTC_138c4.dir/CheckFunctionExists.c.obj -o cmTC_138c4.exe -Wl,--out-implib,libcmTC_138c4.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "CMakeLists.txt:124 (check_function_exists)"
+    checks:
+      - "Looking for strtoull"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qal329"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qal329"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRTOULL"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qal329'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_977f7
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   -DCHECK_FUNCTION_EXISTS=strtoull -o CMakeFiles/cmTC_977f7.dir/CheckFunctionExists.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qal329/CheckFunctionExists.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DCHECK_FUNCTION_EXISTS=strtoull  CMakeFiles/cmTC_977f7.dir/CheckFunctionExists.c.obj -o cmTC_977f7.exe -Wl,--out-implib,libcmTC_977f7.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:126 (check_include_files)"
+    checks:
+      - "Looking for 3 include files sys/types.h, ..., fts.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_FTS_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_cc0c2
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_cc0c2.dir/HAVE_FTS_H.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9/HAVE_FTS_H.c
+        \x1b[31mFAILED: \x1b[0mCMakeFiles/cmTC_cc0c2.dir/HAVE_FTS_H.c.obj 
+        C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_cc0c2.dir/HAVE_FTS_H.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9/HAVE_FTS_H.c
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fsjkd9/HAVE_FTS_H.c:4:10: fatal error: fts.h: No such file or directory
+            4 | #include <fts.h>
+              |          ^~~~~~~
+        compilation terminated.\x0d
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:145 (check_include_files)"
+    checks:
+      - "Looking for include file stdbool.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-w0pcyj"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-w0pcyj"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STDBOOL_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-w0pcyj'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_2f5d3
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_2f5d3.dir/HAVE_STDBOOL_H.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-w0pcyj/HAVE_STDBOOL_H.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_2f5d3.dir/HAVE_STDBOOL_H.c.obj -o cmTC_2f5d3.exe -Wl,--out-implib,libcmTC_2f5d3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:146 (check_include_files)"
+    checks:
+      - "Looking for include file strings.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nhcnuc"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nhcnuc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STRINGS_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nhcnuc'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_bef77
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_bef77.dir/HAVE_STRINGS_H.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nhcnuc/HAVE_STRINGS_H.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_bef77.dir/HAVE_STRINGS_H.c.obj -o cmTC_bef77.exe -Wl,--out-implib,libcmTC_bef77.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:147 (check_include_files)"
+    checks:
+      - "Looking for include file unistd.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-7tsvcx"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-7tsvcx"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_UNISTD_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-7tsvcx'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_b2231
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_b2231.dir/HAVE_UNISTD_H.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-7tsvcx/HAVE_UNISTD_H.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_b2231.dir/HAVE_UNISTD_H.c.obj -o cmTC_b2231.exe -Wl,--out-implib,libcmTC_b2231.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:149 (check_include_files)"
+    checks:
+      - "Looking for include file inttypes.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nw917g"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nw917g"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INTTYPES_H_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nw917g'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_4155d
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_4155d.dir/HAVE_INTTYPES_H_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nw917g/HAVE_INTTYPES_H_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_4155d.dir/HAVE_INTTYPES_H_LIBZIP.c.obj -o cmTC_4155d.exe -Wl,--out-implib,libcmTC_4155d.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:150 (check_include_files)"
+    checks:
+      - "Looking for include file stdint.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-2axpou"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-2axpou"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STDINT_H_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-2axpou'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e6667
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_e6667.dir/HAVE_STDINT_H_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-2axpou/HAVE_STDINT_H_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_e6667.dir/HAVE_STDINT_H_LIBZIP.c.obj -o cmTC_e6667.exe -Wl,--out-implib,libcmTC_e6667.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFiles.cmake:132 (try_compile)"
+      - "CMakeLists.txt:151 (check_include_files)"
+    checks:
+      - "Looking for include file sys/types.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-j6ixeu"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-j6ixeu"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SYS_TYPES_H_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-j6ixeu'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_66361
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_66361.dir/HAVE_SYS_TYPES_H_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-j6ixeu/HAVE_SYS_TYPES_H_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_66361.dir/HAVE_SYS_TYPES_H_LIBZIP.c.obj -o cmTC_66361.exe -Wl,--out-implib,libcmTC_66361.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:251 (check_include_file)"
+      - "CMakeLists.txt:157 (check_type_size)"
+    checks:
+      - "Looking for sys/types.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0l2f9y"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0l2f9y"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SYS_TYPES_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0l2f9y'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_1e776
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_1e776.dir/CheckIncludeFile.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-0l2f9y/CheckIncludeFile.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_1e776.dir/CheckIncludeFile.c.obj -o cmTC_1e776.exe -Wl,--out-implib,libcmTC_1e776.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:252 (check_include_file)"
+      - "CMakeLists.txt:157 (check_type_size)"
+    checks:
+      - "Looking for stdint.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-px20fb"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-px20fb"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STDINT_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-px20fb'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_c83c1
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_c83c1.dir/CheckIncludeFile.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-px20fb/CheckIncludeFile.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_c83c1.dir/CheckIncludeFile.c.obj -o cmTC_c83c1.exe -Wl,--out-implib,libcmTC_c83c1.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckIncludeFile.cmake:90 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:253 (check_include_file)"
+      - "CMakeLists.txt:157 (check_type_size)"
+    checks:
+      - "Looking for stddef.h"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fwuwoi"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fwuwoi"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_STDDEF_H"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fwuwoi'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_dac43
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_dac43.dir/CheckIncludeFile.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-fwuwoi/CheckIncludeFile.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_dac43.dir/CheckIncludeFile.c.obj -o cmTC_dac43.exe -Wl,--out-implib,libcmTC_dac43.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:157 (check_type_size)"
+    checks:
+      - "Check size of __int8"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nwz3ex"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nwz3ex"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE___INT8_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nwz3ex'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_f03c3
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_f03c3.dir/__INT8_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-nwz3ex/__INT8_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_f03c3.dir/__INT8_LIBZIP.c.obj -o cmTC_f03c3.exe -Wl,--out-implib,libcmTC_f03c3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:158 (check_type_size)"
+    checks:
+      - "Check size of int8_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5ul5tj"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5ul5tj"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INT8_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5ul5tj'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_7675a
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_7675a.dir/INT8_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-5ul5tj/INT8_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_7675a.dir/INT8_T_LIBZIP.c.obj -o cmTC_7675a.exe -Wl,--out-implib,libcmTC_7675a.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:159 (check_type_size)"
+    checks:
+      - "Check size of uint8_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-cgdp4u"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-cgdp4u"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_UINT8_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-cgdp4u'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_47400
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_47400.dir/UINT8_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-cgdp4u/UINT8_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_47400.dir/UINT8_T_LIBZIP.c.obj -o cmTC_47400.exe -Wl,--out-implib,libcmTC_47400.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:160 (check_type_size)"
+    checks:
+      - "Check size of __int16"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-37e0ar"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-37e0ar"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE___INT16_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-37e0ar'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_ca942
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_ca942.dir/__INT16_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-37e0ar/__INT16_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_ca942.dir/__INT16_LIBZIP.c.obj -o cmTC_ca942.exe -Wl,--out-implib,libcmTC_ca942.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:161 (check_type_size)"
+    checks:
+      - "Check size of int16_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-59tp6z"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-59tp6z"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INT16_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-59tp6z'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_aa9e1
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_aa9e1.dir/INT16_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-59tp6z/INT16_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_aa9e1.dir/INT16_T_LIBZIP.c.obj -o cmTC_aa9e1.exe -Wl,--out-implib,libcmTC_aa9e1.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:162 (check_type_size)"
+    checks:
+      - "Check size of uint16_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rz5dha"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rz5dha"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_UINT16_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rz5dha'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_87110
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_87110.dir/UINT16_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rz5dha/UINT16_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_87110.dir/UINT16_T_LIBZIP.c.obj -o cmTC_87110.exe -Wl,--out-implib,libcmTC_87110.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:163 (check_type_size)"
+    checks:
+      - "Check size of __int32"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c26rbc"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c26rbc"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE___INT32_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c26rbc'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_4958c
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_4958c.dir/__INT32_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-c26rbc/__INT32_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_4958c.dir/__INT32_LIBZIP.c.obj -o cmTC_4958c.exe -Wl,--out-implib,libcmTC_4958c.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:164 (check_type_size)"
+    checks:
+      - "Check size of int32_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wo4awx"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wo4awx"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INT32_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wo4awx'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_9f016
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_9f016.dir/INT32_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wo4awx/INT32_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_9f016.dir/INT32_T_LIBZIP.c.obj -o cmTC_9f016.exe -Wl,--out-implib,libcmTC_9f016.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:165 (check_type_size)"
+    checks:
+      - "Check size of uint32_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-928g6e"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-928g6e"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_UINT32_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-928g6e'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_e2fd3
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_e2fd3.dir/UINT32_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-928g6e/UINT32_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_e2fd3.dir/UINT32_T_LIBZIP.c.obj -o cmTC_e2fd3.exe -Wl,--out-implib,libcmTC_e2fd3.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:166 (check_type_size)"
+    checks:
+      - "Check size of __int64"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-agckai"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-agckai"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE___INT64_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-agckai'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_6741f
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_6741f.dir/__INT64_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-agckai/__INT64_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_6741f.dir/__INT64_LIBZIP.c.obj -o cmTC_6741f.exe -Wl,--out-implib,libcmTC_6741f.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:167 (check_type_size)"
+    checks:
+      - "Check size of int64_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-y3jnws"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-y3jnws"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INT64_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-y3jnws'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_ad504
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_ad504.dir/INT64_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-y3jnws/INT64_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_ad504.dir/INT64_T_LIBZIP.c.obj -o cmTC_ad504.exe -Wl,--out-implib,libcmTC_ad504.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:168 (check_type_size)"
+    checks:
+      - "Check size of uint64_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qw3z2t"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qw3z2t"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_UINT64_T_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qw3z2t'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_dfdff
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_dfdff.dir/UINT64_T_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-qw3z2t/UINT64_T_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_dfdff.dir/UINT64_T_LIBZIP.c.obj -o cmTC_dfdff.exe -Wl,--out-implib,libcmTC_dfdff.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:169 (check_type_size)"
+    checks:
+      - "Check size of short"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-jzqk8b"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-jzqk8b"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SHORT_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-jzqk8b'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_b67cf
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_b67cf.dir/SHORT_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-jzqk8b/SHORT_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_b67cf.dir/SHORT_LIBZIP.c.obj -o cmTC_b67cf.exe -Wl,--out-implib,libcmTC_b67cf.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:170 (check_type_size)"
+    checks:
+      - "Check size of int"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rrt3uu"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rrt3uu"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_INT_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rrt3uu'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_1b43f
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_1b43f.dir/INT_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-rrt3uu/INT_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_1b43f.dir/INT_LIBZIP.c.obj -o cmTC_1b43f.exe -Wl,--out-implib,libcmTC_1b43f.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:171 (check_type_size)"
+    checks:
+      - "Check size of long"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-f1vcdo"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-f1vcdo"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_LONG_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-f1vcdo'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_a6fe7
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_a6fe7.dir/LONG_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-f1vcdo/LONG_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_a6fe7.dir/LONG_LIBZIP.c.obj -o cmTC_a6fe7.exe -Wl,--out-implib,libcmTC_a6fe7.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:172 (check_type_size)"
+    checks:
+      - "Check size of long long"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-d1t9an"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-d1t9an"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_LONG_LONG_LIBZIP"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-d1t9an'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_2ba0e
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_2ba0e.dir/LONG_LONG_LIBZIP.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-d1t9an/LONG_LONG_LIBZIP.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_2ba0e.dir/LONG_LONG_LIBZIP.c.obj -o cmTC_2ba0e.exe -Wl,--out-implib,libcmTC_2ba0e.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:173 (check_type_size)"
+    checks:
+      - "Check size of off_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-l9nmr5"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-l9nmr5"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_OFF_T"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-l9nmr5'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_55bbe
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_55bbe.dir/SIZEOF_OFF_T.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-l9nmr5/SIZEOF_OFF_T.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_55bbe.dir/SIZEOF_OFF_T.c.obj -o cmTC_55bbe.exe -Wl,--out-implib,libcmTC_55bbe.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:147 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckTypeSize.cmake:272 (__check_type_size_impl)"
+      - "CMakeLists.txt:174 (check_type_size)"
+    checks:
+      - "Check size of size_t"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wd91lk"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wd91lk"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_SIZEOF_SIZE_T"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wd91lk'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_b48c1
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe    -o CMakeFiles/cmTC_b48c1.dir/SIZEOF_SIZE_T.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-wd91lk/SIZEOF_SIZE_T.c
+        [2/2] C:\\WINDOWS\\system32\\cmd.exe /C "cd . && C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe   CMakeFiles/cmTC_b48c1.dir/SIZEOF_SIZE_T.c.obj -o cmTC_b48c1.exe -Wl,--out-implib,libcmTC_b48c1.dll.a -Wl,--major-image-version,0,--minor-image-version,0  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "CMakeLists.txt:176 (check_c_source_compiles)"
+    checks:
+      - "Performing Test HAVE_FICLONERANGE"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_FICLONERANGE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_98145
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DHAVE_FICLONERANGE   -o CMakeFiles/cmTC_98145.dir/src.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2/src.c
+        \x1b[31mFAILED: \x1b[0mCMakeFiles/cmTC_98145.dir/src.c.obj 
+        C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DHAVE_FICLONERANGE   -o CMakeFiles/cmTC_98145.dir/src.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2/src.c
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-grp3f2/src.c:1:10: fatal error: sys/ioctl.h: No such file or directory
+            1 | #include <sys/ioctl.h>
+              |          ^~~~~~~~~~~~~
+        compilation terminated.\x0d
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "CMakeLists.txt:180 (check_c_source_compiles)"
+    checks:
+      - "Performing Test HAVE_NULLABLE"
+    directories:
+      source: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot"
+      binary: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_MODULE_PATH: "C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/cmake"
+    buildResult:
+      variable: "HAVE_NULLABLE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot'
+        
+        Run Build Command(s): C:/Qt/Tools/Ninja/ninja.exe -v cmTC_10ebc
+        [1/2] C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DHAVE_NULLABLE   -o CMakeFiles/cmTC_10ebc.dir/src.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot/src.c
+        \x1b[31mFAILED: \x1b[0mCMakeFiles/cmTC_10ebc.dir/src.c.obj 
+        C:\\Qt\\Tools\\mingw1120_64\\bin\\gcc.exe -DHAVE_NULLABLE   -o CMakeFiles/cmTC_10ebc.dir/src.c.obj -c C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot/src.c
+        C:/Users/robbr48/git/OMSimulator/3rdParty/libzip/build/Desktop_Qt_6_7_2_MinGW_64_bit-Debug/CMakeFiles/CMakeScratch/TryCompile-58flot/src.c:2:26: error: expected ';', ',' or ')' before 'bar'
+            2 | int foo(char * _Nullable bar);
+              |                          ^~~
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+...
