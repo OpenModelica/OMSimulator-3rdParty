@@ -39,6 +39,8 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOCRYPT
 
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
 #include <windows.h>
 
 #include <bcrypt.h>
@@ -228,7 +230,7 @@ pbkdf2(PUCHAR pbPassword, ULONG cbPassword, PUCHAR pbSalt, ULONG cbSalt, DWORD c
     DWORD l, r, dwULen, i, j;
     BYTE Ti[DIGEST_SIZE];
     BYTE V[DIGEST_SIZE];
-    LPBYTE U = malloc(max((cbSalt + 4), DIGEST_SIZE));
+    LPBYTE U = malloc(MAX((cbSalt + 4), DIGEST_SIZE));
     PRF_CTX prfCtx = {0};
 
     if (U == NULL) {
