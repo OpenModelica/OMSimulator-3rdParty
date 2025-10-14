@@ -17,6 +17,8 @@
 
 #ifdef _WIN32
 #include <direct.h>
+//This define prevents windows.h from including winsock.h, this is needed because Asio lib wants to include winsock2.h
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
 
