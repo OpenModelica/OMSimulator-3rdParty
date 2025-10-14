@@ -14,6 +14,7 @@
 #include <iomanip>
 #include <chrono>
 #include <algorithm>
+#include <iostream>
 
 #include <dcp/model/constant/DcpDataType.hpp>
 #include <dcp/model/constant/DcpPduType.hpp>
