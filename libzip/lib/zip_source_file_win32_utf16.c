@@ -40,13 +40,13 @@ static char *utf16_strdup(const char *string);
 
 zip_win32_file_operations_t ops_utf16 = {
     utf16_allocate_tempname,
-    utf16_create_file,
-    DeleteFileW,
-    GetFileAttributesW,
-    GetFileAttributesExW,
+    (HANDLE (WINAPI *)(const void *, DWORD, DWORD, PSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE))utf16_create_file,
+    (BOOL (WINAPI *)(const void *))DeleteFileW,
+    (DWORD (WINAPI *)(const void *))GetFileAttributesW,
+    (BOOL (WINAPI *)(const void *, GET_FILEEX_INFO_LEVELS, void *))GetFileAttributesExW,
     utf16_make_tempname,
-    MoveFileExW,
-    SetFileAttributesW,
+    (BOOL (WINAPI *)(const void *, const void *, DWORD))MoveFileExW,
+    (BOOL (WINAPI *)(const void *, DWORD))SetFileAttributesW,
     utf16_strdup
 };
 
