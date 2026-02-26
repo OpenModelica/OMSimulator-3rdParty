@@ -19,7 +19,7 @@ set(CPACK_RESOURCE_FILE_README ${zlib_SOURCE_DIR}/README)
 # configuration
 # ============================================================================
 
-option(ZLIB_BUILD_TESTING "Enable Zlib Examples as tests" ON)
+option(ZLIB_BUILD_TESTING "Enable Zlib Examples as tests" OFF)
 option(ZLIB_BUILD_SHARED "Enable building zlib shared library" OFF)
 option(ZLIB_BUILD_STATIC "Enable building zlib static library" ON)
 option(ZLIB_INSTALL "Enable installation of zlib" ON)
