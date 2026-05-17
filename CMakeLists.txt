@@ -34,7 +34,16 @@ add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 #########################################################################
 ## zlib.
 message(STATUS "##### 3rdParty zlib")
-add_subdirectory(zlib EXCLUDE_FROM_ALL)
+option(OM_USE_SYSTEM_ZLIB "Use system zlib" OFF)
+if (OM_USE_SYSTEM_ZLIB)
+  set(ZLIB_USE_STATIC_LIBS ON)
+  find_package(ZLIB MODULE REQUIRED)
+  unset(ZLIB_USE_STATIC_LIBS)
+  add_library(zlibstatic INTERFACE)
+  target_link_libraries(zlibstatic INTERFACE ZLIB::ZLIB)
+else ()
+  add_subdirectory(zlib EXCLUDE_FROM_ALL)
+endif ()
 add_library(oms::3rd::zlib ALIAS zlibstatic)
 
 #########################################################################
