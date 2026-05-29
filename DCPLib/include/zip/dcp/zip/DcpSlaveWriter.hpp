@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, FG Simulation und Modellierung, Leibniz Universität Hannover, Germany
+ * Copyright (C) 2019, FG Simulation und Modellierung, Leibniz Universitï¿½t Hannover, Germany
  *
  * All rights reserved.
  *
@@ -10,7 +10,7 @@
 #ifndef DCPLIB_DCPSLAVEWRITER_HPP
 #define DCPLIB_DCPSLAVEWRITER_HPP
 
-#include <zip.h>
+#include "../3rdParty/libzip/lib/zip.h"
 #include <dcp/xml/DcpSlaveDescriptionWriter.hpp>
 
 static void writeDcpSlaveFile(std::shared_ptr<SlaveDescription_t> slaveDescription, std::string dcpZipFile) {
