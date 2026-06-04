@@ -34,6 +34,8 @@ add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 #########################################################################
 ## zlib.
 message(STATUS "##### 3rdParty zlib")
+# Disable shared build to avoid target name conflict with OMCompiler/3rdParty/zlib
+set(ZLIB_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 add_subdirectory(zlib EXCLUDE_FROM_ALL)
 add_library(oms::3rd::zlib ALIAS zlibstatic)
 
