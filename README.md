@@ -22,6 +22,10 @@ OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 
 - https://github.com/nlohmann/json
 
+## libzip
+
+- [libzip.org](https://libzip.org/) [[version 1.11.4](https://github.com/nih-at/libzip/releases/tag/v1.11.4)]
+
 ## Lua
 
 - https://www.lua.org/download.html [version 5.3.4]

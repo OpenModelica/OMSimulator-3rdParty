@@ -34,8 +34,14 @@ add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 #########################################################################
 ## zlib.
 message(STATUS "##### 3rdParty zlib")
+set(ZLIB_BUILD_SHARED OFF CACHE BOOL "Disable zlib shared library")
 add_subdirectory(zlib EXCLUDE_FROM_ALL)
 add_library(oms::3rd::zlib ALIAS zlibstatic)
+# Expose zlibstatic as ZLIB::ZLIB so libzip's find_package(ZLIB) resolves to our
+# in-tree build without requiring a system zlib (e.g. Alpine, Windows).
+add_library(ZLIB::ZLIB ALIAS zlibstatic)
+set(ZLIB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zlib" CACHE PATH "" FORCE)
+set(ZLIB_LIBRARY "zlibstatic" CACHE STRING "" FORCE)
 
 #########################################################################
 ## minizip.
@@ -121,8 +127,22 @@ add_library(oms::3rd::json::header ALIAS json_header_only)
 #########################################################################
 ## libzip.
 message(STATUS "##### 3rdParty libzip")
-set(LIBZIP_USE_EXTERNAL_ZLIB ON)
-set(LIBZIP_EXTERNAL_ZLIB "oms:3rd:zlib" CACHE STRING "Defines an external target for zlib.")
+set(BUILD_REGRESS OFF CACHE BOOL "Disable regression tests")
+set(BUILD_OSSFUZZ OFF CACHE BOOL "Disable fuzzers for ossfuzz")
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples")
+set(BUILD_DOC OFF CACHE BOOL "Disable documentation")
+set(BUILD_TOOLS OFF CACHE BOOL "Disable zipcmp, zipmerge, ziptool binaries")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build zip as a static library")
+set(SHARED_LIB_VERSIONNING OFF CACHE BOOL "Disable SO versioning")
+set(LIBZIP_DO_INSTALL OFF CACHE BOOL "Install libzip and the related files" FORCE)
+set(ENABLE_OPENSSL OFF CACHE BOOL "Disable OpenSSL (not needed for FMUs)")
+set(ENABLE_COMMONCRYPTO OFF CACHE BOOL "Disable CommonCrypto (not needed for FMUs)")
+set(ENABLE_GNUTLS OFF CACHE BOOL "Disable GnuTLS (not needed for FMUs)")
+set(ENABLE_MBEDTLS OFF CACHE BOOL "Disable mbed TLS (not needed for FMUs)")
+set(ENABLE_WINDOWS_CRYPTO OFF CACHE BOOL "Disable Windows Crypto (not needed for FMUs)")
+set(ENABLE_BZIP2 OFF CACHE BOOL "Disable BZip2 (not used in FMUs)")
+set(ENABLE_LZMA OFF CACHE BOOL "Disable LZMA (not used in FMUs)")
+set(ENABLE_ZSTD OFF CACHE BOOL "Disable Zstandard (not used in FMUs)")
 add_subdirectory(libzip EXCLUDE_FROM_ALL)
 add_library(oms::3rd::libzip ALIAS zip)
 
