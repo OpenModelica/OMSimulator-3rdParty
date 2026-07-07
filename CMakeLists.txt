@@ -35,6 +35,7 @@ add_library(oms::3rd::kinsol ALIAS sundials_kinsol_static)
 ## zlib.
 message(STATUS "##### 3rdParty zlib")
 set(ZLIB_BUILD_SHARED OFF CACHE BOOL "Disable zlib shared library")
+set(ZLIB_BUILD_TESTING OFF CACHE BOOL "Disable zlib's own test suite; it registers global ctest targets (zlib_install, zlib_find_package_*, ...) that don't apply when zlib is only vendored as a static-lib dependency")
 add_subdirectory(zlib EXCLUDE_FROM_ALL)
 add_library(oms::3rd::zlib ALIAS zlibstatic)
 # Expose zlibstatic as ZLIB::ZLIB so libzip's find_package(ZLIB) resolves to our
