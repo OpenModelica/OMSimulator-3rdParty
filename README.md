@@ -40,7 +40,7 @@ OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 
 ## Sundials (CVODE, KINSOL)
 
-- https://computation.llnl.gov/projects/sundials/sundials-software [version 2.9.0]
+- Lawrence Livermore National Laboratory [SUNDIALS](https://computing.llnl.gov/projects/sundials/sundials-software) [[version v7.8.0](https://github.com/llnl/sundials/releases/tag/v7.8.0)]
 
 ## tinyfiledialogs
 
