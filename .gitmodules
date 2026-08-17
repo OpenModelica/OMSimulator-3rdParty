@@ -1,6 +1,10 @@
 [submodule "libzip"]
 	path = libzip
 	url = https://github.com/nih-at/libzip.git
+	branch = v1.11.4
+	shallow = true
 [submodule "sundials"]
 	path = sundials
 	url = https://github.com/llnl/sundials.git
+	branch = v7.8.0
+	shallow = true
