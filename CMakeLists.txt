@@ -93,13 +93,6 @@ add_subdirectory(fmi4c EXCLUDE_FROM_ALL)
 add_library(oms::3rd::fmi4c ALIAS fmi4c)
 
 #########################################################################
-## Lua.
-message(STATUS "##### 3rdParty Lua")
-option(LUA_ENABLE_SHARED OFF)
-add_subdirectory(Lua EXCLUDE_FROM_ALL)
-add_library(oms::3rd::lua ALIAS lua_static)
-
-#########################################################################
 ## PugiXml.
 message(STATUS "##### 3rdParty PugiXml")
 add_subdirectory(PugiXml EXCLUDE_FROM_ALL)
