@@ -331,7 +331,7 @@ public:
                     if (slavedescription::structuralParameterExists(slaveDescription, valueReference)) {
                         offset += values[valueReference]->update(param.getConfiguration(), offset, sourceDataType);
 
-                        size_t value;
+                        size_t value = 0;
                         switch (slavedescription::getDataType(slaveDescription, valueReference)) {
                             case DcpDataType::uint8:
                                 value = *values[valueReference]->getValue<uint8_t *>();
@@ -371,7 +371,7 @@ public:
                     values[valueReference]->update(parameter.getConfiguration(), 0,
                                                    slavedescription::getDataType(slaveDescription, valueReference));
 
-                    size_t value;
+                    size_t value = 0;
                     switch (slavedescription::getDataType(slaveDescription, valueReference)) {
                         case DcpDataType::uint8:
                             value = *values[valueReference]->getValue<uint8_t *>();

@@ -1118,7 +1118,7 @@ inline std::shared_ptr<SlaveDescription_t> readSlaveDescription(const char *acuD
     //<xs:assert test="every $linkedVR in Variable/*/Dimensions/Dimension/@linkedVR satisfies
     //                     count(Variable[@valueReference eq $linkedVR]/StructuralParameter) = 1"/>
     for(auto& variable: slaveDescription->Variables){
-        std::vector<Dimension_t>* v;
+        std::vector<Dimension_t>* v = nullptr;
         if(variable.Input != nullptr){
             v = &variable.Input->dimensions;
         } else if(variable.Output != nullptr){
