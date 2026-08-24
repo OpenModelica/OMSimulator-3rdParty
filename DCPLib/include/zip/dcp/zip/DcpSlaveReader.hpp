@@ -12,8 +12,8 @@
 
 #include "zip.h"
 #include "dcp/xml/DcpSlaveDescriptionReader.hpp"
+#include <fstream> //Must be included before zipint
 #include "zipint.h"
-#include <fstream>
 #include <chrono>
 
 
