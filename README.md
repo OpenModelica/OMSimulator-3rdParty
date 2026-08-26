@@ -1,6 +1,6 @@
 # OMSimulator-3rdParty
 
-OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
+OpenModelica FMI & SSP simulator - third party sources used by OMSimulator
 
 ## CTPL
 
@@ -53,3 +53,22 @@ OpenModelica FMI &amp; SSP simulator - third party sources used by OMSimulator
 ## zlib
 
 - https://github.com/madler/zlib
+
+## Building standalone
+
+This repository is normally built as the `3rdParty` subdirectory of
+[OMSimulator](https://github.com/OpenModelica/OMSimulator). To build-test it on
+its own (which is what `.github/workflows/build.yml` does):
+
+```bash
+git submodule update --init --recursive
+cmake -S . -B build
+cmake --build build -j$(nproc)
+```
+
+`cmake/standalone.cmake` supplies the settings OMSimulator would otherwise have
+made before adding this directory. It is included only when this directory is
+the top of the build, so it cannot affect how OMSimulator itself is configured.
+
+Add `-DOMS_ENABLE_OMSimulatorGui=ON` to also build imgui, GLFW and
+tinyfiledialogs.
