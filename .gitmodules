@@ -8,3 +8,8 @@
 	url = https://github.com/llnl/sundials.git
 	branch = v7.8.0
 	shallow = true
+[submodule "fmi4c"]
+	path = fmi4c
+	url = https://github.com/robbr48/fmi4c.git
+	shallow = true
+	branch = v1.2
