@@ -151,3 +151,5 @@ libxml2/xzlib.lo
 libxml2/xzlib.o
 RegEx/OMSRegEx
 RegEx/OMSRegEx.exe
+
+/build/

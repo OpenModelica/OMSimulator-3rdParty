@@ -1,0 +1,118 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux (${{ matrix.build-type }}${{ matrix.gui == 'ON' && ', GUI' || '' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - build-type: Release
+            gui: 'OFF'
+          - build-type: Debug
+            gui: 'OFF'
+          # OMS_ENABLE_OMSimulatorGui is OFF in OMSimulator's default build, so
+          # imgui/GLFW/tinyfiledialogs would otherwise never be compiled here.
+          - build-type: Release
+            gui: 'ON'
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential
+
+      - name: Install GUI dependencies
+        if: matrix.gui == 'ON'
+        # GLFW needs the X11 development headers, and imgui links against GL.
+        run: |
+          sudo apt-get install -y --no-install-recommends xorg-dev libgl-dev
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G "Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+            -DOMS_ENABLE_OMSimulatorGui=${{ matrix.gui }}
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+  windows:
+    name: Windows UCRT64 (${{ matrix.build-type }})
+    runs-on: windows-latest
+    timeout-minutes: 150
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [Release]
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          submodules: recursive
+
+      - uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 #v2.32.0
+        with:
+          msystem: UCRT64
+          update: true
+          # "MSYS Makefiles" drives /usr/bin/make from the MSYS subsystem, so
+          # that one is not a pacboy (:p / UCRT64) package.
+          install: >-
+            make
+          # :p expands to the mingw-w64-ucrt-x86_64-* package of the same name.
+          pacboy: >-
+            toolchain:p
+            cmake:p
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G "MSYS Makefiles" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+  macos:
+    name: macOS (${{ matrix.build-type }})
+    runs-on: macos-latest
+    timeout-minutes: 120
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build-type: [Release]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          submodules: recursive
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G "Unix Makefiles" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+
+      - name: Build
+        run: cmake --build build -j$(sysctl -n hw.ncpu)

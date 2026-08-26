@@ -1,3 +1,15 @@
+# When this directory is the top of the build rather than a subdirectory of the
+# OMSimulator project, pull in the setup OMSimulator would otherwise have done
+# (project(), feature options, C++ standard, install layout) so that this
+# repository can be build-tested on its own. See cmake/standalone.cmake.
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+  cmake_minimum_required(VERSION 3.14)
+  project(OMSimulator_3rdParty C CXX)
+  set(OMS_3RDPARTY_STANDALONE ON)
+  list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+  include(standalone)
+endif()
+
 #########################################################################
 ## Sundials
 message(STATUS "##### 3rdParty Sundials")
@@ -199,3 +211,9 @@ add_library(oms::3rd::dcplib::slave ALIAS Slave)
 add_library(oms::3rd::dcplib::ethernet ALIAS Ethernet)
 add_library(oms::3rd::dcplib::zip ALIAS Zip)
 add_library(oms::3rd::dcplib::xml ALIAS Xml)
+
+#########################################################################
+## Standalone build.
+if(OMS_3RDPARTY_STANDALONE)
+  oms_3rdparty_add_build_all_target()
+endif()
