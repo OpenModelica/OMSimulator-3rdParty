@@ -1,0 +1,96 @@
+name: build-test
+
+on:
+  push:
+    branches: [ master, dev, testing ]
+  pull_request:
+    branches: [ master, dev ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install libzip-dev libxerces-c-dev libasio-dev
+        
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      
+    - name: Build
+      # Build your program with the given configuration
+      run: sudo cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}  --target install
+      
+    - name: Configure CMake master example
+      run: mkdir ${{github.workspace}}/example/master/build && cmake -B ${{github.workspace}}/example/master/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/master/
+      
+    - name: Build master example
+      run:  cmake --build ${{github.workspace}}/example/master/build --config ${{env.BUILD_TYPE}}
+      
+    - name: Configure CMake slave example
+      run: mkdir ${{github.workspace}}/example/slave/build && cmake -B ${{github.workspace}}/example/slave/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/slave/
+      
+    - name: Build slave example
+      run: cmake --build ${{github.workspace}}/example/slave/build --config ${{env.BUILD_TYPE}}
+      
+    - name: copy Slave-Description to master build
+      run: cp ${{github.workspace}}/example/master/Example-Slave-Description.xml ${{github.workspace}}/example/master/build/  
+      
+    - name: run examples
+      run: ${{github.workspace}}/example/slave/build/dcpslave & pid_slave=$! && cd ${{github.workspace}}/example/master/build/ && ./dcpmaster  && kill -KILL $pid_slave
+
+    - name: Configure CMake struct master master example
+      run: mkdir ${{github.workspace}}/example/struc_param_master/build && cmake -B ${{github.workspace}}/example/struc_param_master/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/struc_param_master/      
+
+    - name: Build struct master example
+      run:  cmake --build ${{github.workspace}}/example/struc_param_master/build --config ${{env.BUILD_TYPE}}
+      
+    - name: Configure CMake struct slave example
+      run: mkdir ${{github.workspace}}/example/struc_param_slave/build && cmake -B ${{github.workspace}}/example/struc_param_slave/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/struc_param_slave/
+      
+    - name: Build struct slave example
+      run: cmake --build ${{github.workspace}}/example/struc_param_slave/build --config ${{env.BUILD_TYPE}}
+      
+    - name: copy Slave-Description to master build
+      run: cp ${{github.workspace}}/example/struc_param_master/StrucParam-Slave-Description.xml ${{github.workspace}}/example/struc_param_master/build/  
+      
+    - name: run struct example
+      run: ${{github.workspace}}/example/struc_param_slave/build/struc_param_slave & pid_slave=$! && cd ${{github.workspace}}/example/struc_param_master/build/ && ./struc_param_master  && kill -KILL $pid_slave
+
+    - name: Configure CMake MSD master example
+      run: mkdir ${{github.workspace}}/example/spring_damper_master/build && cmake -B ${{github.workspace}}/example/spring_damper_master/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/spring_damper_master/      
+
+    - name: Build MSD master example
+      run:  cmake --build ${{github.workspace}}/example/spring_damper_master/build --config ${{env.BUILD_TYPE}}
+      
+    - name: Configure CMake MSD1 slave example
+      run: mkdir ${{github.workspace}}/example/spring_damper_slave1/build && cmake -B ${{github.workspace}}/example/spring_damper_slave1/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/spring_damper_slave1/
+      
+    - name: Build MSD1 slave example
+      run: cmake --build ${{github.workspace}}/example/spring_damper_slave1/build --config ${{env.BUILD_TYPE}}
+
+    - name: Configure CMake MSD2 slave example
+      run: mkdir ${{github.workspace}}/example/spring_damper_slave2/build && cmake -B ${{github.workspace}}/example/spring_damper_slave2/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{github.workspace}}/example/spring_damper_slave2/
+      
+    - name: Build MSD2 slave example
+      run: cmake --build ${{github.workspace}}/example/spring_damper_slave2/build --config ${{env.BUILD_TYPE}}
+      
+    - name: copy Slave-Description to master build
+      run: cp ${{github.workspace}}/example/spring_damper_master/MSD1-Slave-Description.xml ${{github.workspace}}/example/spring_damper_master/build/ && cp ${{github.workspace}}/example/spring_damper_master/MSD2-Slave-Description.xml ${{github.workspace}}/example/spring_damper_master/build/
+      
+    - name: run MSD example
+      run: ${{github.workspace}}/example/spring_damper_slave1/build/dcp_msd1_slave & ${{github.workspace}}/example/spring_damper_slave2/build/dcp_msd2_slave & cd ${{github.workspace}}/example/spring_damper_master/build/ && ./dcp_msd_master  && pkill dcp_msd1_slave  && pkill dcp_msd2_slave
