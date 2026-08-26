@@ -42,31 +42,49 @@ if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 endif()
 
 # --- the default build target ----------------------------------------------
-# Every library here is added EXCLUDE_FROM_ALL.  Give it a target that depends
-# on the whole set this repository exists to provide.
+# Every library here is added EXCLUDE_FROM_ALL, because in the OMSimulator build
+# they are pulled in by whatever links them. Standalone there is no such
+# consumer, so `cmake --build build` would happily build nothing at all. Give it
+# a target that depends on every library this repository builds.
 #
-# Called from the bottom of CMakeLists.txt, once the targets exist. Only the
-# ones that produce artifacts are listed; the header-only INTERFACE libraries
-# (pugixml, CTPL, nlohmann/json) have nothing to compile.
-macro(oms_3rdparty_add_build_all_target)
-  add_custom_target(oms_3rdParty_all ALL)
-  add_dependencies(oms_3rdParty_all
-    sundials_cvode_static
-    sundials_kinsol_static
-    zlibstatic
-    oms_minizip
-    fmi4c
-    lua_static
-    xerces-c
-    zip
-    Core
-    Master
-    Slave
-    Ethernet
-    Zip
-    Xml)
+# The set is collected from the buildsystem rather than listed by hand, so that
+# adding or dropping a dependency here does not need a matching edit in this
+# file. Only real libraries are picked up: executables and utility targets that
+# the vendored projects define for their own tools are not what we ship, and the
+# header-only INTERFACE libraries (pugixml, CTPL, nlohmann/json and all of
+# DCPLib) have nothing to compile in the first place. OBJECT libraries are left
+# out as well - SUNDIALS defines one per module and links them into the static
+# libraries below, so they get built either way and would only make the target
+# list unreadable.
+function(_oms_3rdparty_collect_libraries dir out_var)
+  set(libraries "")
 
-  if(OMS_ENABLE_OMSimulatorGui)
-    add_dependencies(oms_3rdParty_all imgui glfw tinyfd)
-  endif()
+  get_property(targets DIRECTORY "${dir}" PROPERTY BUILDSYSTEM_TARGETS)
+  foreach(target IN LISTS targets)
+    get_target_property(type ${target} TYPE)
+    if(type STREQUAL "STATIC_LIBRARY"
+       OR type STREQUAL "SHARED_LIBRARY"
+       OR type STREQUAL "MODULE_LIBRARY")
+      list(APPEND libraries ${target})
+    endif()
+  endforeach()
+
+  get_property(subdirs DIRECTORY "${dir}" PROPERTY SUBDIRECTORIES)
+  foreach(subdir IN LISTS subdirs)
+    _oms_3rdparty_collect_libraries("${subdir}" sublibraries)
+    list(APPEND libraries ${sublibraries})
+  endforeach()
+
+  set(${out_var} "${libraries}" PARENT_SCOPE)
+endfunction()
+
+# Called from the bottom of CMakeLists.txt, once the targets exist.
+macro(oms_3rdparty_add_build_all_target)
+  _oms_3rdparty_collect_libraries("${CMAKE_CURRENT_SOURCE_DIR}" _oms_3rdparty_libraries)
+  list(REMOVE_DUPLICATES _oms_3rdparty_libraries)
+  list(SORT _oms_3rdparty_libraries)
+  message(STATUS "##### 3rdParty standalone build targets: ${_oms_3rdparty_libraries}")
+
+  add_custom_target(oms_3rdParty_all ALL)
+  add_dependencies(oms_3rdParty_all ${_oms_3rdparty_libraries})
 endmacro()
