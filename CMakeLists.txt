@@ -181,6 +181,9 @@ set(ENABLE_WINDOWS_CRYPTO OFF CACHE BOOL "Disable Windows Crypto (not needed for
 set(ENABLE_BZIP2 OFF CACHE BOOL "Disable BZip2 (not used in FMUs)")
 set(ENABLE_LZMA OFF CACHE BOOL "Disable LZMA (not used in FMUs)")
 set(ENABLE_ZSTD OFF CACHE BOOL "Disable Zstandard (not used in FMUs)")
+if(MSVC AND MSVC_VERSION GREATER_EQUAL 1900)  
+  set(HAVE_SNPRINTF 1 CACHE INTERNAL "libzip: MSVC has native snprintf" FORCE)
+endif()
 add_subdirectory(libzip EXCLUDE_FROM_ALL)
 add_library(oms::3rd::libzip ALIAS zip)
 
