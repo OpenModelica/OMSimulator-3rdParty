@@ -8,7 +8,7 @@ OpenModelica FMI & SSP simulator - third party sources used by OMSimulator
 
 ## fmi4c
 
-- https://github.com/robbr48/fmi4c
+- [FMI4C](https://github.com/robbr48/fmi4c) [[version 1.2](https://github.com/robbr48/fmi4c/releases/tag/v1.2)]
 
 ## GLFW
 
