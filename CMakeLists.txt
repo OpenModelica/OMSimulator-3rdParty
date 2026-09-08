@@ -32,7 +32,9 @@ if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   set(SUNDIALS_ENABLE_KINSOL ON CACHE BOOL "Enable the KINSOL library" FORCE)
   set(SUNDIALS_ENABLE_ARKODE OFF CACHE BOOL "Enable the ARKODE library" FORCE)
   set(SUNDIALS_ENABLE_CVODES OFF CACHE BOOL "Enable the CVODES library" FORCE)
-  set(SUNDIALS_ENABLE_IDA OFF CACHE BOOL "Enable the IDA library" FORCE)
+  # IDA: the DAE mode of the strongly coupled system (fmi-ls-dae), where the
+  # master integrates the components' residuals instead of their derivatives.
+  set(SUNDIALS_ENABLE_IDA ON CACHE BOOL "Enable the IDA library" FORCE)
   set(SUNDIALS_ENABLE_IDAS OFF CACHE BOOL "Enable the IDAS library" FORCE)
   set(SUNDIALS_ENABLE_KLU OFF CACHE BOOL "Enable KLU support" FORCE)
   set(SUNDIALS_ENABLE_LAPACK OFF CACHE BOOL "Enable LAPACK support" FORCE)
@@ -73,6 +75,7 @@ endif()
 ## need an interface library of our own on top.
 
 add_library(oms::3rd::sundials::cvode ALIAS sundials_cvode_static)
+add_library(oms::3rd::sundials::ida ALIAS sundials_ida_static)
 add_library(oms::3rd::sundials::kinsol ALIAS sundials_kinsol_static)
 
 #########################################################################
