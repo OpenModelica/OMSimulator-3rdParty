@@ -74,6 +74,18 @@ if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   set(SUITESPARSE_DEMOS OFF CACHE BOOL "" FORCE)
   set(SUITESPARSE_USE_STRICT OFF CACHE BOOL "" FORCE)
   set(KLU_USE_CHOLMOD OFF CACHE BOOL "" FORCE)
+  # SuiteSparse_config looks for a BLAS unless told that nothing needs one, and
+  # nothing here does: BLAS is used by CHOLMOD, UMFPACK and SPQR, none of which
+  # are enabled, and KLU only reaches them through KLU_USE_CHOLMOD, which is off.
+  # OpenModelica does not hit this because it requires BLAS/LAPACK anyway;
+  # OMSimulator does not, and its Linux and Windows CI images have none.
+  set(SUITESPARSE_REQUIRE_BLAS OFF CACHE BOOL "" FORCE)
+  # With the requirement off SuiteSparse skips the search but still labels the
+  # BLAS it did not look for, and its threading checks dereference that label
+  # unguarded — an empty BLA_VENDOR is a configure error there. Any non-empty
+  # value does, since the checks are all guarded on a specific vendor; nothing
+  # is searched for and nothing is linked.
+  set(BLA_VENDOR "Generic" CACHE STRING "" FORCE)
   add_subdirectory(SuiteSparse EXCLUDE_FROM_ALL)
 
   # SUNDIALS' FindKLU prefers an existing SuiteSparse::KLU target as long as it
