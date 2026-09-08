@@ -8,3 +8,8 @@
 	url = https://github.com/llnl/sundials.git
 	branch = v7.8.0
 	shallow = true
+[submodule "SuiteSparse"]
+	path = SuiteSparse
+	url = https://github.com/DrTimothyAldenDavis/SuiteSparse.git
+	branch = v7.12.2
+	shallow = true

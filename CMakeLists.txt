@@ -25,16 +25,22 @@ if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   set(BUILD_STATIC_LIBS ON CACHE BOOL "Build SUNDIALS static libraries" FORCE)
   set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build SUNDIALS shared libraries" FORCE)
 
-  # OMSimulator only uses CVODE (SystemSC/SystemSC3) and KINSOL (AlgLoop), both
-  # with the dense linear solver. No ARKODE/CVODES/IDA/IDAS, and no KLU - unlike
-  # OMC we have no SuiteSparse in 3rdParty to build it against.
+  # OMSimulator uses CVODE (SystemSC/SystemSC3), KINSOL (AlgLoop) and IDA (the
+  # DAE mode of SystemSC), the first two with the dense linear solver and IDA
+  # with KLU over the structure the components' fmi-ls-dae manifests give.
+  # No ARKODE/CVODES/IDAS.
   set(SUNDIALS_ENABLE_CVODE ON CACHE BOOL "Enable the CVODE library" FORCE)
   set(SUNDIALS_ENABLE_KINSOL ON CACHE BOOL "Enable the KINSOL library" FORCE)
   set(SUNDIALS_ENABLE_ARKODE OFF CACHE BOOL "Enable the ARKODE library" FORCE)
   set(SUNDIALS_ENABLE_CVODES OFF CACHE BOOL "Enable the CVODES library" FORCE)
-  set(SUNDIALS_ENABLE_IDA OFF CACHE BOOL "Enable the IDA library" FORCE)
+  # IDA: the DAE mode of the strongly coupled system (fmi-ls-dae), where the
+  # master integrates the components' residuals instead of their derivatives.
+  set(SUNDIALS_ENABLE_IDA ON CACHE BOOL "Enable the IDA library" FORCE)
   set(SUNDIALS_ENABLE_IDAS OFF CACHE BOOL "Enable the IDAS library" FORCE)
-  set(SUNDIALS_ENABLE_KLU OFF CACHE BOOL "Enable KLU support" FORCE)
+  # KLU, against the in-tree SuiteSparse below: the sparse factorization for the
+  # DAE mode of the strongly coupled system. SUNDIALS_INDEX_SIZE is 64 above,
+  # which matches SuiteSparse' int64 KLU entry points.
+  set(SUNDIALS_ENABLE_KLU ON CACHE BOOL "Enable KLU support" FORCE)
   set(SUNDIALS_ENABLE_LAPACK OFF CACHE BOOL "Enable LAPACK support" FORCE)
 
   # Doubles and a 64 bit sunindextype, matching OMC's settings.
@@ -53,6 +59,42 @@ if(NOT OPENMODELICA_NEW_CMAKE_BUILD)
   # warns about the performance hit while configuring). Keep SUNDIALS behaving the
   # same way in all build types.
   set(SUNDIALS_ENABLE_ERROR_CHECKS OFF CACHE BOOL "Enable SUNDIALS error checking" FORCE)
+
+  # SuiteSparse (DrTimothyAldenDavis/SuiteSparse, submodule pinned to v7.12.2),
+  # for SUNDIALS' KLU: the sparse linear solver the DAE mode of the strongly
+  # coupled system factorizes its Jacobian with. Only the subset KLU needs is
+  # built, and the build is delegated to SuiteSparse' own CMakeLists as
+  # OpenModelica does it (OMCompiler/3rdParty/CMakeLists.txt).
+  set(SUITESPARSE_ENABLE_PROJECTS "suitesparse_config;amd;colamd;btf;klu" CACHE STRING "SuiteSparse projects to build" FORCE)
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+  set(BUILD_STATIC_LIBS ON CACHE BOOL "" FORCE)
+  set(SUITESPARSE_USE_OPENMP OFF CACHE BOOL "" FORCE)
+  set(SUITESPARSE_USE_CUDA OFF CACHE BOOL "" FORCE)
+  set(SUITESPARSE_USE_FORTRAN OFF CACHE BOOL "" FORCE)
+  set(SUITESPARSE_DEMOS OFF CACHE BOOL "" FORCE)
+  set(SUITESPARSE_USE_STRICT OFF CACHE BOOL "" FORCE)
+  set(KLU_USE_CHOLMOD OFF CACHE BOOL "" FORCE)
+  # SuiteSparse_config looks for a BLAS unless told that nothing needs one, and
+  # nothing here does: BLAS is used by CHOLMOD, UMFPACK and SPQR, none of which
+  # are enabled, and KLU only reaches them through KLU_USE_CHOLMOD, which is off.
+  # OpenModelica does not hit this because it requires BLAS/LAPACK anyway;
+  # OMSimulator does not, and its Linux and Windows CI images have none.
+  set(SUITESPARSE_REQUIRE_BLAS OFF CACHE BOOL "" FORCE)
+  # With the requirement off SuiteSparse skips the search but still labels the
+  # BLAS it did not look for, and its threading checks dereference that label
+  # unguarded — an empty BLA_VENDOR is a configure error there. Any non-empty
+  # value does, since the checks are all guarded on a specific vendor; nothing
+  # is searched for and nothing is linked.
+  set(BLA_VENDOR "Generic" CACHE STRING "" FORCE)
+  add_subdirectory(SuiteSparse EXCLUDE_FROM_ALL)
+
+  # SUNDIALS' FindKLU prefers an existing SuiteSparse::KLU target as long as it
+  # is not pointed at a KLU somewhere else, so it picks up the one built above on
+  # its own — do not hand it KLU_INCLUDE_DIR/KLU_LIBRARY_DIR. The compatibility
+  # checks have to be off: they try_compile() against SUNDIALS::KLU, which here
+  # aliases an in-tree target rather than an imported one and is invisible to the
+  # separate try_compile project.
+  set(SUNDIALS_ENABLE_KLU_CHECKS OFF CACHE BOOL "Enable KLU compatibility checks" FORCE)
 
   add_subdirectory(sundials EXCLUDE_FROM_ALL)
 
@@ -73,6 +115,8 @@ endif()
 ## need an interface library of our own on top.
 
 add_library(oms::3rd::sundials::cvode ALIAS sundials_cvode_static)
+add_library(oms::3rd::sundials::ida ALIAS sundials_ida_static)
+add_library(oms::3rd::sundials::sunlinsolklu ALIAS sundials_sunlinsolklu_static)
 add_library(oms::3rd::sundials::kinsol ALIAS sundials_kinsol_static)
 
 #########################################################################
