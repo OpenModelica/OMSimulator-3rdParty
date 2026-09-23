@@ -18,7 +18,6 @@
 # OPENMODELICA_NEW_CMAKE_BUILD is deliberately left undefined: standalone we are
 # not part of the OpenModelica superproject, so 3rdParty configures its own
 # SUNDIALS, exactly like a standalone OMSimulator build does.
-option(OMS_ENABLE_OMSimulatorGui "Enable OMSimulator GUI component" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED ON)

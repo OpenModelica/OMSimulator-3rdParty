@@ -172,35 +172,6 @@ add_subdirectory(CTPL EXCLUDE_FROM_ALL)
 add_library(oms::3rd::ctpl::header ALIAS ctpl_header_only)
 
 #########################################################################
-## Dear ImGui.
-if (OMS_ENABLE_OMSimulatorGui)
-  message(STATUS "##### 3rdParty Dear ImGui")
-  add_subdirectory(imgui EXCLUDE_FROM_ALL)
-  add_library(oms::3rd::imgui ALIAS imgui)
-endif ()
-
-#########################################################################
-## GLFW.
-if (OMS_ENABLE_OMSimulatorGui)
-  message(STATUS "##### 3rdParty GLFW")
-  set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-  set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-  set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-  set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
-
-  add_subdirectory(glfw EXCLUDE_FROM_ALL)
-  add_library(oms::3rd::GLFW ALIAS glfw)
-endif ()
-
-#########################################################################
-## tinyfiledialogs.
-if (OMS_ENABLE_OMSimulatorGui)
-  message(STATUS "##### 3rdParty tinyfiledialogs")
-  add_subdirectory(tinyfd EXCLUDE_FROM_ALL)
-  add_library(oms::3rd::tinyfd ALIAS tinyfd)
-endif ()
-
-#########################################################################
 ## nlohmann/json
 message(STATUS "##### 3rdParty nlohmann/json")
 add_subdirectory(json EXCLUDE_FROM_ALL)
