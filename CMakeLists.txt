@@ -147,6 +147,10 @@ set(FMI4C_USE_EXTERNAL_MINIZIP ON)
 set(FMI4C_EXTERNAL_MINIZIP "oms::3rd::minizip" CACHE STRING "Defines an external target for minizip.")
 add_subdirectory(fmi4c EXCLUDE_FROM_ALL)
 add_library(oms::3rd::fmi4c ALIAS fmi4c)
+# fmi4c.h includes windows.h, which would pull in winsock.h and break Asio (needs winsock2.h).
+if(WIN32)
+  target_compile_definitions(fmi4c PUBLIC WIN32_LEAN_AND_MEAN)
+endif()
 
 #########################################################################
 ## PugiXml.
