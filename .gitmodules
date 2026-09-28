@@ -15,6 +15,6 @@
 	shallow = true
 [submodule "fmi4c"]
 	path = fmi4c
-	url = https://github.com/AnHeuermann/fmi4c.git
+	url = https://github.com/robbr48/fmi4c.git
 	shallow = true
 	branch = main
