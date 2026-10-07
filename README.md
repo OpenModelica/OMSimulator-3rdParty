@@ -69,6 +69,3 @@ cmake --build build -j$(nproc)
 `cmake/standalone.cmake` supplies the settings OMSimulator would otherwise have
 made before adding this directory. It is included only when this directory is
 the top of the build, so it cannot affect how OMSimulator itself is configured.
-
-Add `-DOMS_ENABLE_OMSimulatorGui=ON` to also build imgui, GLFW and
-tinyfiledialogs.
