@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019, FG Simulation und Modellierung, Leibniz Universit‰t Hannover, Germany
+ * Copyright (C) 2019, FG Simulation und Modellierung, Leibniz Universit√§t Hannover, Germany
  *
  * All rights reserved.
  *
@@ -24,7 +24,7 @@ static inline int char2int(char input) {
 }
 
 static inline uint128_t convertToUUID(std::string uuidStr){
-    uint128_t uuid;
+    uint128_t uuid{};
     int j = 0;
     int i = 0;
     //toDo: Find better solution which is also usable on arduino
